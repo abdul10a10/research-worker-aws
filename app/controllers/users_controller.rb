@@ -51,6 +51,7 @@ class UsersController < ApplicationController
     if User.where(:id => params[:id]).present?
       @user = User.find(params[:id])
       @user.status = "active"
+      @user.save
       @message = "user-activated"
       render json: {message: @message}, status: :ok
     else
@@ -62,6 +63,7 @@ class UsersController < ApplicationController
     if User.where(:id => params[:id]).present?
       @user = User.find(params[:id])
       @user.status = "deactive"
+      @user.save
       @message = "user-deactivated"
       render json: {message: @message}, status: :ok
     else
