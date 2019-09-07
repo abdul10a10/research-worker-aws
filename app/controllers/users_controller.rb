@@ -40,7 +40,7 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
     if @user.update_attributes(user_params)
-      @message = "user info has been updated"
+      @message = "user-updated"
       render json: {message: @message}, status: :ok
     else
       head(:unprocessable_entity)
