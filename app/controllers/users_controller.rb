@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
   def index
     @users = User.all
-
     render json: @users, status: :ok
   end
 
@@ -19,7 +18,8 @@ class UsersController < ApplicationController
   def destroy
     @user = User.find(params[:id])
     if @user.destroy
-      head(:ok)
+      @message = "user has been deleted"
+      render json: {message: @message}, status: :ok
     else
       head(:unprocessable_entity)
     end
@@ -40,7 +40,8 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
     if @user.update_attributes(user_params)
-      head(:ok)
+      @message = "user info has been updated"
+      render json: {message: @message}, status: :ok
     else
       head(:unprocessable_entity)
     end
@@ -48,6 +49,6 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:email, :password, :first_name, :last_name, :country, :user_type, :university, :university_email, :department, :specialisation, :job_type, :referral_code)
+    params.permit(:email, :password, :first_name, :last_name, :country, :user_type, :university, :university_email, :department, :specialisation, :job_type, :referral_code)
   end
 end

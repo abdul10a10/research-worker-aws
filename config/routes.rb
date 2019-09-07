@@ -1,8 +1,15 @@
 Rails.application.routes.draw do
  # devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  resources :users
+  # resources :users
+  # resources :users, :path => "getuser"
   # resources :sessions, only: [:create, :destroy]
+
+  get 'users/', to: 'users#index'
+  get 'getuserinfo/:id', to: 'users#show'
+  post 'users', to: 'users#create'
+  put 'updateuserinfo/:id', to: 'users#update'
+  delete 'deleteuser/:id', to: 'users#destroy'
   devise_for :users, controllers: {
       sessions: 'users/sessions',
       passwords: 'users/passwords',
