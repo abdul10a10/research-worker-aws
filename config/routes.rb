@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   get 'getuserinfo/:id', to: 'users#show'
   post 'users', to: 'users#create'
   put 'updateuserinfo/:id', to: 'users#update'
+  put 'activateuser/:id', to: 'users#activate'
+  put 'deactivateuser/:id', to: 'users#deactivate'
   delete 'deleteuser/:id', to: 'users#destroy'
   devise_for :users, controllers: {
       sessions: 'users/sessions',

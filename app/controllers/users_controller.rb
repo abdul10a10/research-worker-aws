@@ -46,6 +46,29 @@ class UsersController < ApplicationController
       head(:unprocessable_entity)
     end
   end
+
+  def activate
+    if User.where(:id => params[:id]).present?
+      @user = User.find(params[:id])
+      @user.status = "active"
+      @message = "user-activated"
+      render json: {message: @message}, status: :ok
+    else
+      head(:unprocessable_entity)
+    end
+  end
+
+  def deactivate
+    if User.where(:id => params[:id]).present?
+      @user = User.find(params[:id])
+      @user.status = "deactive"
+      @message = "user-deactivated"
+      render json: {message: @message}, status: :ok
+    else
+      @message = "User-not-found"
+      render json: {message: @message}, status: :not_found
+    end
+  end
   private
 
   def user_params
