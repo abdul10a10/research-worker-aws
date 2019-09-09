@@ -6,12 +6,31 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-
     if @user.save
-      render json: @user, status: :created
+      @user.generate_email_confirmation_token!
+      UserMailer.with(user: @user).welcome_email.deliver_later
+      @message = "user-registered"
+      @responce = {
+          user: @user,
+          message: @message,
+          status: :created,
+      }
+      render json: @responce, status: :created
     else
-      head(:unprocessable_entity)
+      @message = "Email already exist"
+      @status = "422"
+      @responce = {
+          message: @message,
+          status: :unprocessable_entity,
+      }
+      # head(:unprocessable_entity)
+      render json: @responce, status: :unprocessable_entity
     end
+    # if @user.save
+    #   render json: @user, status: :created
+    # else
+    #   head(:unprocessable_entity)
+    # end
 
 
   end
@@ -71,6 +90,27 @@ class UsersController < ApplicationController
       render json: {message: @message}, status: :not_found
     end
   end
+
+  def welcome
+    if User.where(:confirmation_token => params[:confirmation_token]).present?
+
+      @user = User.find_by(:confirmation_token => params[:confirmation_token])
+      if @user.present? && @user.email_confirmation_valid?
+        @user.status = "active"
+        @user.save
+        @user.generate_referral_code!
+        @message = "user-activated"
+        render json: {message: @message}, status: :ok
+      else
+        @message = "Link-expired"
+        render json: {message: @message}, status: :ok
+      end
+      # user.generate_refer_code!
+    else
+      head(:unprocessable_entity)
+    end
+  end
+
   private
 
   def user_params

@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   put 'updateuserinfo/:id', to: 'users#update'
   put 'activateuser/:id', to: 'users#activate'
   put 'deactivateuser/:id', to: 'users#deactivate'
+  get 'welcome/:confirmation_token', to: 'users#welcome'
   delete 'deleteuser/:id', to: 'users#destroy'
   devise_for :users, controllers: {
       sessions: 'users/sessions',

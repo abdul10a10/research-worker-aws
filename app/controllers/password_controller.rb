@@ -1,9 +1,8 @@
 class PasswordController < ApplicationController
   def forgot
-    debugger
     if params[:email].blank? # check if email is present
       @error = "Email not present"
-      return render json: {error: @error}
+      return render json: {error: @error}, status: :not_found
     end
 
     user = User.find_by(email: params[:email]) # if present find user by email
@@ -11,12 +10,17 @@ class PasswordController < ApplicationController
     if user.present?
       user.generate_password_token! #generate pass token
       # SEND EMAIL HERE
+
+      ForgetPasswordMailer.with(user: user).forget_password_email.deliver_later
+
       @message = "Confirmation email has been sent"
       render json: {message: @message}, status: :ok
     else
       @error = "Email address not found. Please check and try again."
       render json: {error: @error}, status: :not_found
     end
+
+
   end
 
   def reset

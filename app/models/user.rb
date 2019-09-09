@@ -17,7 +17,7 @@ class User < ApplicationRecord
   end
 
   def password_token_valid?
-    (self.reset_password_sent_at + 4.hours) > Time.now.utc
+    (self.reset_password_sent_at + 3.hours) > Time.now.utc
   end
 
   def reset_password!(password)
@@ -26,9 +26,28 @@ class User < ApplicationRecord
     save!
   end
 
+  def generate_email_confirmation_token!
+    self.confirmation_token = generate_token
+    self.confirmation_sent_at = Time.now.utc
+    save!
+  end
+
+  def email_confirmation_valid?
+    (self.confirmation_sent_at + 2.days) > Time.now.utc
+  end
+
+  def generate_referral_code!
+    self.user_referral_code = generate_code
+    save!
+  end
+
   private
 
   def generate_token
     SecureRandom.hex(10)
+  end
+
+  def generate_code
+    SecureRandom.hex(5)
   end
 end
