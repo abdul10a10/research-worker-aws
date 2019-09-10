@@ -54,7 +54,7 @@ Rails.application.configure do
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "Research_worker_api_#{Rails.env}"
 
-  ActionMailer::Base.perform_caching = false
+  config.action_mailer.perform_caching = false
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -73,7 +73,7 @@ Rails.application.configure do
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-  ActionMailer::Base.default_url_options = { :host => 'https://research-worker-backend.herokuapp.com' }
+  config.action_mailer.default_url_options = { :host => 'https://research-worker-backend.herokuapp.com' }
   # config.action_mailer.delivery_method = :smtp
   # # SMTP settings for gmail
   # config.action_mailer.smtp_settings = {
