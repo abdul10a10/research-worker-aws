@@ -3,7 +3,7 @@ class UserMailer < ApplicationMailer
 
   def welcome_email
     @user = params[:user]
-    @link = "http://localhost:4200/#/welcome/#{@user.confirmation_token}"
+    @link = "http://karyonsolutions.com/research_work_front-end/#/welcome/#{@user.confirmation_token}"
     mail(to: @user.email, subject: "Welcome to Research Worker")
   end
 
@@ -11,9 +11,9 @@ class UserMailer < ApplicationMailer
     @user = params[:user]
     @admin_mail = "amisha.farkya@codoxysolutions.com"
     if @user.user_type = "participant"
-      @link = "http://localhost:4200/#/participantlist"
+      @link = "http://karyonsolutions.com/research_workAdmin_front-end/#/participantlist"
     else
-      @link = "http://localhost:4200/#/researcherlist"
+      @link = "http://karyonsolutions.com/research_workAdmin_front-end/#/researcherlist"
     end
     mail(to: @admin_mail, subject: "New user registered")
   end
