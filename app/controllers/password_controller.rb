@@ -35,7 +35,7 @@ class PasswordController < ApplicationController
 
     if user.present? && user.password_token_valid?
       if user.reset_password!(params[:password])
-        @message = "Password has been changed"
+        @message = "Password-changed"
         render json: {message: @message}, status: :ok
       else
       render json: {error: user.errors.full_messages}, status: :unprocessable_entity
@@ -43,6 +43,28 @@ class PasswordController < ApplicationController
     else
       @error = "[’Link not valid or expired. Try generating a new link.’]"
     render json: {error:  @error}, status: :not_found
+    end
+  end
+
+  def change_password
+    @id = params[:id]
+    @old_password = params[:old_password]
+    @new_password = params[:new_password]
+    @user = User.find_by(id: params[:id])
+    debugger
+    if @user.present?
+      if @user.password == @old_password
+        @user.password = @new_password
+        @user.save
+        @message = "Password-changed"
+        render json: {message: @message}, status: :ok
+      else
+        @message = "Password-mismatch"
+        render json: {message: @message}, status: :not_found
+      end
+    else
+      @message = "user-not-found"
+      render json: {message: @message}, status: :not_found
     end
   end
 end

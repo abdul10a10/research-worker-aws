@@ -22,5 +22,6 @@ Rails.application.routes.draw do
 
   post 'password/forgot', to: 'password#forgot'
   post 'password/reset', to: 'password#reset'
+  post 'password/change', to: 'password#change_password'
   post 'admin/login', to: 'sessions#admin_login'
 end
