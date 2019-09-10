@@ -84,13 +84,12 @@ Rails.application.configure do
   #     :authentication       => "plain",
   #     :enable_starttls_auto => true
   # }
-  ActionMailer::Base.perform_deliveries = true
-  ActionMailer::Base.raise_delivery_errors = true
-  ActionMailer::Base.delivery_method = :smtp
-  ActionMailer::Base.smtp_settings = {
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
       address:              'smtp.gmail.com',
       port:                 587,
-      domain:               'gmail.com',
       user_name:            '10a10khan@gmail.com',
       password:             'arman1010#',
       authentication:       'plain',

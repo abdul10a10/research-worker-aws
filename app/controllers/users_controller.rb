@@ -17,7 +17,7 @@ class UsersController < ApplicationController
       }
       render json: @responce, status: :created
     else
-      @message = "Email already exist"
+      @message = "already-exists"
       @status = "422"
       @responce = {
           message: @message,
