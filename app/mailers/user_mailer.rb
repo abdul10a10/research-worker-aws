@@ -3,7 +3,14 @@ class UserMailer < ApplicationMailer
 
   def welcome_email
     @user = params[:user]
-    @link = "https://research-worker-backend.herokuapp.com/welcome/#{@user.confirmation_token}"
+    @link = "http://karyonsolutions.com/research_work_front-end/research_work_front-end#/welcome/#{@user.confirmation_token}"
     mail(to: @user.email, subject: "Welcome to Research Worker")
+  end
+
+  def user_registration_admin_email
+    @user = params[:user]
+    @admin_mail = "10a10khan@gmail.com"
+    @link = "abcd.com"
+    mail(to: @admin_mail, subject: "New user registered")
   end
 end

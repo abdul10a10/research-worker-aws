@@ -96,7 +96,9 @@ class UsersController < ApplicationController
 
       @user = User.find_by(:confirmation_token => params[:confirmation_token])
       if @user.present? && @user.email_confirmation_valid?
+        UserMailer.with(user: @user).user_registration_admin_email.deliver_later
         @user.status = "active"
+        @user.verification_status = "1"
         @user.save
         @user.generate_referral_code!
         @message = "user-activated"

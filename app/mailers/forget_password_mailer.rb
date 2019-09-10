@@ -3,7 +3,7 @@ class ForgetPasswordMailer < ApplicationMailer
 
   def forget_password_email
     @user = params[:user]
-    @link = "www.abcd.com/#{@user.id}"
+    @link = "https://research-worker-backend.herokuapp.com/forgetpassword"
     mail(to: @user.email, subject: "Forget password link")
   end
 end

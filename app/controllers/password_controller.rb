@@ -1,4 +1,7 @@
 class PasswordController < ApplicationController
+  def new
+
+  end
   def forgot
     if params[:email].blank? # check if email is present
       @error = "Email not present"

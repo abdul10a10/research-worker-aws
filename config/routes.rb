@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       registrations: 'users/registrations',
   }
 
-
+  get 'forgetpassword', to: 'password#new'
   post 'password/forgot', to: 'password#forgot'
   post 'password/reset', to: 'password#reset'
   post 'password/change', to: 'password#change_password'
