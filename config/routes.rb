@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :notifications
  # devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   # resources :users
@@ -7,12 +8,19 @@ Rails.application.routes.draw do
 
   get 'users/', to: 'users#index'
   get 'getuserinfo/:id', to: 'users#show'
+  get 'participantlist', to: 'users#participant_list'
+  get 'researcherlist', to: 'users#researcher_list'
+  get 'welcome/:confirmation_token', to: 'users#welcome'
+
   post 'users', to: 'users#create'
+  post 'sharerefferalcode', to: 'users#share_referral_code'
+
   put 'updateuserinfo/:id', to: 'users#update'
   put 'activateuser/:id', to: 'users#activate'
   put 'deactivateuser/:id', to: 'users#deactivate'
-  get 'welcome/:confirmation_token', to: 'users#welcome'
   delete 'deleteuser/:id', to: 'users#destroy'
+
+
   devise_for :users, controllers: {
       sessions: 'users/sessions',
       passwords: 'users/passwords',

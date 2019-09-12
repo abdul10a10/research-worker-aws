@@ -17,4 +17,18 @@ class UserMailer < ApplicationMailer
     end
     mail(to: @admin_mail, subject: "New user registered")
   end
+
+  def rejection_email
+    @user = params[:user]
+    @reason = params[:reason]
+    mail(to: @user.email, subject: "Participation cancellation mail")
+  end
+
+  def share_referral_code_email
+    @user = params[:user]
+    @receiver = params[:receiver]
+    @link = "registrationlink.com"
+    mail(to: @receiver, subject: "Refer code for Research worker")
+
+  end
 end

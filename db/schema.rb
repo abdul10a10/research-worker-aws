@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_10_095528) do
+ActiveRecord::Schema.define(version: 2019_09_11_065034) do
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "type"
+    t.integer "user_id"
+    t.string "message"
+    t.string "redirect_url"
+    t.string "seen_status"
+    t.string "status"
+    t.datetime "seen_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false

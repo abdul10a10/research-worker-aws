@@ -38,6 +38,7 @@ class PasswordController < ApplicationController
 
     if user.present? && user.password_token_valid?
       if user.reset_password!(params[:password])
+        ForgetPasswordMailer.with(user: user).password_change_email.deliver_later
         @message = "Password-changed"
         render json: {message: @message}, status: :ok
       else
