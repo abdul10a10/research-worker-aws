@@ -10,16 +10,47 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_11_065034) do
+ActiveRecord::Schema.define(version: 2019_09_13_131330) do
+
+  create_table "answers", force: :cascade do |t|
+    t.integer "question_id"
+    t.string "description"
+    t.integer "follow_up_question"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "notifications", force: :cascade do |t|
-    t.string "type"
+    t.string "notification_type"
     t.integer "user_id"
     t.string "message"
     t.string "redirect_url"
     t.string "seen_status"
     t.string "status"
     t.datetime "seen_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "question_categories", force: :cascade do |t|
+    t.string "name"
+    t.string "image_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "question_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.integer "question_type"
+    t.integer "question_category"
+    t.string "title"
+    t.string "description"
+    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -10,12 +10,13 @@ class UserMailer < ApplicationMailer
   def user_registration_admin_email
     @user = params[:user]
     @admin_mail = "amisha.farkya@codoxysolutions.com"
-    if @user.user_type = "participant"
+    @user_type = @user.user_type
+    if @user_type == "Participant"
       @link = "http://karyonsolutions.com/research_workAdmin_front-end/#/participantlist"
     else
       @link = "http://karyonsolutions.com/research_workAdmin_front-end/#/researcherlist"
     end
-    mail(to: @admin_mail, subject: "New user registered")
+    mail(to: @admin_mail, subject: "New "+  +" registered")
   end
 
   def rejection_email

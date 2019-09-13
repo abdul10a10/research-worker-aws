@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: [:show, :update, :destroy, :activate, :deactivate, :share_referral_code]
   def index
     @users = User.all
     render json: @users, status: :ok
@@ -45,7 +46,6 @@ class UsersController < ApplicationController
 
   end
   def destroy
-    @user = User.find(params[:id])
     if @user.destroy
       @message = "user has been deleted"
       render json: {message: @message}, status: :ok
@@ -55,10 +55,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    # user = User.find(params[:id])
-
-    if  User.where(:id => params[:id]).present?
-      @user = User.find(params[:id])
+    if  @user.present?
       @message = "user-info"
       render json: {user: @user, message: @message}, status: :ok
     else
@@ -68,7 +65,6 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user = User.find(params[:id])
     if @user.update_attributes(user_params)
       @message = "user-updated"
       render json: {message: @message}, status: :ok
@@ -78,8 +74,7 @@ class UsersController < ApplicationController
   end
 
   def activate
-    if User.where(:id => params[:id]).present?
-      @user = User.find(params[:id])
+    if @user.present?
       @user.status = "active"
       @user.save
       @message = "user-activated"
@@ -90,9 +85,8 @@ class UsersController < ApplicationController
   end
 
   def deactivate
-    if User.where(:id => params[:id]).present?
+    if @user.present?
       @reason = params[:reason]
-      @user = User.find(params[:id])
       @user.status = "deactive"
       @user.save
       @message = "user-deactivated"
@@ -105,32 +99,36 @@ class UsersController < ApplicationController
   end
 
   def welcome
-    if User.where(:confirmation_token => params[:confirmation_token]).present?
+    if User.where(confirmation_token: params[:confirmation_token]).present?
 
-      @user = User.find_by(:confirmation_token => params[:confirmation_token])
+      @user = User.find_by(confirmation_token: params[:confirmation_token])
       if @user.present? && @user.email_confirmation_valid?
-        @user.status = "deactive"
-        @user.verification_status = "1"
-        @user.save
-        @user.generate_referral_code!
-        @message = "user-activated"
+        if @user.verification_status == "1"
+          @message = "already-activated-account"
+          render json: {message: @message}, status: :ok
+        else
+          @user.status = "deactive"
+          @user.verification_status = "1"
+          @user.save
+          @user.generate_referral_code!
+          @message = "user-activated"
 
-        UserMailer.with(user: @user).user_registration_admin_email.deliver_later
-        @notification = Notification.new
-        @notification.type = "Registration"
-        @notification.user_id = "0"
+          UserMailer.with(user: @user).user_registration_admin_email.deliver_later
+          @notification = Notification.new
+          @notification.notification_type = "Registration"
+          @notification.user_id = "0"
+          @user_type = @user.user_type
+          @notification.message = "New " + @user_type +" has registered"
 
-        if @user.user_type == "Participant"
-          @notification.message = "New Participant has registered"
-          @notification.redirect_url = "http://karyonsolutions.com/research_workAdmin_front-end/#/participantlist"
-        elsif @user.user_type == "Researcher"
-          @notification.message = "New Researcher has registered"
-          @notification.redirect_url = "http://karyonsolutions.com/research_workAdmin_front-end/#/researcherlist"
+          if @user.user_type == "Participant"
+            @notification.redirect_url = "http://karyonsolutions.com/research_workAdmin_front-end/#/participantlist"
+          elsif @user.user_type == "Researcher"
+            @notification.redirect_url = "http://karyonsolutions.com/research_workAdmin_front-end/#/researcherlist"
+          end
+          @notification.save
+          render json: {message: @message}, status: :ok
         end
-        @notification.save
 
-
-        render json: {message: @message}, status: :ok
       else
         @message = "Link-expired"
         render json: {message: @message}, status: :ok
@@ -142,7 +140,6 @@ class UsersController < ApplicationController
   end
 
   def share_referral_code
-    @user = User.find(params[:id])
     @receiver = params[:email]
     UserMailer.with(user: @user, receiver: @receiver).share_referral_code_email.deliver_later
     @message = "Code-shared"
@@ -154,4 +151,8 @@ class UsersController < ApplicationController
   def user_params
     params.permit(:email, :password, :first_name, :last_name, :country, :user_type, :university, :university_email, :department, :specialisation, :job_type, :referral_code)
   end
-end
+
+  def set_user
+    @user = User.find(params[:id])
+  end
+  end

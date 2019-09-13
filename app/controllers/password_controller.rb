@@ -51,20 +51,19 @@ class PasswordController < ApplicationController
   end
 
   def change_password
-    @id = params[:id]
-    @old_password = params[:old_password]
-    @new_password = params[:new_password]
+    # @id = params[:id]
+    @currentpassword = params[:currentpassword]
+    @newpassword = params[:newpassword]
     @user = User.find_by(id: params[:id])
-    debugger
     if @user.present?
-      if @user.password == @old_password
-        @user.password = @new_password
+      if @user && @user.valid_password?(@currentpassword)
+        @user.password = @newpassword
         @user.save
         @message = "Password-changed"
         render json: {message: @message}, status: :ok
       else
         @message = "Password-mismatch"
-        render json: {message: @message}, status: :not_found
+        render json: {user: @user,message: @message}, status: :not_found
       end
     else
       @message = "user-not-found"
