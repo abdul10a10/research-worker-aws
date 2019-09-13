@@ -60,7 +60,7 @@ class UsersController < ApplicationController
     if  User.where(:id => params[:id]).present?
       @user = User.find(params[:id])
       @message = "user-info"
-      render json: {user: @user, message: @message}, status: :found
+      render json: {user: @user, message: @message}, status: :ok
     else
       @message = "user-not-found"
       render json: {message: @message}, status: :not_found
