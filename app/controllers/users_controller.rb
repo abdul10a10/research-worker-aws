@@ -119,10 +119,12 @@ class UsersController < ApplicationController
         @notification = Notification.new
         @notification.type = "Registration"
         @notification.user_id = "0"
-        @notification.message = "New user has been registered"
-        if @user.user_type = "participant"
+
+        if @user.user_type == "Participant"
+          @notification.message = "New Participant has registered"
           @notification.redirect_url = "http://karyonsolutions.com/research_workAdmin_front-end/#/participantlist"
-        else
+        elsif @user.user_type == "Researcher"
+          @notification.message = "New Researcher has registered"
           @notification.redirect_url = "http://karyonsolutions.com/research_workAdmin_front-end/#/researcherlist"
         end
         @notification.save
