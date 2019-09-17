@@ -5,6 +5,7 @@ class AnswersController < ApplicationController
   # GET /answers.json
   def index
     @answers = Answer.group(:question_id)
+    render json: @answers, status: :ok
   end
 
   # GET /answers/1
@@ -18,7 +19,8 @@ class AnswersController < ApplicationController
     @answer = Answer.new(answer_params)
 
     if @answer.save
-      render :show, status: :created, location: @answer
+      @message = "answer-saved"
+      render json: {answer: @answer, message: @message}, status: :created
     else
       render json: @answer.errors, status: :unprocessable_entity
     end
@@ -44,7 +46,8 @@ class AnswersController < ApplicationController
     @question_id = params[:id]
     @question = Question.find(params[:id])
     @answers = Answer.where(question_id: @question_id)
-    render :question_answer, status: :ok
+    # render :question_answer, status: :ok
+    render json: {question: @question, answer: @answer}, status: :ok
   end
 
   private

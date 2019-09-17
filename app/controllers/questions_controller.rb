@@ -43,7 +43,7 @@ class QuestionsController < ApplicationController
   def category_question
     @question_category = params[:question_category]
     @questions = Question.where(question_category: @question_category)
-    render :category_question, status: :ok
+    render json: @questions, status: :ok
   end
   private
     # Use callbacks to share common setup or constraints between actions.
