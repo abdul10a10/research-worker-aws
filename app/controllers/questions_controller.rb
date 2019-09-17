@@ -40,6 +40,11 @@ class QuestionsController < ApplicationController
     @question.destroy
   end
 
+  def category_question
+    @question_category = params[:question_category]
+    @questions = Question.where(question_category: @question_category)
+    render :category_question, status: :ok
+  end
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_question
@@ -48,6 +53,6 @@ class QuestionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def question_params
-      params.fetch(:question, {})
+      params.fetch(:question, {}).permit(:question_category, :question_type, :title, :description)
     end
 end

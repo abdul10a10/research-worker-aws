@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_13_131330) do
+ActiveRecord::Schema.define(version: 2019_09_16_130810) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -50,6 +50,15 @@ ActiveRecord::Schema.define(version: 2019_09_13_131330) do
     t.integer "question_category"
     t.string "title"
     t.string "description"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "responses", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "question_id"
+    t.integer "answer_id"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

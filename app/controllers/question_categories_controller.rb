@@ -16,11 +16,16 @@ class QuestionCategoriesController < ApplicationController
   # POST /question_categories.json
   def create
     @question_category = QuestionCategory.new(question_category_params)
-
-    if @question_category.save
-      render :show, status: :created, location: @question_category
+    @name = QuestionCategory.find_by(name: question_category_params[:name])
+    if @name.present?
+      @message = "category-already-exist"
+      render json: { message: @message}, status: :ok
     else
-      render json: @question_category.errors, status: :unprocessable_entity
+      if @question_category.save
+        render :add, status: :created, location: @question_category
+      else
+        render json: @question_category.errors, status: :unprocessable_entity
+      end
     end
   end
 
@@ -48,6 +53,6 @@ class QuestionCategoriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def question_category_params
-      params.fetch(:question_category, {})
+      params.fetch(:question_category, {}).permit(:name, :image_url)
     end
 end

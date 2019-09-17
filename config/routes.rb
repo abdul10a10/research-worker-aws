@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :responses
   resources :answers
   resources :questions
   resources :question_types
@@ -36,4 +37,6 @@ Rails.application.routes.draw do
   post 'password/reset', to: 'password#reset'
   post 'password/change', to: 'password#change_password'
   post 'admin/login', to: 'sessions#admin_login'
+  get 'category_question/:question_category', to: 'questions#category_question'
+  get 'question_answer/:id', to: 'answers#question_answer'
 end

@@ -4,7 +4,7 @@ class AnswersController < ApplicationController
   # GET /answers
   # GET /answers.json
   def index
-    @answers = Answer.all
+    @answers = Answer.group(:question_id)
   end
 
   # GET /answers/1
@@ -40,6 +40,13 @@ class AnswersController < ApplicationController
     @answer.destroy
   end
 
+  def question_answer
+    @question_id = params[:id]
+    @question = Question.find(params[:id])
+    @answers = Answer.where(question_id: @question_id)
+    render :question_answer, status: :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_answer
@@ -48,6 +55,6 @@ class AnswersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def answer_params
-      params.fetch(:answer, {})
+      params.fetch(:answer, {}).permit(:question_id, :description, :follow_up_question)
     end
 end

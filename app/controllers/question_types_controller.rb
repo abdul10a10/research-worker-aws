@@ -16,11 +16,16 @@ class QuestionTypesController < ApplicationController
   # POST /question_types.json
   def create
     @question_type = QuestionType.new(question_type_params)
-
-    if @question_type.save
-      render :show, status: :created, location: @question_type
+    @name = QuestionType.find_by(name: params[:name])
+    if @name.present?
+      @message = "Question-type-already-exist"
+      render json: { message: @message}, status:  :ok
     else
-      render json: @question_type.errors, status: :unprocessable_entity
+      if @question_type.save
+        render :show, status: :created, location: @question_type
+      else
+        render json: @question_type.errors, status: :unprocessable_entity
+      end
     end
   end
 
@@ -38,6 +43,8 @@ class QuestionTypesController < ApplicationController
   # DELETE /question_types/1.json
   def destroy
     @question_type.destroy
+    @message = "Question-type-already-exist"
+    render json: { message: @message}, status:  :ok
   end
 
   private
@@ -48,6 +55,6 @@ class QuestionTypesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def question_type_params
-      params.fetch(:question_type, {})
+      params.fetch(:question_type, {}).permit(:name)
     end
 end
