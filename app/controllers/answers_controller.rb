@@ -4,7 +4,7 @@ class AnswersController < ApplicationController
   # GET /answers
   # GET /answers.json
   def index
-    @answers = Answer.all
+    @answers = Answer.group(:question_id)
     render json: @answers, status: :ok
   end
 
@@ -47,7 +47,7 @@ class AnswersController < ApplicationController
     @question = Question.find(params[:id])
     @answers = Answer.where(question_id: @question_id)
     # render :question_answer, status: :ok
-    render json: @answers, status: :ok
+    render json: {question: @question, answer: @answers}, status: :ok
   end
 
   private

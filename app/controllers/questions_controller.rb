@@ -43,7 +43,20 @@ class QuestionsController < ApplicationController
   def category_question
     @question_category = params[:question_category]
     @questions = Question.where(question_category: @question_category)
-    render json: @questions, status: :ok
+    @responce = Array.new
+    @questions.each do |question|
+      @question_id = question.id
+      @answers = Answer.where(question_id: @question_id)
+      @responce.push({
+                         question: question,
+                         answer: @answers
+                     })
+
+
+      # @responce = @responce, {question: question, answer: @answers}
+
+    end
+    render json: @responce, status: :ok
   end
   private
     # Use callbacks to share common setup or constraints between actions.
