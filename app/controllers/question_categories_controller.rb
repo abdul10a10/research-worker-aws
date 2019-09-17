@@ -5,7 +5,7 @@ class QuestionCategoriesController < ApplicationController
   # GET /question_categories.json
   def index
     @question_categories = QuestionCategory.all
-    render @question_categories, status: :ok
+    render json: @question_categories, status: :ok
   end
 
   # GET /question_categories/1
