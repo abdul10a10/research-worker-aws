@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :update, :destroy, :activate, :deactivate, :share_referral_code]
+  before_action :set_user, only: [ :update, :destroy, :activate, :deactivate, :share_referral_code]
+
   def index
     @users = User.all
     render json: @users, status: :ok
@@ -55,12 +56,13 @@ class UsersController < ApplicationController
   end
 
   def show
-    if  @user.present?
+    if User.exists?(params[:id])
+      @user = User.find_by_id(params[:id])
       @message = "user-info"
       render json: {user: @user, message: @message}, status: :ok
     else
       @message = "user-not-found"
-      render json: {message: @message}, status: :ok
+      render json: { message: @message}, status: :ok
     end
   end
 
@@ -153,6 +155,7 @@ class UsersController < ApplicationController
   end
 
   def set_user
+    debugger
     @user = User.find(params[:id])
   end
-  end
+end
