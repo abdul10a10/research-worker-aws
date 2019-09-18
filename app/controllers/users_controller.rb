@@ -16,6 +16,7 @@ class UsersController < ApplicationController
     render json: @users, status: :ok
   end
 
+
   def create
     @user = User.new(user_params)
     if @user.save
@@ -38,14 +39,9 @@ class UsersController < ApplicationController
       # head(:unprocessable_entity)
       render json: @responce, status: :unprocessable_entity
     end
-    # if @user.save
-    #   render json: @user, status: :created
-    # else
-    #   head(:unprocessable_entity)
-    # end
-
-
   end
+
+
   def destroy
     if @user.destroy
       @message = "user has been deleted"
@@ -65,6 +61,7 @@ class UsersController < ApplicationController
       render json: { message: @message}, status: :ok
     end
   end
+
 
   def update
     if @user.update_attributes(user_params)
@@ -86,6 +83,7 @@ class UsersController < ApplicationController
     end
   end
 
+
   def deactivate
     if @user.present?
       @reason = params[:reason]
@@ -99,6 +97,7 @@ class UsersController < ApplicationController
       render json: {message: @message}, status: :not_found
     end
   end
+
 
   def welcome
     if User.where(confirmation_token: params[:confirmation_token]).present?
@@ -141,6 +140,7 @@ class UsersController < ApplicationController
     end
   end
 
+
   def share_referral_code
     @receiver = params[:email]
     UserMailer.with(user: @user, receiver: @receiver).share_referral_code_email.deliver_later
@@ -148,14 +148,17 @@ class UsersController < ApplicationController
     render json: {message: @message}, status: :ok
 
   end
+
+
+
   private
 
   def user_params
     params.permit(:email, :password, :first_name, :last_name, :country, :user_type, :university, :university_email, :department, :specialisation, :job_type, :referral_code)
   end
 
+  
   def set_user
-    debugger
     @user = User.find(params[:id])
   end
 end

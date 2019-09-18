@@ -5,7 +5,7 @@ class PasswordController < ApplicationController
   def forgot
     if params[:email].blank? # check if email is present
       @error = "Email not present"
-      return render json: {error: @error}, status: :not_found
+      return render json: {error: @error}, status: :ok
     end
 
     user = User.find_by(email: params[:email]) # if present find user by email
@@ -20,12 +20,12 @@ class PasswordController < ApplicationController
       render json: {message: @message}, status: :ok
     else
       @error = "Email address not found. Please check and try again."
-      render json: {error: @error}, status: :not_found
+      render json: {error: @error}, status: :ok
     end
-
-
+    
   end
 
+  
   def reset
     token = params[:token].to_s
 
@@ -46,7 +46,7 @@ class PasswordController < ApplicationController
       end
     else
       @error = "[’Link not valid or expired. Try generating a new link.’]"
-    render json: {error:  @error}, status: :not_found
+    render json: {error:  @error}, status: :ok
     end
   end
 
@@ -63,11 +63,11 @@ class PasswordController < ApplicationController
         render json: {message: @message}, status: :ok
       else
         @message = "Password-mismatch"
-        render json: {user: @user,message: @message}, status: :not_found
+        render json: {user: @user,message: @message}, status: :ok
       end
     else
       @message = "user-not-found"
-      render json: {message: @message}, status: :not_found
+      render json: {message: @message}, status: :ok
     end
   end
 end

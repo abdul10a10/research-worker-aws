@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   # resources :users, :path => "getuser"
   # resources :sessions, only: [:create, :destroy]
 
+  get 'about_you/:user_id', to: 'question_categories#about_you'
   get 'users/', to: 'users#index'
   get 'getuserinfo/:id', to: 'users#show'
   get 'participantlist', to: 'users#participant_list'

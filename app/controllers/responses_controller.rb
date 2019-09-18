@@ -16,11 +16,11 @@ class ResponsesController < ApplicationController
   # POST /responses.json
   def create
     @response = Response.new(response_params)
-
     if @response.save
-      render :show, status: :created, location: @response
+      @message = "response-saved"
+      render json: {message: @message}, status: :created
     else
-      render json: @response.errors, status: :unprocessable_entity
+      render json: {message: @response.errors}, status: :unprocessable_entity
     end
   end
 
