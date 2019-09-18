@@ -16,7 +16,10 @@ class QuestionsController < ApplicationController
   # POST /questions.json
   def create
     @question = Question.new(question_params)
-
+    @temp1 = question_params[:question_category]
+    @category = QuestionCategory.where(name: @temp1).first
+    @question_category = @category.id
+    @question.question_category = @question_category
     if @question.save
       render :show, status: :created, location: @question
     else
