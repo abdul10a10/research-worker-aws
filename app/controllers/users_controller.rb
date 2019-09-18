@@ -60,7 +60,7 @@ class UsersController < ApplicationController
       render json: {user: @user, message: @message}, status: :ok
     else
       @message = "user-not-found"
-      render json: {message: @message}, status: :not_found
+      render json: {message: @message}, status: :ok
     end
   end
 
