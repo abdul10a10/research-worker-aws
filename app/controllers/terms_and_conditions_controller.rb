@@ -4,7 +4,7 @@ class TermsAndConditionsController < ApplicationController
   # GET /terms_and_conditions
   # GET /terms_and_conditions.json
   def index
-    @terms_and_conditions = TermsAndCondition.all
+    @terms_and_conditions = TermsAndCondition.all.order(id: :asc)
     render json: @terms_and_conditions, status: :ok
   end
 

@@ -4,7 +4,7 @@ class PrivacyPoliciesController < ApplicationController
   # GET /privacy_policies
   # GET /privacy_policies.json
   def index
-    @privacy_policies = PrivacyPolicy.all
+    @privacy_policies = PrivacyPolicy.all.order(id: :asc)
     render json: @privacy_policies, status: :ok
   end
 
