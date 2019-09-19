@@ -20,8 +20,8 @@ class Users::SessionsController < Devise::SessionsController
       @current_user = user.as_json(only: [:id, :email, :authentication_token])
       render json: {user: @current_user, message: @message, expires_in: @expires_in}, status: :created
     else
-      @message = "login failed"
-      render json: { message: @message  }, status: :unprocessable_entity
+      @message = "login-failed"
+      render json: { message: @message  }, status: :ok
     end
   end
 
