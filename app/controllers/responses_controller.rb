@@ -5,11 +5,13 @@ class ResponsesController < ApplicationController
   # GET /responses.json
   def index
     @responses = Response.all
+    render json: @responses
   end
 
   # GET /responses/1
   # GET /responses/1.json
   def show
+    render json: @response, status: :ok
   end
 
   # POST /responses
@@ -38,7 +40,31 @@ class ResponsesController < ApplicationController
   # DELETE /responses/1.json
   def destroy
     @response.destroy
+    @message = "response-deleted"
+    render json: {message: @message}, status: :ok
   end
+
+
+  #PUT /delete_response
+  def delete_response
+    @user_id = params[:user_id]
+    @question_id = params[:question_id]
+    
+    if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
+      @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
+      @response.each do |response|
+        response.deleted_at!
+      end
+      # @response.deleted_at!
+      @message = "response-deleted"
+      render json: {message: @message}
+    else
+      @message = "response-not-exist"
+      render json: {message: @message}, status: :ok
+    end
+    
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

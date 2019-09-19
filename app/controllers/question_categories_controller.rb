@@ -13,7 +13,7 @@ class QuestionCategoriesController < ApplicationController
   def show
   end
 
-  
+
   # POST /question_categories
   # POST /question_categories.json
   def create
@@ -62,7 +62,7 @@ class QuestionCategoriesController < ApplicationController
       @response=0
       @question.each do |question|
         @question_id = question.id
-        if Response.where(question_id: @question_id, user_id: @user_id).present?
+        if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
           @response = @response+1
         end
       end

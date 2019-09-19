@@ -159,6 +159,11 @@ class UsersController < ApplicationController
 
   
   def set_user
-    @user = User.find(params[:id])
+    if User.exists?(params[:id])
+      @user = User.find(params[:id])
+    else
+      @message = "User-not-found"
+      render json: {message: @message}, status: :ok
+    end
   end
 end

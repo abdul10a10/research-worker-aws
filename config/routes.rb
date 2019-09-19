@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :privacy_policies
+  resources :terms_and_conditions
   resources :responses
   resources :answers
   resources :questions
@@ -12,6 +14,9 @@ Rails.application.routes.draw do
   # resources :sessions, only: [:create, :destroy]
 
   get 'about_you/:user_id', to: 'question_categories#about_you'
+
+  post 'delete_response', to: 'responses#delete_response'
+ 
   get 'users/', to: 'users#index'
   get 'getuserinfo/:id', to: 'users#show'
   get 'participantlist', to: 'users#participant_list'

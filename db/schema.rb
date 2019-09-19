@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_16_130810) do
+ActiveRecord::Schema.define(version: 2019_09_19_062754) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -28,6 +28,15 @@ ActiveRecord::Schema.define(version: 2019_09_16_130810) do
     t.string "seen_status"
     t.string "status"
     t.datetime "seen_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "privacy_policies", force: :cascade do |t|
+    t.string "country"
+    t.string "user_type"
+    t.string "title"
+    t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -60,6 +69,15 @@ ActiveRecord::Schema.define(version: 2019_09_16_130810) do
     t.integer "question_id"
     t.integer "answer_id"
     t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "terms_and_conditions", force: :cascade do |t|
+    t.string "country"
+    t.string "user_type"
+    t.string "title"
+    t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
