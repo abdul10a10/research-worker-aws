@@ -34,10 +34,10 @@ class UsersController < ApplicationController
       @status = "422"
       @responce = {
           message: @message,
-          status: :unprocessable_entity,
+          status: :ok,
       }
-      # head(:unprocessable_entity)
-      render json: @responce, status: :unprocessable_entity
+      # head(:ok)
+      render json: @responce, status: :ok
     end
   end
 
@@ -47,7 +47,7 @@ class UsersController < ApplicationController
       @message = "user has been deleted"
       render json: {message: @message}, status: :ok
     else
-      head(:unprocessable_entity)
+      head(:ok)
     end
   end
 
@@ -68,7 +68,7 @@ class UsersController < ApplicationController
       @message = "user-updated"
       render json: {message: @message}, status: :ok
     else
-      head(:unprocessable_entity)
+      head(:ok)
     end
   end
 
@@ -79,7 +79,7 @@ class UsersController < ApplicationController
       @message = "user-activated"
       render json: {message: @message}, status: :ok
     else
-      head(:unprocessable_entity)
+      head(:ok)
     end
   end
 
@@ -136,7 +136,7 @@ class UsersController < ApplicationController
       end
       # user.generate_refer_code!
     else
-      head(:unprocessable_entity)
+      head(:ok)
     end
   end
 
