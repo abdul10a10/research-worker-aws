@@ -33,7 +33,7 @@ class UsersController < ApplicationController
       @message = "already-exists"
       @status = "422"
       @responce = {
-          message: @message,
+          message: @user.errors,
           status: :ok,
       }
       # head(:ok)

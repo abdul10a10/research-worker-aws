@@ -41,7 +41,8 @@ class AnswersController < ApplicationController
   def destroy
     @answer.destroy
   end
-
+  
+  # GET /question_answer/id
   def question_answer
     @question_id = params[:id]
     @question = Question.find(params[:id])

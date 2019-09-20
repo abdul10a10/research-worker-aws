@@ -5,11 +5,13 @@ class NotificationsController < ApplicationController
   # GET /notifications.json
   def index
     @notifications = Notification.all
+    render json: @notifications, status: :ok
   end
 
   # GET /notifications/1
   # GET /notifications/1.json
   def show
+    render json: @notification, status: :ok
   end
 
   # POST /notifications
@@ -40,6 +42,33 @@ class NotificationsController < ApplicationController
     @notification.destroy
   end
 
+  #GET /change_seen_status/id
+  def change_seen_status
+    @notification = Notification.find(params[:id])
+    @notification.seen_status = 1
+    @notification.seen_time = Time.now.utc
+    @notification.save
+    @message = "notification-seen"
+    render json: {notification: @notification,message: @message}, status: :ok
+  end
+
+  #GET /change_status/user_id
+  def change_status
+    @notification = Notification.where(user_id: params[:user_id])
+    @notification.each do |notification|
+      notification.status = 1
+      notification.save
+    end
+    @message = "notification-published"
+    render json: {message: @message}, status: :ok
+  end
+
+  #GET /user_notification/user_id
+  def user_notification
+    @notification = Notification.where(user_id: params[:user_id]).order(id: :desc)
+    render json: @notification, status: :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_notification
@@ -48,6 +77,6 @@ class NotificationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def notification_params
-      params.fetch(:notification, {})
+      params.fetch(:notification, {}).permit(:notification_type, :user_id, :message, :redirect_url, :seen_status, :status)
     end
 end

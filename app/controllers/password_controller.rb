@@ -45,7 +45,7 @@ class PasswordController < ApplicationController
       render json: {error: user.errors.full_messages}, status: :ok
       end
     else
-      @error = "[’Link not valid or expired. Try generating a new link.’]"
+      @error = "Link not valid or expired. Try generating a new link."
     render json: {error:  @error}, status: :ok
     end
   end

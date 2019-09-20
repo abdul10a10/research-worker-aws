@@ -44,7 +44,6 @@ class ResponsesController < ApplicationController
     render json: {message: @message}, status: :ok
   end
 
-
   #PUT /delete_response
   def delete_response
     @user_id = params[:user_id]
