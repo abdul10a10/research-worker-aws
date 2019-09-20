@@ -21,7 +21,7 @@ class TermsAndConditionsController < ApplicationController
     if @terms_and_condition.save
       render :show, status: :created, location: @terms_and_condition
     else
-      render json: @terms_and_condition.errors, status: :unprocessable_entity
+      render json: @terms_and_condition.errors, status: :ok
     end
   end
 
@@ -31,7 +31,7 @@ class TermsAndConditionsController < ApplicationController
     if @terms_and_condition.update(terms_and_condition_params)
       render :show, status: :ok, location: @terms_and_condition
     else
-      render json: @terms_and_condition.errors, status: :unprocessable_entity
+      render json: @terms_and_condition.errors, status: :ok
     end
   end
 

@@ -22,7 +22,7 @@ class AnswersController < ApplicationController
       @message = "answer-saved"
       render json: {answer: @answer, message: @message}, status: :created
     else
-      render json: @answer.errors, status: :unprocessable_entity
+      render json: @answer.errors, status: :ok
     end
   end
 
@@ -32,7 +32,7 @@ class AnswersController < ApplicationController
     if @answer.update(answer_params)
       render :show, status: :ok, location: @answer
     else
-      render json: @answer.errors, status: :unprocessable_entity
+      render json: @answer.errors, status: :ok
     end
   end
 

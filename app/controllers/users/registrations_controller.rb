@@ -27,8 +27,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
           status: @status,
           message: @message
       }
-      # head(:unprocessable_entity)
-      render json: @responce, status: :unprocessable_entity
+      # head(:ok)
+      render json: @responce, status: :ok
     end
 
   end
@@ -49,7 +49,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     if @user.destroy
       head(:ok)
     else
-      head(:unprocessable_entity)
+      head(:ok)
     end
   end
 

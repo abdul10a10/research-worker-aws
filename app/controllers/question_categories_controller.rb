@@ -26,7 +26,7 @@ class QuestionCategoriesController < ApplicationController
       if @question_category.save
         render :add, status: :created, location: @question_category
       else
-        render json: @question_category.errors, status: :unprocessable_entity
+        render json: @question_category.errors, status: :ok
       end
     end
   end
@@ -38,7 +38,7 @@ class QuestionCategoriesController < ApplicationController
     if @question_category.update(question_category_params)
       render :show, status: :ok, location: @question_category
     else
-      render json: @question_category.errors, status: :unprocessable_entity
+      render json: @question_category.errors, status: :ok
     end
   end
 

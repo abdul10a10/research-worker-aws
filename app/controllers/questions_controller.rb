@@ -23,7 +23,7 @@ class QuestionsController < ApplicationController
     if @question.save
       render :show, status: :created, location: @question
     else
-      render json: @question.errors, status: :unprocessable_entity
+      render json: @question.errors, status: :ok
     end
   end
 
@@ -33,7 +33,7 @@ class QuestionsController < ApplicationController
     if @question.update(question_params)
       render :show, status: :ok, location: @question
     else
-      render json: @question.errors, status: :unprocessable_entity
+      render json: @question.errors, status: :ok
     end
   end
 

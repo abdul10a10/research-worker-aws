@@ -20,7 +20,7 @@ class NotificationsController < ApplicationController
     if @notification.save
       render :show, status: :created, location: @notification
     else
-      render json: @notification.errors, status: :unprocessable_entity
+      render json: @notification.errors, status: :ok
     end
   end
 
@@ -30,7 +30,7 @@ class NotificationsController < ApplicationController
     if @notification.update(notification_params)
       render :show, status: :ok, location: @notification
     else
-      render json: @notification.errors, status: :unprocessable_entity
+      render json: @notification.errors, status: :ok
     end
   end
 

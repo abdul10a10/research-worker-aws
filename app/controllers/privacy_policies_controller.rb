@@ -21,7 +21,7 @@ class PrivacyPoliciesController < ApplicationController
     if @privacy_policy.save
       render :show, status: :created, location: @privacy_policy
     else
-      render json: @privacy_policy.errors, status: :unprocessable_entity
+      render json: @privacy_policy.errors, status: :ok
     end
   end
 
@@ -31,7 +31,7 @@ class PrivacyPoliciesController < ApplicationController
     if @privacy_policy.update(privacy_policy_params)
       render :show, status: :ok, location: @privacy_policy
     else
-      render json: @privacy_policy.errors, status: :unprocessable_entity
+      render json: @privacy_policy.errors, status: :ok
     end
   end
 

@@ -42,7 +42,7 @@ class PasswordController < ApplicationController
         @message = "Password-changed"
         render json: {message: @message}, status: :ok
       else
-      render json: {error: user.errors.full_messages}, status: :unprocessable_entity
+      render json: {error: user.errors.full_messages}, status: :ok
       end
     else
       @error = "[’Link not valid or expired. Try generating a new link.’]"

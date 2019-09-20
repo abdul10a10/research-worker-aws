@@ -24,7 +24,7 @@ class QuestionTypesController < ApplicationController
       if @question_type.save
         render :show, status: :created, location: @question_type
       else
-        render json: @question_type.errors, status: :unprocessable_entity
+        render json: @question_type.errors, status: :ok
       end
     end
   end
@@ -35,7 +35,7 @@ class QuestionTypesController < ApplicationController
     if @question_type.update(question_type_params)
       render :show, status: :ok, location: @question_type
     else
-      render json: @question_type.errors, status: :unprocessable_entity
+      render json: @question_type.errors, status: :ok
     end
   end
 

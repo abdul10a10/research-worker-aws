@@ -22,7 +22,7 @@ class ResponsesController < ApplicationController
       @message = "response-saved"
       render json: {message: @message}, status: :created
     else
-      render json: {message: @response.errors}, status: :unprocessable_entity
+      render json: {message: @response.errors}, status: :ok
     end
   end
 
@@ -32,7 +32,7 @@ class ResponsesController < ApplicationController
     if @response.update(response_params)
       render :show, status: :ok, location: @response
     else
-      render json: @response.errors, status: :unprocessable_entity
+      render json: @response.errors, status: :ok
     end
   end
 

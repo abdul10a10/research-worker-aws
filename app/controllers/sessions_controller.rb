@@ -20,7 +20,7 @@ class SessionsController < ApplicationController
     else
       @error = "{ 'email or password is invalid"
       @message = "login failed"
-      render json: { errors: @error, message: @message }, status: :unprocessable_entity
+      render json: { errors: @error, message: @message }, status: :ok
     end
   end
 
