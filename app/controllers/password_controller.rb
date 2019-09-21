@@ -29,10 +29,10 @@ class PasswordController < ApplicationController
   def reset
     token = params[:token].to_s
 
-    if params[:email].blank?
-      @error = "Token not present"
-      return render json: {error: @error}
-    end
+    # if params[:email].blank?
+    #   @error = "Token not present"
+    #   return render json: {error: @error}
+    # end
 
     user = User.find_by(reset_password_token: token)
 
