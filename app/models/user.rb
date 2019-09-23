@@ -41,6 +41,10 @@ class User < ApplicationRecord
     save!
   end
 
+  def validateparams!
+    (self.email != "") && (self.password != "") && (self.job_type != "") && (self.user_type != "") && (self.country != "") && (self.first_name != "") && (self.last_name != "")
+  end
+  
   private
 
   def generate_token

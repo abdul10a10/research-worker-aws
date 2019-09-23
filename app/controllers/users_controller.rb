@@ -22,24 +22,18 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    if @user.save
-      @user.generate_email_confirmation_token!
-      UserMailer.with(user: @user).welcome_email.deliver_later
-      @message = "user-registered"
-      # @responce = {
-      #     user: @user,
-      #     message: @message,
-      #     status: :created,
-      # }
-      render json: {Data: @users, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
+    if @user.validateparams!
+      if @user.save
+        @user.generate_email_confirmation_token!
+        UserMailer.with(user: @user).welcome_email.deliver_later
+        @message = "user-registered"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
+      else
+        @message = "already-exists"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      end
     else
-      @message = "already-exists"
-      @status = "422"
-      # @responce = {
-      #     message: @user.errors,
-      #     status: :ok,
-      # }
-      # head(:ok)
+      @message = "fields-not-filled"
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
   end
