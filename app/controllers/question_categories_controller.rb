@@ -4,7 +4,7 @@ class QuestionCategoriesController < ApplicationController
   # GET /question_categories
   # GET /question_categories.json
   def index
-    @question_categories = QuestionCategory.all
+    @question_categories = QuestionCategory.all.order(id: :asc)
     render json: @question_categories, status: :ok
   end
 
@@ -53,7 +53,7 @@ class QuestionCategoriesController < ApplicationController
   # GET /about_you/:user_id
   def about_you
     @user_id = params[:user_id]
-    @question_categories = QuestionCategory.all
+    @question_categories = QuestionCategory.all.order(id: :asc)
     @demographic_category = Array.new
     @question_categories.each do |category|
       @question_category = category.id
