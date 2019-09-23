@@ -3,7 +3,7 @@ class UserMailer < ApplicationMailer
 
   def welcome_email
     @user = params[:user]
-    @link = "http://karyonsolutions.com/research_work_front-end/#/welcome/#{@user.confirmation_token}"
+    @link = "http:localhost:4200/#/pages/verifyemail/#{@user.confirmation_token}"
     mail(to: @user.email, subject: "Welcome to Research Worker")
   end
 
