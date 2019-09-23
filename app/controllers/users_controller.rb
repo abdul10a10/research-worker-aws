@@ -22,7 +22,12 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    if @user.validateparams!
+    if @user.user_type == 'Participant'
+      @validation = @user.validateparamsparticipant!
+    else
+      @validation = @user.validateparamsresearcher!
+    end
+    if @validation
       if @user.save
         @user.generate_email_confirmation_token!
         UserMailer.with(user: @user).welcome_email.deliver_later
