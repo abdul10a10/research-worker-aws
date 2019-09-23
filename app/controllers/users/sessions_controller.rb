@@ -12,20 +12,22 @@ class Users::SessionsController < Devise::SessionsController
 
   # POST /resource/sign_in
   def create
+
     user = User.find_by_email(configure_sign_in_params[:email])
 
     if user && user.valid_password?(configure_sign_in_params[:password])
 
       if (user.status == "active")
         @current_user = user.as_json(only: [:id, :email, :authentication_token])
+        @token = JsonWebToken.encode(user_id: user.id)
         @message = "user-logged-in"
         @expires_in = 3600
-        render json: {user: @current_user, message: @message, expires_in: @expires_in}, status: :created
+        render json: {user: @current_user, message: @message, expires_in: @expires_in, Token: @token}, status: :created
       else
         @message = "user-not-verified"
         render json: { message: @message  }, status: :ok
       end
-      # 
+      
     else
       @message = "login-failed"
       render json: { message: @message  }, status: :ok

@@ -1,19 +1,22 @@
 class UsersController < ApplicationController
+  # before_action :authorize_request, except: :create
   before_action :set_user, only: [ :update, :destroy, :activate, :deactivate, :share_referral_code]
 
   def index
-    @users = User.all
-    render json: @users, status: :ok
+    @users = User.all.order(id: :desc)
+    render json: {Data: @users, CanEdit: true, CanDelete: false, Status: :ok, message: 'All-users', Token: nil, Success: false}, status: :ok
+
   end
 
   def participant_list
     @user = User.where(user_type: 'Participant')
-    render json: @users, status: :ok
+    render json: {Data: @user, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def researcher_list
     @user = User.where(user_type: 'Researcher')
-    render json: @users, status: :ok
+    @message = "user-list"
+    render json: {Data: @user, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
 
@@ -23,21 +26,21 @@ class UsersController < ApplicationController
       @user.generate_email_confirmation_token!
       UserMailer.with(user: @user).welcome_email.deliver_later
       @message = "user-registered"
-      @responce = {
-          user: @user,
-          message: @message,
-          status: :created,
-      }
-      render json: @responce, status: :created
+      # @responce = {
+      #     user: @user,
+      #     message: @message,
+      #     status: :created,
+      # }
+      render json: {Data: @users, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
     else
       @message = "already-exists"
       @status = "422"
-      @responce = {
-          message: @user.errors,
-          status: :ok,
-      }
+      # @responce = {
+      #     message: @user.errors,
+      #     status: :ok,
+      # }
       # head(:ok)
-      render json: @responce, status: :ok
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
   end
 
@@ -45,7 +48,7 @@ class UsersController < ApplicationController
   def destroy
     if @user.destroy
       @message = "user has been deleted"
-      render json: {message: @message}, status: :ok
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       head(:ok)
     end
@@ -66,7 +69,7 @@ class UsersController < ApplicationController
   def update
     if @user.update_attributes(user_params)
       @message = "user-updated"
-      render json: {message: @message}, status: :ok
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       head(:ok)
     end
@@ -77,7 +80,7 @@ class UsersController < ApplicationController
       @user.status = "active"
       @user.save
       @message = "user-activated"
-      render json: {message: @message}, status: :ok
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       head(:ok)
     end
@@ -91,10 +94,10 @@ class UsersController < ApplicationController
       @user.save
       @message = "user-deactivated"
       UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
-      render json: {message: @message}, status: :ok
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @message = "User-not-found"
-      render json: {message: @message}, status: :not_found
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :not_found
     end
   end
 
