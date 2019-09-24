@@ -70,7 +70,7 @@ class UsersController < ApplicationController
       @message = "user-profile-updated"
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      head(:ok)
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @user.errors, Token: nil, Success: false}, status: :ok
     end
   end
 
