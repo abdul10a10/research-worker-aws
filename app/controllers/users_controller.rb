@@ -67,7 +67,7 @@ class UsersController < ApplicationController
 
   def update
     if @user.update_attributes(user_params)
-      @message = "user-updated"
+      @message = "user-profile-updated"
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       head(:ok)
@@ -75,14 +75,22 @@ class UsersController < ApplicationController
   end
 
   def activate
-    if @user.present?
-      @user.status = "active"
-      @user.save
-      @message = "user-activated"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    else
-      head(:ok)
-    end
+    # if @current_user.user_type == 'Admin'
+      if @user.present?
+        @user.status = "active"
+        @user.save
+        @message = "user-activated"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      else
+        @message = "user-not-found"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      end
+
+    # else
+    #   @message = "unauthorise"
+    #   render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+     
+    # end   
   end
 
 
@@ -156,7 +164,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.permit(:email, :password, :first_name, :last_name, :country, :user_type, :university, :university_email, :department, :specialisation, :job_type, :referral_code)
+    params.permit(:email, :password, :first_name, :last_name, :country, :user_type, :university, :university_email, :department, :specialisation, :job_type, :referral_code, :address, :contact_number)
   end
 
   
