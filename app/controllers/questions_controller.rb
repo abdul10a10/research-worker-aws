@@ -4,7 +4,7 @@ class QuestionsController < ApplicationController
   # GET /questions
   # GET /questions.json
   def index
-    @questions = Question.all
+    @questions = Question.all.order(id: :asc)
   end
 
   # GET /questions/1
@@ -45,11 +45,11 @@ class QuestionsController < ApplicationController
 
   def category_question
     @question_category = params[:question_category]
-    @questions = Question.where(question_category: @question_category)
+    @questions = Question.where(question_category: @question_category).order(id: :asc)
     @responce = Array.new
     @questions.each do |question|
       @question_id = question.id
-      @answers = Answer.where(question_id: @question_id)
+      @answers = Answer.where(question_id: @question_id).order(id: :asc)
       @responce.push({
                          question: question,
                          answer: @answers

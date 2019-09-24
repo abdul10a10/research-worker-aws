@@ -54,7 +54,7 @@ class PasswordController < ApplicationController
     # @id = params[:id]
     @currentpassword = params[:currentpassword]
     @newpassword = params[:newpassword]
-    @user = User.find_by(id: params[:id])
+    @user = User.find_by(id: params[:user_id])
     if @user.present?
       if @user && @user.valid_password?(@currentpassword)
         @user.password = @newpassword
