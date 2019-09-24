@@ -30,9 +30,9 @@ class PrivacyPoliciesController < ApplicationController
   # PATCH/PUT /privacy_policies/1.json
   def update
     if @privacy_policy.update(privacy_policy_params)
-      render :show, status: :ok, location: @privacy_policy
+      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: 'policy-updated', Token: nil, Success: false}, status: :ok
     else
-      render json: @privacy_policy.errors, status: :ok
+      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: 'policy-not-updated', Token: nil, Success: false}, status: :ok
     end
   end
 
