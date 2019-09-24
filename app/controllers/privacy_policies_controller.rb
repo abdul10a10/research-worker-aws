@@ -11,6 +11,7 @@ class PrivacyPoliciesController < ApplicationController
   # GET /privacy_policies/1
   # GET /privacy_policies/1.json
   def show
+    render json: {Data: @privacy_policy, CanEdit: true, CanDelete: false, Status: :ok, message: 'privacy policy', Token: nil, Success: false}, status: :ok
   end
 
   # POST /privacy_policies

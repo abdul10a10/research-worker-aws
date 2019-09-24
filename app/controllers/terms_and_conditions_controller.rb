@@ -11,6 +11,7 @@ class TermsAndConditionsController < ApplicationController
   # GET /terms_and_conditions/1
   # GET /terms_and_conditions/1.json
   def show
+    render json: {Data: @terms_and_condition, CanEdit: true, CanDelete: false, Status: :ok, message: 'terms and conditions', Token: nil, Success: false}, status: :ok
   end
 
   # POST /terms_and_conditions
@@ -29,9 +30,10 @@ class TermsAndConditionsController < ApplicationController
   # PATCH/PUT /terms_and_conditions/1.json
   def update
     if @terms_and_condition.update(terms_and_condition_params)
-      render :show, status: :ok, location: @terms_and_condition
+      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: 'terms-updated', Token: nil, Success: false}, status: :ok
+
     else
-      render json: @terms_and_condition.errors, status: :ok
+      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: 'terms-not-updated', Token: nil, Success: false}, status: :ok
     end
   end
 

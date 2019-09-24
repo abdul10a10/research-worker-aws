@@ -9,12 +9,12 @@ class UsersController < ApplicationController
   end
 
   def participant_list
-    @user = User.where(user_type: 'Participant').order(id: :desc)
+    @user = User.where(user_type: 'Participant', verification_status: '1').order(id: :desc)
     render json: {Data: @user, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def researcher_list
-    @user = User.where(user_type: 'Researcher').order(id: :desc)
+    @user = User.where(user_type: 'Researcher', verification_status: '1').order(id: :desc)
     @message = "user-list"
     render json: {Data: @user, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
