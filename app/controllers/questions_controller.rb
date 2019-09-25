@@ -21,10 +21,12 @@ class QuestionsController < ApplicationController
     @question_category = @category.id
     @question.question_category = @question_category
     if @question.save
-      render :show, status: :created, location: @question
+      @message = "question-saved"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      render json: @question.errors, status: :ok
-    end
+      @message = "question-not-saved"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+     end
   end
 
   # PATCH/PUT /questions/1
