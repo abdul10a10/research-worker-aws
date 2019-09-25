@@ -45,6 +45,8 @@ class QuestionsController < ApplicationController
   # DELETE /questions/1.json
   def destroy
     @question.destroy
+    @message = "question-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def category_question
@@ -76,6 +78,14 @@ class QuestionsController < ApplicationController
       Questions: @questions
     }
     render json: {Data: @data, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
+  def delete_question
+    @question = Question.find(params[:id])
+    @question.deleted_at!
+    @message = "question-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+
   end
   private
     # Use callbacks to share common setup or constraints between actions.

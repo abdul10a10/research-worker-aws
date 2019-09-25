@@ -4,7 +4,8 @@ class AnswersController < ApplicationController
   # GET /answers
   # GET /answers.json
   def index
-    @answers = Answer.group(:question_id)
+    # @answers = Answer.group(:question_id)
+    @answers = Answer.all
     render json: @answers, status: :ok
   end
 
