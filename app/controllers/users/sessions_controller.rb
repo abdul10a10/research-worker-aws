@@ -19,16 +19,16 @@ class Users::SessionsController < Devise::SessionsController
 
       if (user.verification_status == "1")
 
-        if (user.status == "active")
+        # if (user.status == "active")
           @current_user = user.as_json(only: [:id, :email, :authentication_token])
           @token = JsonWebToken.encode(user_id: user.id)
           @message = "user-logged-in"
           @expires_in = 3600
           render json: {user: @current_user, message: @message, expires_in: @expires_in, Token: @token}, status: :created
-        else
-          @message = "waiting for admin approval"
-        render json: { message: @message  }, status: :ok
-        end
+        # else
+        #   @message = "waiting for admin approval"
+        # render json: { message: @message  }, status: :ok
+        # end
         
       else
         @message = "user-not-verified"
