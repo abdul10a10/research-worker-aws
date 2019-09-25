@@ -22,7 +22,8 @@ class QuestionTypesController < ApplicationController
       render json: { message: @message}, status:  :ok
     else
       if @question_type.save
-        render :show, status: :created, location: @question_type
+        @message = "question-type-saved"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
       else
         render json: @question_type.errors, status: :ok
       end
@@ -33,7 +34,8 @@ class QuestionTypesController < ApplicationController
   # PATCH/PUT /question_types/1.json
   def update
     if @question_type.update(question_type_params)
-      render :show, status: :ok, location: @question_type
+      @message = "question-type-updated"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       render json: @question_type.errors, status: :ok
     end
@@ -43,7 +45,7 @@ class QuestionTypesController < ApplicationController
   # DELETE /question_types/1.json
   def destroy
     @question_type.destroy
-    @message = "Question-type-already-exist"
+    @message = "Question-type-deleted"
     render json: { message: @message}, status:  :ok
   end
 

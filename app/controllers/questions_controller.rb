@@ -33,9 +33,11 @@ class QuestionsController < ApplicationController
   # PATCH/PUT /questions/1.json
   def update
     if @question.update(question_params)
-      render :show, status: :ok, location: @question
+      @message = "question-updated"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      render json: @question.errors, status: :ok
+      @message = "question-not-update"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
   end
 
@@ -62,6 +64,18 @@ class QuestionsController < ApplicationController
 
     end
     render json: @responce, status: :ok
+  end
+
+  def question_list
+    @question_category = params[:question_category]
+    @category = QuestionCategory.find(params[:question_category])
+    @questions = Question.where(question_category: @question_category).order(id: :asc)
+    @message = 'questions-per-category'
+    @data = {
+      QuestionCategory: @category,
+      Questions: @questions
+    }
+    render json: {Data: @data, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
   private
     # Use callbacks to share common setup or constraints between actions.
