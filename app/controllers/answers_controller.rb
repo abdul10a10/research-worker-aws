@@ -31,9 +31,11 @@ class AnswersController < ApplicationController
   # PATCH/PUT /answers/1.json
   def update
     if @answer.update(answer_params)
-      render :show, status: :ok, location: @answer
+      @message = "answer-updated"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      render json: @answer.errors, status: :ok
+      @message = "answer-not-update"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
   end
 
