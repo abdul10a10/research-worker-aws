@@ -36,9 +36,11 @@ class QuestionCategoriesController < ApplicationController
   # PATCH/PUT /question_categories/1.json
   def update
     if @question_category.update(question_category_params)
-      render :show, status: :ok, location: @question_category
+      @message = "Question-category-updated"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      render json: @question_category.errors, status: :ok
+      @message = "Question-category-not-updated"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
   end
 
