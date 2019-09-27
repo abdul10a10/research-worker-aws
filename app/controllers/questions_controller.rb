@@ -4,7 +4,7 @@ class QuestionsController < ApplicationController
   # GET /questions
   # GET /questions.json
   def index
-    @questions = Question.all.order(id: :asc)
+    @questions = Question.where(deleted_at: nil).order(id: :asc)
   end
 
   # GET /questions/1
