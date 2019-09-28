@@ -18,12 +18,26 @@ class ResponsesController < ApplicationController
   # POST /responses.json
   def create
     @response = Response.new(response_params)
-    if @response.save
-      @message = "response-saved"
-      render json: {message: @message}, status: :created
+    @question = Question.find(@response.question_id)
+    if @question.question_type == 2
+      answer_ids = response_params[:answer_id]
+      for answer_id in answer_ids do
+        @responsetemp = Response.new(response_params)
+        @responsetemp.answer_id = answer_id
+        @responsetemp.save
+      end
+        @message = "response-saved"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      render json: {message: @response.errors}, status: :ok
+      if @response.save
+        @message = "response-saved"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      else
+        @message = "response-saved"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      end
     end
+    
   end
 
   # PATCH/PUT /responses/1
@@ -73,6 +87,6 @@ class ResponsesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def response_params
-      params.fetch(:response, {}).permit(:user_id, :question_id, :answer_id, :deleted_at)
+      params.fetch(:response, {}).permit(:user_id, :question_id, :answer_id, :deleted_at, :text_answer, answer_id:[])
     end
 end
