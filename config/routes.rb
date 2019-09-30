@@ -4,7 +4,8 @@ Rails.application.routes.draw do
 
   resources :studies
   post 'add_description', to: 'studies#add_description'
-  get 'user_studies/:user_id', to: 'studies#user_studies'
+  get 'unpublished_studies/:user_id', to: 'studies#unpublished_studies'
+  get 'published_studies/:user_id', to: 'studies#published_studies'
 
   resources :responses 
   post 'delete_response', to: 'responses#delete_response'
