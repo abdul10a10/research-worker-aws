@@ -53,13 +53,13 @@ class StudiesController < ApplicationController
   end
 
   def unpublished_studies
-    @studies = Study.find_by(user_id: params[:id])
+    @studies = Study.where(user_id: params[:user_id])
     @message = "user-studies"
     render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
   def published_studies
-    @studies = Study.find_by(user_id: params[:id])
+    @studies = Study.where(user_id: params[:user_id])
     @message = "user-studies"
     render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
