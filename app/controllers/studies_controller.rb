@@ -42,6 +42,7 @@ class StudiesController < ApplicationController
     end
   end
 
+  # POST /add_description
   def add_description
     @study = Study.find(params[:id])
     if @study.update(study_params)
@@ -52,6 +53,7 @@ class StudiesController < ApplicationController
     end
   end
 
+  #GET unpublished_studies/1
   def unpublished_studies
     @studies = Study.where(user_id: params[:user_id])
     @message = "user-studies"
@@ -68,6 +70,8 @@ class StudiesController < ApplicationController
   # DELETE /studies/1.json
   def destroy
     @study.destroy
+    @message = "study-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
   private
