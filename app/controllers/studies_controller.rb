@@ -43,7 +43,6 @@ class StudiesController < ApplicationController
   end
 
   def add_description
-    debugger
     @study = Study.find(params[:id])
     if @study.update(study_params)
       @message = "description-added"
