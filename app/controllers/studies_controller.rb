@@ -82,6 +82,6 @@ class StudiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def study_params
-      params.fetch(:study, {}).permit(:user_id, :name, :completionurl, :completioncode, :studyurl, :allowedtime, :estimatetime, :submission, :description)
+      params.fetch(:study, {}).permit(:user_id, :name, :completionurl, :completioncode, :studyurl, :allowedtime, :estimatetime, :submission, :description, :reward)
     end
 end
