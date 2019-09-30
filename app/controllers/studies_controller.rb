@@ -43,6 +43,8 @@ class StudiesController < ApplicationController
   end
 
   def add_description
+    debugger
+    @study = Study.find(params[:id])
     if @study.update(study_params)
       @message = "description-added"
       render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
@@ -51,6 +53,12 @@ class StudiesController < ApplicationController
     end
   end
 
+  def user_studies
+    @studies = Study.find_by(user_id: params[:id])
+    @message = "user-studies"
+    render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+ 
+  end
   # DELETE /studies/1
   # DELETE /studies/1.json
   def destroy
