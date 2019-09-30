@@ -33,7 +33,7 @@ class ResponsesController < ApplicationController
         @message = "response-saved"
         render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
       else
-        @message = "response-saved"
+        @message = "response-not-saved"
         render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
       end
     end

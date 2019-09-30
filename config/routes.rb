@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   resources :privacy_policies
   resources :terms_and_conditions
 
+  resources :studies
+  post 'add_description', to: 'studies#add_description'
 
   resources :responses 
   post 'delete_response', to: 'responses#delete_response'
