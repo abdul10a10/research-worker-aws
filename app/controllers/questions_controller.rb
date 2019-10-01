@@ -6,11 +6,15 @@ class QuestionsController < ApplicationController
   # GET /questions.json
   def index
     @questions = Question.where(deleted_at: nil).order(id: :asc)
+    @message = "questions"
+    render json: {Data: @questions, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # GET /questions/1
   # GET /questions/1.json
   def show
+    @message = "question"
+    render json: {Data: @question, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # POST /questions

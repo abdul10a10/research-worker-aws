@@ -41,6 +41,7 @@ class TermsAndConditionsController < ApplicationController
   # DELETE /terms_and_conditions/1.json
   def destroy
     @terms_and_condition.destroy
+    render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: 'terms-deleted', Token: nil, Success: false}, status: :ok
   end
 
   private

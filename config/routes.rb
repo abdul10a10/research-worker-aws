@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   resources :privacy_policies
   resources :terms_and_conditions
+  resources :question_types
+
+  resources :audiences
+  post 'delete_audience', to: 'audiences#delete_audience'
 
   resources :studies
   post 'add_description', to: 'studies#add_description'
@@ -17,8 +21,6 @@ Rails.application.routes.draw do
   get 'category_question/:question_category', to: 'questions#category_question'
   get 'question_list/:question_category', to: 'questions#question_list'
   post 'delete_question/:id', to: 'questions#delete_question'
-
-  resources :question_types
 
   resources :question_categories
   get 'about_you/:user_id', to: 'question_categories#about_you'
