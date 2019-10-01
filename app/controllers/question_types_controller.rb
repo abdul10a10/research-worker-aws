@@ -1,4 +1,5 @@
 class QuestionTypesController < ApplicationController
+  # before_action :authorize_request, except: :create
   before_action :set_question_type, only: [:show, :update, :destroy]
 
   # GET /question_types

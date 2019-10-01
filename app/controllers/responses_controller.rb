@@ -1,4 +1,5 @@
 class ResponsesController < ApplicationController
+  # before_action :authorize_request, except: :create
   before_action :set_response, only: [:show, :update, :destroy]
 
   # GET /responses
