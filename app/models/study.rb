@@ -1,3 +1,3 @@
 class Study < ApplicationRecord
-  has_many :audiences  
+  # has_many :audiences  
 end
