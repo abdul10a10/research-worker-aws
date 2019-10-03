@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   resources :studies
   post 'add_description', to: 'studies#add_description'
   get 'unpublished_studies/:user_id', to: 'studies#unpublished_studies'
-  get 'published_studies/:user_id', to: 'studies#published_studies'
+  get 'active_studies/:user_id', to: 'studies#active_studies'
   put 'publish_study/:id', to:  'studies#publish_study'
   put 'complete_study/:id', to:  'studies#complete_study'
 

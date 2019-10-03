@@ -61,8 +61,14 @@ class StudiesController < ApplicationController
     render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
-  def published_studies
-    @studies = Study.where(user_id: params[:user_id], is_published: !nil)
+  def active_studies
+    @studies = Study.where(user_id: params[:user_id], is_active: "1")
+    @message = "user-studies"
+    render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+  end
+
+  def completed_studies
+    @studies = Study.where(user_id: params[:user_id], is_complete: "1")
     @message = "user-studies"
     render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
@@ -88,7 +94,7 @@ class StudiesController < ApplicationController
   def complete_study
     @study.is_complete = 1
     @study.save
-    @message = "study-published"
+    @message = "study-completed"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
