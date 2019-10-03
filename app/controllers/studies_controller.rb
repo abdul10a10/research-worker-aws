@@ -62,7 +62,7 @@ class StudiesController < ApplicationController
   end
 
   def active_studies
-    @studies = Study.where(user_id: params[:user_id], is_active: "1")
+    @studies = Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil)
     @message = "user-studies"
     render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
