@@ -75,6 +75,27 @@ class AudiencesController < ApplicationController
       render json: {message: @message}, status: :ok
     end
   end
+
+  # def find_audience
+  #   @study_id = params[:study_id]
+  #   @user_ids = Array.new
+
+  #   if Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil).present?
+  #     @audience = Audience.where(study_id: @study_id, deleted_at: nil)
+
+  #     @audience.each do |audience|
+  #       @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id)
+  #     end
+      
+  #     @message = "audience-deleted"
+  #     render json: {message: @message}
+  #   else
+  #     @message = "audience-not-exist"
+  #     render json: {message: @message}, status: :ok
+  #   end
+
+  # end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_audience

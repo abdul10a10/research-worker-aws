@@ -1,6 +1,6 @@
 class StudiesController < ApplicationController
   # before_action :authorize_request, except: :create
-  before_action :set_study, only: [:show, :update, :destroy]
+  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :complete_study]
 
   # GET /studies
   # GET /studies.json
@@ -56,13 +56,13 @@ class StudiesController < ApplicationController
 
   #GET unpublished_studies/1
   def unpublished_studies
-    @studies = Study.where(user_id: params[:user_id])
+    @studies = Study.where(user_id: params[:user_id], is_published: nil)
     @message = "user-studies"
     render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
   def published_studies
-    @studies = Study.where(user_id: params[:user_id])
+    @studies = Study.where(user_id: params[:user_id], is_published: !nil)
     @message = "user-studies"
     render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
@@ -72,6 +72,23 @@ class StudiesController < ApplicationController
   def destroy
     @study.destroy
     @message = "study-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+  end
+
+  # PUT /publish_study/1
+  def publish_study
+    @study.is_published = 1
+    @study.is_active = 1
+    @study.save
+    @message = "study-published"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+  end
+
+  # PUT /complete_study/1
+  def complete_study
+    @study.is_complete = 1
+    @study.save
+    @message = "study-published"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_01_122249) do
+ActiveRecord::Schema.define(version: 2019_10_03_092542) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -98,6 +98,8 @@ ActiveRecord::Schema.define(version: 2019_10_01_122249) do
     t.datetime "updated_at", null: false
     t.string "reward"
     t.string "is_published"
+    t.string "is_active"
+    t.string "is_complete"
   end
 
   create_table "terms_and_conditions", force: :cascade do |t|
