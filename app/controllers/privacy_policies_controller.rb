@@ -45,7 +45,7 @@ class PrivacyPoliciesController < ApplicationController
 
   # get /user_terms
   def user_policies
-    @privacy_policy = PrivacyPolicy.where(user_type: @current_user.user_type)
+    @privacy_policy = PrivacyPolicy.where(user_type: @current_user.user_type, country: @current_user.country)
     render json: {Data: @privacy_policy, CanEdit: true, CanDelete: false, Status: :ok, message: 'privacy policy', Token: nil, Success: false}, status: :ok
   end
 

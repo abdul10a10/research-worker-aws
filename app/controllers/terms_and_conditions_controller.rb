@@ -47,8 +47,8 @@ class TermsAndConditionsController < ApplicationController
 
   # get /user_terms
   def user_terms
-    @terms_and_condition = TermsAndCondition.where(user_type: @current_user.user_type)
-    render json: {Data: @terms_and_condition, CanEdit: true, CanDelete: false, Status: :ok, message: 'terms-and-conditions', Token: nil, Success: false}, status: :ok
+    @terms_and_condition = TermsAndCondition.where(user_type: @current_user.user_type, country: @current_user.country)
+    render json: {Data: @terms_and_condition, CanEdit: false, CanDelete: false, Status: :ok, message: 'terms-and-conditions', Token: nil, Success: false}, status: :ok
   end
 
   private
