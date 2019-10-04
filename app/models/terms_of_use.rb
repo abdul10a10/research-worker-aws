@@ -1,0 +1,2 @@
+class TermsOfUse < ApplicationRecord
+end

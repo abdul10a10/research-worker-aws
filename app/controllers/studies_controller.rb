@@ -122,18 +122,14 @@ class StudiesController < ApplicationController
   def find_audience
     @study_id = params[:id]
     @user_ids = Array.new
-    
+    @study = Study.find(@study_id)
     # loop to find user_ids
     if Audience.where(study_id: @study_id, deleted_at: nil).present?
       @audience = Audience.where(study_id: @study_id, deleted_at: nil)
       @audience.each do |audience|
         @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id)
         @users.each do |user|
-          @user_ids.push(
-            {
-              id: user.user_id
-            }
-          )
+          @user_ids.push( user.user_id )
           puts("inside loop")
         end
         puts("outside-loop")
@@ -143,11 +139,17 @@ class StudiesController < ApplicationController
       render json: {message: @message}, status: :ok
     end
 
+    i=0
+    @user_ids.uniq.each do |user_id|
+      @user = User.find(user_id)
+      UserMailer.with(user: @user, study: @study).new_study_invitation_email.deliver_later
+      i = i+1
+    end
     #email users
     # UserMailer.with(user: @user).new_study_invitation_mail.deliver_later
 
     @message = "user-ids"
-    render json: {Data: @user_ids,message: @message}
+    render json: {Data: @user,message: @message, i: i}
   end
 
   private

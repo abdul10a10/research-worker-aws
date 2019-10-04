@@ -189,7 +189,7 @@ class UsersController < ApplicationController
 
   #GET /participantoverview/:id
   def participantoverview
-    # debugger
+    
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
       @message = "user-info"
@@ -211,15 +211,7 @@ class UsersController < ApplicationController
           })
         
         end
-
-        # @response.each do |response|
-        #   @question = Question.find(response.question_id)
-        #   @answer = Answer.find(response.answer_id)
-        #   @demographics.push({
-        #     question: @question,
-        #     answer: @answer
-        #   })
-        # end
+        
       end
       render json: {Data: {user: @user, demographics: @demographics}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else

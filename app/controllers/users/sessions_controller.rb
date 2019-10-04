@@ -53,44 +53,4 @@ class Users::SessionsController < Devise::SessionsController
     params.permit(:email, :password)
   end
 
-  # before_action :configure_sign_in_params, :params, only: [:create]
-  #
-  # # GET /resource/sign_in
-  # def new
-  #   super
-  # end
-  #
-  # # POST /resource/sign_in
-  # def create
-  #   user = User.where(email: params{:email}).first
-  #
-  #   if user&.valid_password?(params{:password})
-  #     @user = user.as_json(only: [:id, :email, :authentication_token])
-  #     # @responce = [@user, @message]
-  #     @message = "user-login"
-  #     @responce = {
-  #         user: @user,
-  #         message: @message
-  #     }
-  #     render json: @responce, status: :created
-  #   else
-  #     @message = "user-login-failed"
-  #     #head(:unauthorized)
-  #     render json: @message, status: :unauthorized
-  #   end
-  #
-  # end
-  #
-  # # DELETE /resource/sign_out
-  # def destroy
-  #   super
-  # end
-  #
-  #  protected
-  #
-  # # If you have extra params to permit, append them to the sanitizer.
-  # def configure_sign_in_params
-  #   params.permit(:email, :password, :session)
-  # end
-
 end

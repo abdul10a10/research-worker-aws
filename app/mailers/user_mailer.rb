@@ -32,8 +32,9 @@ class UserMailer < ApplicationMailer
     mail(to: @receiver, subject: "Refer code for Research worker")
   end
 
-  def new_study_invitation_mail
+  def new_study_invitation_email
     @user = params[:user]
+    @study = params[:study]
     mail(to: @user.email, subject: "Invitation for new study")
   end
 
