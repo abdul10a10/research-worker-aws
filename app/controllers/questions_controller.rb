@@ -1,5 +1,6 @@
 class QuestionsController < ApplicationController
   # before_action :authorize_request, except: :create
+  before_action :authorize_request, only: :category_question
   before_action :set_question, only: [:show, :update, :destroy]
 
   # GET /questions
@@ -55,19 +56,23 @@ class QuestionsController < ApplicationController
   end
 
   def category_question
+    @user_id = @current_user.id
     @question_category = params[:question_category]
     @questions = Question.where(question_category: @question_category, deleted_at: nil).order(id: :asc)
     @responce = Array.new
     @questions.each do |question|
       @question_id = question.id
-      @answers = Answer.where(question_id: @question_id).order(id: :asc)
-      @responce.push({
-                         question: question,
-                         answer: @answers
-                     })
-
-
-      # @responce = @responce, {question: question, answer: @answers}
+      if Response.where(question_id: @question_id, user_id: @user_id).present?
+      else
+        @answers = Answer.where(question_id: @question_id).order(id: :asc)
+        @responce.push({
+                           question: question,
+                           answer: @answers
+                       })
+  
+  
+        # @responce = @responce, {question: question, answer: @answers}
+      end
 
     end
     render json: @responce, status: :ok

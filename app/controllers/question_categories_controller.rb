@@ -1,5 +1,6 @@
 class QuestionCategoriesController < ApplicationController
   # before_action :authorize_request, except: :create
+  # before_action :authorize_request, only: :about_you
   before_action :set_question_category, only: [:show, :update, :destroy]
 
   # GET /question_categories

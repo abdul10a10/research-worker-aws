@@ -16,7 +16,7 @@ class UserMailer < ApplicationMailer
     else
       @link = "http://karyonsolutions.com/research_workAdmin_front-end/#/researcherlist"
     end
-    mail(to: @admin_mail, subject: "New "+  +" registered")
+    mail(to: @admin_mail, subject: "New "+ @user_type +" registered")
   end
 
   def rejection_email
@@ -30,6 +30,11 @@ class UserMailer < ApplicationMailer
     @receiver = params[:receiver]
     @link = "registrationlink.com"
     mail(to: @receiver, subject: "Refer code for Research worker")
-
   end
+
+  def new_study_invitation_mail
+    @user = params[:user]
+    mail(to: @user.email, subject: "Invitation for new study")
+  end
+
 end

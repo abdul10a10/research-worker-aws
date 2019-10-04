@@ -54,23 +54,43 @@ class StudiesController < ApplicationController
     end
   end
 
-  #GET unpublished_studies/1
+  # GET 'unpublished_studies/:user_id'
   def unpublished_studies
-    @studies = Study.where(user_id: params[:user_id], is_published: nil)
-    @message = "user-studies"
-    render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+
+    if Study.where(user_id: params[:user_id], is_published: nil)
+      @studies = Study.where(user_id: params[:user_id], is_published: nil)
+      @message = "user-studies"
+      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok 
+    else
+      @message = "studies-not-found"
+      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    end 
+
   end
 
+  #GET 'active_studies/:user_id'
   def active_studies
-    @studies = Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil)
-    @message = "user-studies"
-    render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+
+    if Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil)
+      @studies = Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil)
+      @message = "user-studies"
+      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    else
+      @message = "studies-not-found"
+      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    end  
   end
 
+  #GET 'completed_studies/:user_id'
   def completed_studies
-    @studies = Study.where(user_id: params[:user_id], is_complete: "1")
-    @message = "user-studies"
-    render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+    if Study.where(user_id: params[:user_id], is_complete: "1").present?
+      @studies = Study.where(user_id: params[:user_id], is_complete: "1")
+      @message = "completed-studies"
+      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+    else
+      @message = "studies-not-found"
+      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok    
+    end
   end
 
   # DELETE /studies/1
@@ -96,6 +116,38 @@ class StudiesController < ApplicationController
     @study.save
     @message = "study-completed"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+  end
+
+  # GET /find_audience/:id
+  def find_audience
+    @study_id = params[:id]
+    @user_ids = Array.new
+    
+    # loop to find user_ids
+    if Audience.where(study_id: @study_id, deleted_at: nil).present?
+      @audience = Audience.where(study_id: @study_id, deleted_at: nil)
+      @audience.each do |audience|
+        @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id)
+        @users.each do |user|
+          @user_ids.push(
+            {
+              id: user.user_id
+            }
+          )
+          puts("inside loop")
+        end
+        puts("outside-loop")
+      end
+    else
+      @message = "audience-not-exist"
+      render json: {message: @message}, status: :ok
+    end
+
+    #email users
+    # UserMailer.with(user: @user).new_study_invitation_mail.deliver_later
+
+    @message = "user-ids"
+    render json: {Data: @user_ids,message: @message}
   end
 
   private
