@@ -73,6 +73,7 @@ class QuestionCategoriesController < ApplicationController
       @demographic_category.push({
         id: category.id,
         name: category.name,
+        image_url: category.image_url,
         question_count: @question_count,
         response: @response
       })

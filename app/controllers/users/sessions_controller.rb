@@ -17,7 +17,7 @@ class Users::SessionsController < Devise::SessionsController
 
     if user && user.valid_password?(configure_sign_in_params[:password])
 
-      # if (user.verification_status == "1")
+      if (user.verification_status == "1")
 
         # if (user.status == "active")
           @current_user = user.as_json(only: [:id, :email, :authentication_token])
@@ -30,10 +30,10 @@ class Users::SessionsController < Devise::SessionsController
         # render json: { message: @message  }, status: :ok
         # end
         
-      # else
-      #   @message = "user-not-verified"
-      #   render json: { message: @message  }, status: :ok
-      # end
+      else
+        @message = "user-not-verified"
+        render json: { message: @message  }, status: :ok
+      end
       
     else
       @message = "login-failed"
