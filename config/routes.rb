@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   post 'delete_question/:id', to: 'questions#delete_question'
 
   resources :question_categories
-  get 'about_you/:user_id', to: 'question_categories#about_you'
+  get 'about_you', to: 'question_categories#about_you'
 
   resources :notifications
   get 'change_seen_status/:id', to: 'notifications#change_seen_status'

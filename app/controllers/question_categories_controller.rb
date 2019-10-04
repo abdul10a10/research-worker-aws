@@ -1,6 +1,6 @@
 class QuestionCategoriesController < ApplicationController
   # before_action :authorize_request, except: :create
-  # before_action :authorize_request, only: :about_you
+   before_action :authorize_request, only: :about_you
   before_action :set_question_category, only: [:show, :update, :destroy]
 
   # GET /question_categories
@@ -56,7 +56,7 @@ class QuestionCategoriesController < ApplicationController
 
   # GET /about_you/:user_id
   def about_you
-    @user_id = params[:user_id]
+    @user_id = @current_user.id
     @question_categories = QuestionCategory.all.order(id: :asc)
     @demographic_category = Array.new
     @question_categories.each do |category|
