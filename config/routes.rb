@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   resources :privacy_policies
+  get 'user_policies', to: 'privacy_policies#user_policies'
+
   resources :terms_and_conditions
+  get 'user_terms', to: 'terms_and_conditions#user_terms'
+
   resources :question_types
 
   resources :audiences

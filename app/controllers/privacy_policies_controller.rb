@@ -1,4 +1,5 @@
 class PrivacyPoliciesController < ApplicationController
+  before_action :authorize_request, only: :user_policies
   before_action :set_privacy_policy, only: [:show, :update, :destroy]
 
   # GET /privacy_policies
@@ -40,6 +41,12 @@ class PrivacyPoliciesController < ApplicationController
   # DELETE /privacy_policies/1.json
   def destroy
     @privacy_policy.destroy
+  end
+
+  # get /user_terms
+  def user_policies
+    @privacy_policy = PrivacyPolicy.where(user_type: @current_user.user_type)
+    render json: {Data: @privacy_policy, CanEdit: true, CanDelete: false, Status: :ok, message: 'privacy policy', Token: nil, Success: false}, status: :ok
   end
 
   private
