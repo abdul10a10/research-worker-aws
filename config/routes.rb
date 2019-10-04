@@ -40,6 +40,9 @@ Rails.application.routes.draw do
 
   get 'users/', to: 'users#index'
   get 'getuserinfo/:id', to: 'users#show'
+  get 'dashboard', to: 'users#dashboard'
+  get 'researcheroverview/:id', to: 'users#researcheroverview'
+  get 'participantoverview/:id', to: 'users#participantoverview'
   get 'participantlist', to: 'users#participant_list'
   get 'researcherlist', to: 'users#researcher_list'
   get 'welcome/:confirmation_token', to: 'users#welcome'

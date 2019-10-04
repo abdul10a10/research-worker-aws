@@ -1,25 +1,37 @@
 class UsersController < ApplicationController
+  before_action :authorize_request, only: :dashboard
   # before_action :authorize_request, except: :create
   before_action :set_user, only: [ :update, :destroy, :activate, :deactivate, :share_referral_code]
 
+  #GET /users
   def index
     @users = User.all.order(id: :desc)
     render json: {Data: @users, CanEdit: true, CanDelete: false, Status: :ok, message: 'All-users', Token: nil, Success: false}, status: :ok
 
   end
 
+  #GET /dashboard/:id
+  def dashboard
+      @message = "user-info"
+      @notification = Notification.where(user_id: @current_user.id).order(id: :desc)
+      render json: {Data: {user: @current_user, notification: @notification}, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    
+  end
+
+  #GET /participantlist
   def participant_list
     @user = User.where(user_type: 'Participant', verification_status: '1').order(id: :desc)
     render json: {Data: @user, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
+  #GET /researcherlist
   def researcher_list
     @user = User.where(user_type: 'Researcher', verification_status: '1').order(id: :desc)
     @message = "user-list"
     render json: {Data: @user, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
-
+  #Post /users
   def create
     @user = User.new(user_params)
     if @user.user_type == 'Participant'
@@ -53,6 +65,7 @@ class UsersController < ApplicationController
     end
   end
 
+  #GET /getuserinfo/:id
   def show
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
@@ -159,6 +172,44 @@ class UsersController < ApplicationController
 
   end
 
+  #GET /researcheroverview/:id
+  def researcheroverview
+    if User.exists?(params[:id])
+      @user = User.find_by_id(params[:id])
+      @message = "user-info"
+      if Study.where(user_id: params[:id]).present?
+        @studies = Study.where(user_id: params[:id], is_published: nil)
+      end
+      render json: {Data: {user: @user, studies: @studies}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    else
+      @message = "user-not-found"
+      render json: { message: @message}, status: :ok
+    end
+  end
+
+  #GET /participantoverview/:id
+  def participantoverview
+    if User.exists?(params[:id])
+      @user = User.find_by_id(params[:id])
+      @message = "user-info"
+      if Response.where(user_id: @user.id, deleted_at: nil).present?
+        @demographics = Array.new
+        @response = Response.where(user_id: params[:id])
+        @response.each do |response|
+          @question = Question.find(response.question_id)
+          @answer = Answer.find(response.answer_id)
+          @demographics.push({
+            question: @question,
+            answer: @answer
+          })
+        end
+      end
+      render json: {Data: {user: @user, demographics: @demographics}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    else
+      @message = "user-not-found"
+      render json: { message: @message}, status: :ok
+    end
+  end
 
 
   private
