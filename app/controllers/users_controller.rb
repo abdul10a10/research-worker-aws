@@ -187,6 +187,36 @@ class UsersController < ApplicationController
     end
   end
 
+  # #GET /participantoverview/:id
+  # def participantoverview
+  #   if User.exists?(params[:id])
+  #     @user = User.find_by_id(params[:id])
+  #     @message = "user-info"
+  #     if Response.where(user_id: @user.id, deleted_at: nil).present?
+  #       @demographics = Array.new
+  #       # @response = Response.where(user_id: params[:id]).order(question_id: :asc)
+  #       @question_ids = Response.select("DISTINCT question_id").map(&:question_id)
+  #       for question_id in @question_ids do
+  #         @response = Response.where(user_id: @user.id, question_id: question_id)
+  #         @question = Question.find(question_id)
+  #         @answers = Array.new
+  #         @response.each do |response|
+  #           @answer = Answer.find(response.answer_id)
+  #           @answers.push(@answer.description)
+  #         end
+  #         @demographics.push({
+  #           question: @question,
+  #           answer: @answers
+  #         })
+  #       end
+  #     end
+  #     render json: {Data: {user: @user, demographics: @demographics}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  #   else
+  #     @message = "user-not-found"
+  #     render json: { message: @message}, status: :ok
+  #   end
+  # end
+
   #GET /participantoverview/:id
   def participantoverview
     if User.exists?(params[:id])
@@ -195,8 +225,8 @@ class UsersController < ApplicationController
       if Response.where(user_id: @user.id, deleted_at: nil).present?
         @demographics = Array.new
         # @response = Response.where(user_id: params[:id]).order(question_id: :asc)
-        @question_ids = Response.select("DISTINCT question_id").map(&:question_id)
-        for question_id in @question_ids do
+        @question_ids = Response.select("question_id").map(&:question_id)
+        for question_id in @question_ids.uniq do
           @response = Response.where(user_id: @user.id, question_id: question_id)
           @question = Question.find(question_id)
           @answers = Array.new
@@ -216,7 +246,6 @@ class UsersController < ApplicationController
       render json: { message: @message}, status: :ok
     end
   end
-
 
   private
 
