@@ -196,7 +196,7 @@ class UsersController < ApplicationController
     @demographic_category = Array.new
     @question_categories.each do |category|
       @question_category = category.id
-      @question = Question.where(question_category: @question_category)
+      @question = Question.where(question_category: @question_category, deleted_at: nil)
       @question_count = @question.count
       @response=0
       @question.each do |question|
