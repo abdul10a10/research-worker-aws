@@ -189,7 +189,6 @@ class UsersController < ApplicationController
 
   #GET /participantoverview/:id
   def participantoverview
-    debugger
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
       @message = "user-info"
