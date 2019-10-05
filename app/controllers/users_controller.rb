@@ -145,9 +145,9 @@ class UsersController < ApplicationController
           @notification.message = "New " + @user_type +" has registered"
 
           if @user.user_type == "Participant"
-            @notification.redirect_url = "http://karyonsolutions.com/research_workAdmin_front-end/#/participantlist"
+            @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/#/dashboards/overviewuser/#{@user.id}"
           elsif @user.user_type == "Researcher"
-            @notification.redirect_url = "http://karyonsolutions.com/research_workAdmin_front-end/#/researcherlist"
+            @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/#/dashboards/overviewresearcheruser/#{@user.id}"
           end
           @notification.save
           render json: {message: @message}, status: :ok
@@ -189,7 +189,7 @@ class UsersController < ApplicationController
 
   #GET /participantoverview/:id
   def participantoverview
-    
+    debugger
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
       @message = "user-info"
@@ -209,9 +209,7 @@ class UsersController < ApplicationController
             question: @question,
             answer: @answers
           })
-        
         end
-        
       end
       render json: {Data: {user: @user, demographics: @demographics}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else

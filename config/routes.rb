@@ -22,6 +22,7 @@ Rails.application.routes.draw do
 
   resources :responses 
   post 'delete_response', to: 'responses#delete_response'
+  get 'user_response/:id', to: 'responses#user_response'
  
   resources :answers
   get 'question_answer/:id', to: 'answers#question_answer'

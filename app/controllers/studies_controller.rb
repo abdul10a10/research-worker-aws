@@ -144,6 +144,15 @@ class StudiesController < ApplicationController
       @user = User.find(user_id)
       UserMailer.with(user: @user, study: @study).new_study_invitation_email.deliver_later
       i = i+1
+      @notification = Notification.new
+      @notification.notification_type = "Study Invitation"
+      @notification.user_id = @user.id
+      @study_name = @study.name
+      @notification.message = "Invitation to participate in " + @study_name +" study"
+
+      @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/"
+
+      @notification.save
     end
     #email users
     # UserMailer.with(user: @user).new_study_invitation_mail.deliver_later

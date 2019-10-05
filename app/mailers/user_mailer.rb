@@ -12,9 +12,9 @@ class UserMailer < ApplicationMailer
     @admin_mail = "amisha.farkya@codoxysolutions.com"
     @user_type = @user.user_type
     if @user_type == "Participant"
-      @link = "http://karyonsolutions.com/research_workAdmin_front-end/#/participantlist"
+      @link = "http://winpowerllc.karyonsolutions.com/#/dashboards/overviewuser/#{@user.id}"
     else
-      @link = "http://karyonsolutions.com/research_workAdmin_front-end/#/researcherlist"
+      @link = "http://winpowerllc.karyonsolutions.com/#/dashboards/overviewresearcheruser/#{@user.id}"
     end
     mail(to: @admin_mail, subject: "New "+ @user_type +" registered")
   end

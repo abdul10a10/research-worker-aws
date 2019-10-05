@@ -67,7 +67,7 @@ class ResponsesController < ApplicationController
     if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
       @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
       @response.each do |response|
-        response.deleted_at!
+      response.deleted_at!
       end
       # @response.deleted_at!
       @message = "response-deleted"
@@ -79,6 +79,12 @@ class ResponsesController < ApplicationController
     
   end
 
+  def user_response
+    @user_id = params[:id]
+    @responses = Response.where(user_id: @user_id)
+    @message = "response-not-saved"
+    render json: {Data: @responses, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
