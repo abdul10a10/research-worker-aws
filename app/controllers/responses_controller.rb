@@ -82,7 +82,15 @@ class ResponsesController < ApplicationController
   def user_response
     @user_id = params[:id]
     @responses = Response.where(user_id: @user_id)
-    @message = "response-not-saved"
+    @message = "user-responses"
+    render json: {Data: @responses, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
+  def user_response_per_category
+    @user_id = params[:id]
+    @question_category = params[:question_category]
+    @responses = Response.where(user_id: @user_id)
+    @message = "user-responses-per-category"
     render json: {Data: @responses, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 

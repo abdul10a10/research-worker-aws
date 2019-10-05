@@ -188,33 +188,61 @@ class UsersController < ApplicationController
   end
 
   #GET /participantoverview/:id
-  def participantoverview
+  # def participantoverview
+  #   @user = User.find_by_id(params[:id])
+  #   @user_id = (params[:id])
+  #   @question_categories = QuestionCategory.all.order(id: :asc)
+  #   @demographic_category = Array.new
+  #   @question_categories.each do |category|
+  #     @question_category = category.id
+  #     @question = Question.where(question_category: @question_category, deleted_at: nil)
+  #     @question_count = @question.count
+  #     @response=0
+  #     @question.each do |question|
+  #       @question_id = question.id
+  #       if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
+  #         @response = @response+1
+  #       end
+  #     end
+  #     @demographic_category.push({
+  #       id: category.id,
+  #       name: category.name,
+  #       image_url: category.image_url,
+  #       question_count: @question_count,
+  #       response: @response
+  #     })
+  #   end
+  #   render json: {Data: {user: @user, demographics: @demographic_category}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  # end
 
-    @user = User.find_by_id(params[:id])
-    @user_id = (params[:id])
-    @question_categories = QuestionCategory.all.order(id: :asc)
-    @demographic_category = Array.new
-    @question_categories.each do |category|
-      @question_category = category.id
-      @question = Question.where(question_category: @question_category, deleted_at: nil)
-      @question_count = @question.count
-      @response=0
-      @question.each do |question|
-        @question_id = question.id
-        if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
-          @response = @response+1
+  #GET /participantoverview/:id
+  def participantoverview
+    if User.exists?(params[:id])
+      @user = User.find_by_id(params[:id])
+      @message = "user-info"
+      if Response.where(user_id: @user.id, deleted_at: nil).present?
+        @demographics = Array.new
+        # @response = Response.where(user_id: params[:id]).order(question_id: :asc)
+        @question_ids = Response.select("DISTINCT question_id").where(user_id: params[:id], deleted_at: nil).map(&:question_id)
+        @question_ids.each do |question_id|
+          @response = Response.where(user_id: @user.id, question_id: question_id)
+          @question = Question.find(question_id)
+          @answers = Array.new
+          @response.each do |response|
+            @answer = Answer.find(response.answer_id)
+            @answers.push(@answer.description)
+          end
+          @demographics.push({
+            question: @question,
+            answer: @answers
+          })
         end
       end
-      @demographic_category.push({
-        id: category.id,
-        name: category.name,
-        image_url: category.image_url,
-        question_count: @question_count,
-        response: @response
-      })
+      render json: {Data: {user: @user, demographics: @demographics}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    else
+      @message = "user-not-found"
+      render json: { message: @message}, status: :ok
     end
-    render json: {Data: {user: @user, demographics: @demographic_category}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-
   end
 
   private
@@ -233,33 +261,3 @@ class UsersController < ApplicationController
     end
   end
 end
-
-  # #GET /participantoverview/:id
-  # def participantoverview
-  #   if User.exists?(params[:id])
-  #     @user = User.find_by_id(params[:id])
-  #     @message = "user-info"
-  #     if Response.where(user_id: @user.id, deleted_at: nil).present?
-  #       @demographics = Array.new
-  #       # @response = Response.where(user_id: params[:id]).order(question_id: :asc)
-  #       @question_ids = Response.select("DISTINCT question_id").map(&:question_id)
-  #       for question_id in @question_ids do
-  #         @response = Response.where(user_id: @user.id, question_id: question_id)
-  #         @question = Question.find(question_id)
-  #         @answers = Array.new
-  #         @response.each do |response|
-  #           @answer = Answer.find(response.answer_id)
-  #           @answers.push(@answer.description)
-  #         end
-  #         @demographics.push({
-  #           question: @question,
-  #           answer: @answers
-  #         })
-  #       end
-  #     end
-  #     render json: {Data: {user: @user, demographics: @demographics}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-  #   else
-  #     @message = "user-not-found"
-  #     render json: { message: @message}, status: :ok
-  #   end
-  # end
