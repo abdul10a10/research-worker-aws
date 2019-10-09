@@ -42,6 +42,7 @@ Rails.application.routes.draw do
 
   get 'users/', to: 'users#index'
   get 'getuserinfo/:id', to: 'users#show'
+  get '/participantinfo/:id', to: 'users#participantInfo'
   get 'dashboard', to: 'users#dashboard'
   get 'researcheroverview/:id', to: 'users#researcheroverview'
   get 'participantoverview/:id', to: 'users#participantoverview'
