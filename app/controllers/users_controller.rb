@@ -10,7 +10,7 @@ class UsersController < ApplicationController
 
   end
 
-  #GET /dashboard/:id
+  #GET /dashboard
   def dashboard
       @message = "user-info"
       @notification = Notification.where(user_id: @current_user.id).order(id: :desc)
@@ -67,6 +67,20 @@ class UsersController < ApplicationController
 
   #GET /getuserinfo/:id
   def show
+    if User.exists?(params[:id])
+      @user = User.find_by_id(params[:id])
+      @message = "user-info"
+      @notification = 
+      render json: {Data: {user: @user, notification: }, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    else
+      @message = "user-not-found"
+      render json: { message: @message}, status: :ok
+    end
+  end
+
+
+  #GET /participantinfo/:id
+  def participantInfo
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
       @message = "user-info"
@@ -157,7 +171,7 @@ class UsersController < ApplicationController
         @message = "Link-expired"
         render json: {message: @message}, status: :ok
       end
-      # user.generate_refer_code!
+      
     else
       head(:ok)
     end
@@ -186,34 +200,6 @@ class UsersController < ApplicationController
       render json: { message: @message}, status: :ok
     end
   end
-
-  #GET /participantoverview/:id
-  # def participantoverview
-  #   @user = User.find_by_id(params[:id])
-  #   @user_id = (params[:id])
-  #   @question_categories = QuestionCategory.all.order(id: :asc)
-  #   @demographic_category = Array.new
-  #   @question_categories.each do |category|
-  #     @question_category = category.id
-  #     @question = Question.where(question_category: @question_category, deleted_at: nil)
-  #     @question_count = @question.count
-  #     @response=0
-  #     @question.each do |question|
-  #       @question_id = question.id
-  #       if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
-  #         @response = @response+1
-  #       end
-  #     end
-  #     @demographic_category.push({
-  #       id: category.id,
-  #       name: category.name,
-  #       image_url: category.image_url,
-  #       question_count: @question_count,
-  #       response: @response
-  #     })
-  #   end
-  #   render json: {Data: {user: @user, demographics: @demographic_category}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-  # end
 
   #GET /participantoverview/:id
   def participantoverview

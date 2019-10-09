@@ -4,7 +4,7 @@ class UserMailer < ApplicationMailer
   def welcome_email
     @user = params[:user]
     @link = "http://winpowerllc.karyonsolutions.com/#/pages/verifyemail/#{@user.confirmation_token}"
-    mail(to: @user.email, subject: "Welcome to Research Worker")
+    mail(to: @user.email, subject: "Welcome to Research Work")
   end
 
   def user_registration_admin_email
@@ -28,8 +28,8 @@ class UserMailer < ApplicationMailer
   def share_referral_code_email
     @user = params[:user]
     @receiver = params[:receiver]
-    @link = "registrationlink.com"
-    mail(to: @receiver, subject: "Refer code for Research worker")
+    @link = "http://winpowerllc.karyonsolutions.com/#/pages/signup"
+    mail(to: @receiver, subject: "Refer code for Research work")
   end
 
   def new_study_invitation_email

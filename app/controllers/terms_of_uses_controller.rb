@@ -12,6 +12,8 @@ class TermsOfUsesController < ApplicationController
   # GET /terms_of_uses/1
   # GET /terms_of_uses/1.json
   def show
+  @message = "terms-of use"
+  render json: {Data: @terms_of_use, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # POST /terms_of_uses
@@ -31,7 +33,9 @@ class TermsOfUsesController < ApplicationController
   # PATCH/PUT /terms_of_uses/1.json
   def update
     if @terms_of_use.update(terms_of_use_params)
-      render :show, status: :ok, location: @terms_of_use
+
+      @message = "terms-of-use-updated"
+      render json: {Data: @terms_of_use, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       render json: @terms_of_use.errors, status: :unprocessable_entity
     end
@@ -41,6 +45,8 @@ class TermsOfUsesController < ApplicationController
   # DELETE /terms_of_uses/1.json
   def destroy
     @terms_of_use.destroy
+    @message = "terms-of-use-deleted"
+    render json: {Data: @terms_of_use, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   private
