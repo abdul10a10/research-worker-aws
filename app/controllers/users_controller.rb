@@ -70,7 +70,7 @@ class UsersController < ApplicationController
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
       @message = "user-info"
-      @notification = 
+      @notification = Notification.where(user_id: @current_user.id).order(id: :desc)
       render json: {Data: {user: @user, notification: }, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @message = "user-not-found"
