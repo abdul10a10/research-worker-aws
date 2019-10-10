@@ -65,12 +65,15 @@ class QuestionCategoriesController < ApplicationController
   # GET /about_you/:user_id
   def about_you
     @user_id = @current_user.id
-    @question_categories = QuestionCategory.all.order(id: :asc)
+    @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
     @demographic_category = Array.new
+    @total_question = 0
+    @total_response = 0
     @question_categories.each do |category|
       @question_category = category.id
       @question = Question.where(question_category: @question_category, deleted_at: nil)
       @question_count = @question.count
+      @total_question = @total_question + @question_count
       @response=0
       @question.each do |question|
         @question_id = question.id
@@ -85,8 +88,10 @@ class QuestionCategoriesController < ApplicationController
         question_count: @question_count,
         response: @response
       })
+      @total_response = @total_response + @response
     end
-    render json: @demographic_category, status: :ok
+    # render json: @demographic_category, status: :ok
+    render json: {Data: {demographic_category: @demographic_category, total_question: @total_question, total_response: @total_response}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
 
