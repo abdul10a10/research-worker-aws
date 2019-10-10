@@ -5,7 +5,7 @@ class PrivacyPoliciesController < ApplicationController
   # GET /privacy_policies
   # GET /privacy_policies.json
   def index
-    @privacy_policies = PrivacyPolicy.all.order(id: :asc)
+    @privacy_policies = PrivacyPolicy.where(deleted_at: nil).order(id: :asc)
     render json: @privacy_policies, status: :ok
   end
 

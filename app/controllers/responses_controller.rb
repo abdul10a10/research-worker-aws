@@ -5,7 +5,7 @@ class ResponsesController < ApplicationController
   # GET /responses
   # GET /responses.json
   def index
-    @responses = Response.all
+    @responses = Response.where(deleted_at: nil)
     render json: @responses
   end
 

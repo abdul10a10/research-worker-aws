@@ -5,7 +5,7 @@ class StudiesController < ApplicationController
   # GET /studies
   # GET /studies.json
   def index
-    @studies = Study.all
+    @studies = Study.where(deleted_at: nil)
     @message = "all-study"
     render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
 

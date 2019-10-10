@@ -4,7 +4,7 @@ class AudiencesController < ApplicationController
   # GET /audiences
   # GET /audiences.json
   def index
-    @audiences = Audience.all
+    @audiences = Audience.where(deleted_at: nil)
     @message = "All-audience-response"
     render json: {Data: @audiences, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end

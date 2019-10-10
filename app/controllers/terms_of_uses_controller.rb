@@ -4,7 +4,7 @@ class TermsOfUsesController < ApplicationController
   # GET /terms_of_uses
   # GET /terms_of_uses.json
   def index
-    @terms_of_uses = TermsOfUse.all
+    @terms_of_uses = TermsOfUse.where(deleted_at: nil)
     @message = "all-terms-of uses"
     render json: {Data: @terms_of_uses, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end

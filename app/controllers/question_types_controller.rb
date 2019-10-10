@@ -5,7 +5,7 @@ class QuestionTypesController < ApplicationController
   # GET /question_types
   # GET /question_types.json
   def index
-    @question_types = QuestionType.all
+    @question_types = QuestionType.where(deleted_at: nil)
   end
 
   # GET /question_types/1

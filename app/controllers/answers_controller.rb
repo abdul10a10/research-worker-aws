@@ -6,7 +6,7 @@ class AnswersController < ApplicationController
   # GET /answers.json
   def index
     # @answers = Answer.group(:question_id)
-    @answers = Answer.all
+    @answers = Answer.where(deleted_at: nil)
     render json: @answers, status: :ok
   end
 
@@ -19,13 +19,21 @@ class AnswersController < ApplicationController
   # POST /answers.json
   def create
     @answer = Answer.new(answer_params)
+    @question_id = @answer.question_id
+    @description = @answer.description
 
-    if @answer.save
-      @message = "answer-saved"
-      render json: {answer: @answer, message: @message}, status: :created
+    if Answer.where(question_id: @question_id, description: @description, deleted_at: nil)
+      @message = "answer-already-exist"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
     else
-      render json: @answer.errors, status: :ok
+      if @answer.save
+        @message = "answer-saved"
+        render json: {answer: @answer, message: @message}, status: :created
+      else
+        render json: @answer.errors, status: :ok
+      end
     end
+    
   end
 
   # PATCH/PUT /answers/1

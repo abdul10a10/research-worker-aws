@@ -5,7 +5,7 @@ class NotificationsController < ApplicationController
   # GET /notifications
   # GET /notifications.json
   def index
-    @notifications = Notification.all
+    @notifications = Notification.where(deleted_at: nil)
     render json: @notifications, status: :ok
   end
 

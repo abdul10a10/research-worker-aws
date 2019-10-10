@@ -6,7 +6,7 @@ class QuestionCategoriesController < ApplicationController
   # GET /question_categories
   # GET /question_categories.json
   def index
-    @question_categories = QuestionCategory.all.order(id: :asc)
+    @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
     render json: @question_categories, status: :ok
   end
 

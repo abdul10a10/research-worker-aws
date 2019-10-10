@@ -5,7 +5,7 @@ class TermsAndConditionsController < ApplicationController
   # GET /terms_and_conditions
   # GET /terms_and_conditions.json
   def index
-    @terms_and_conditions = TermsAndCondition.all.order(id: :asc)
+    @terms_and_conditions = TermsAndCondition.where(deleted_at: nil).order(id: :asc)
     render json: @terms_and_conditions, status: :ok
   end
 
@@ -51,7 +51,7 @@ class TermsAndConditionsController < ApplicationController
     @message = "terms-and-condition-deleted"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
-  
+
   # get /user_terms
   def user_terms
     @terms_and_condition = TermsAndCondition.where(user_type: @current_user.user_type, country: @current_user.country, deleted_at: nil)
