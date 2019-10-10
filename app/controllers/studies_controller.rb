@@ -58,8 +58,8 @@ class StudiesController < ApplicationController
   # GET 'unpublished_studies/:user_id'
   def unpublished_studies
 
-    if Study.where(user_id: params[:user_id], is_published: nil)
-      @studies = Study.where(user_id: params[:user_id], is_published: nil)
+    if Study.where(user_id: params[:user_id], is_published: nil, deleted_at: nil)
+      @studies = Study.where(user_id: params[:user_id], is_published: nil, deleted_at: nil)
       @message = "user-studies"
       render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok 
     else
@@ -72,8 +72,8 @@ class StudiesController < ApplicationController
   #GET 'active_studies/:user_id'
   def active_studies
 
-    if Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil)
-      @studies = Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil)
+    if Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil, deleted_at: nil)
+      @studies = Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil, deleted_at: nil)
       @message = "user-studies"
       render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
@@ -84,8 +84,8 @@ class StudiesController < ApplicationController
 
   #GET 'completed_studies/:user_id'
   def completed_studies
-    if Study.where(user_id: params[:user_id], is_complete: "1").present?
-      @studies = Study.where(user_id: params[:user_id], is_complete: "1")
+    if Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil).present?
+      @studies = Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil)
       @message = "completed-studies"
       render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
     else

@@ -26,7 +26,8 @@ class QuestionCategoriesController < ApplicationController
       render json: { message: @message}, status: :ok
     else
       if @question_category.save
-        render :add, status: :created, location: @question_category
+        @message = "Question-category-added"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
       else
         render json: @question_category.errors, status: :ok
       end

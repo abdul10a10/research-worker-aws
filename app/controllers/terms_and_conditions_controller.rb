@@ -41,13 +41,13 @@ class TermsAndConditionsController < ApplicationController
   # DELETE /terms_and_conditions/1
   # DELETE /terms_and_conditions/1.json
   def destroy
-    @terms_and_condition.destroy
+    @terms_and_condition.deleted_at!
     render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: 'terms-deleted', Token: nil, Success: false}, status: :ok
   end
 
   # get /user_terms
   def user_terms
-    @terms_and_condition = TermsAndCondition.where(user_type: @current_user.user_type, country: @current_user.country)
+    @terms_and_condition = TermsAndCondition.where(user_type: @current_user.user_type, country: @current_user.country, deleted_at: nil)
     render json: {Data: @terms_and_condition, CanEdit: false, CanDelete: false, Status: :ok, message: 'terms-and-conditions', Token: nil, Success: false}, status: :ok
   end
 
