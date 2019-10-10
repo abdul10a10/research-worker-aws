@@ -23,7 +23,8 @@ class StudiesController < ApplicationController
   # POST /studies.json
   def create
     @study = Study.new(study_params)
-
+    allowedtime = study_params[:allowedtime]
+    estimatetime = study_params[:estimatetime]
     if @study.save
       @message = "study-saved"
       render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
@@ -89,14 +90,14 @@ class StudiesController < ApplicationController
       render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
     else
       @message = "studies-not-found"
-      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok    
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok    
     end
   end
 
   # DELETE /studies/1
   # DELETE /studies/1.json
   def destroy
-    @study.destroy
+    @study.deleted_at!
     @message = "study-deleted"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
@@ -106,6 +107,7 @@ class StudiesController < ApplicationController
     @study.is_published = 1
     @study.is_active = 1
     @study.save
+    find_audience(@study.id)
     @message = "study-published"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
@@ -119,15 +121,15 @@ class StudiesController < ApplicationController
   end
 
   # GET /find_audience/:id
-  def find_audience
-    @study_id = params[:id]
+  def find_audience(id)
+    @study_id = id
     @user_ids = Array.new
     @study = Study.find(@study_id)
     # loop to find user_ids
     if Audience.where(study_id: @study_id, deleted_at: nil).present?
       @audience = Audience.where(study_id: @study_id, deleted_at: nil)
       @audience.each do |audience|
-        @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id)
+        @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
         @users.each do |user|
           @user_ids.push( user.user_id )
         end
@@ -147,8 +149,17 @@ class StudiesController < ApplicationController
       @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/"
       @notification.save
     end
-    @message = "user-ids"
-    render json: {Data: @user,message: @message}
+    # @message = "user-ids" 
+    # render json: {Data: @user,message: @message}
+  end
+
+   
+  def delete_study
+    @study = Notification.find(params[:id])
+    @study.deleted_at!
+    @message = "study-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+
   end
 
   private

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_04_133942) do
+ActiveRecord::Schema.define(version: 2019_10_10_093008) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2019_10_04_133942) do
     t.integer "follow_up_question"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   create_table "audiences", force: :cascade do |t|
@@ -39,6 +40,7 @@ ActiveRecord::Schema.define(version: 2019_10_04_133942) do
     t.datetime "seen_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   create_table "privacy_policies", force: :cascade do |t|
@@ -48,6 +50,7 @@ ActiveRecord::Schema.define(version: 2019_10_04_133942) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   create_table "question_categories", force: :cascade do |t|
@@ -55,12 +58,14 @@ ActiveRecord::Schema.define(version: 2019_10_04_133942) do
     t.string "image_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   create_table "question_types", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   create_table "questions", force: :cascade do |t|
@@ -100,6 +105,7 @@ ActiveRecord::Schema.define(version: 2019_10_04_133942) do
     t.string "is_published"
     t.string "is_active"
     t.string "is_complete"
+    t.datetime "deleted_at"
   end
 
   create_table "terms_and_conditions", force: :cascade do |t|
@@ -109,12 +115,14 @@ ActiveRecord::Schema.define(version: 2019_10_04_133942) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   create_table "terms_of_uses", force: :cascade do |t|
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   create_table "users", force: :cascade do |t|
@@ -146,6 +154,7 @@ ActiveRecord::Schema.define(version: 2019_10_04_133942) do
     t.string "verification_status"
     t.string "address"
     t.string "contact_number"
+    t.string "nationality"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

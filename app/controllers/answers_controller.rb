@@ -43,16 +43,22 @@ class AnswersController < ApplicationController
   # DELETE /answers/1
   # DELETE /answers/1.json
   def destroy
-    @answer.destroy
+    @answer.deleted_at!
     @message = "answer-deleted"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
   
+  def delete_answer
+    @answer.destroy
+    @message = "answer-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
   # GET /question_answer/id
   def question_answer
     @question_id = params[:id]
     @question = Question.find(params[:id])
-    @answers = Answer.where(question_id: @question_id)
+    @answers = Answer.where(question_id: @question_id, deleted_at: nil)
     # render :question_answer, status: :ok
     render json: {question: @question, answer: @answers}, status: :ok
   end

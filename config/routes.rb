@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   get 'unpublished_studies/:user_id', to: 'studies#unpublished_studies'
   get 'active_studies/:user_id', to: 'studies#active_studies'
   get 'completed_studies/:user_id', to: 'studies#completed_studies'
-  get 'find_audience/:id', to:  'studies#find_audience'
+  # get 'find_audience/:id', to:  'studies#find_audience'
   put 'publish_study/:id', to:  'studies#publish_study'
   put 'complete_study/:id', to:  'studies#complete_study'
 

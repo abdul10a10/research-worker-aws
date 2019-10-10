@@ -43,6 +43,15 @@ class NotificationsController < ApplicationController
     @notification.destroy
   end
 
+  
+  def delete_notifification
+    @notification = Notification.find(params[:id])
+    @notification.deleted_at!
+    @message = "notification-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+
+  end
+
   #GET /change_seen_status/id
   def change_seen_status
     @notification = Notification.find(params[:id])
