@@ -64,7 +64,7 @@ class NotificationsController < ApplicationController
 
   #GET /change_status/user_id
   def change_status
-    @notification = Notification.where(user_id: params[:user_id])
+    @notification = Notification.where(user_id: params[:user_id], deleted_at: nil)
     @notification.each do |notification|
       notification.status = 1
       notification.save
@@ -75,7 +75,7 @@ class NotificationsController < ApplicationController
 
   #GET /user_notification/user_id
   def user_notification
-    @notification = Notification.where(user_id: params[:user_id]).order(id: :desc)
+    @notification = Notification.where(user_id: params[:user_id], deleted_at: nil).order(id: :desc)
     render json: @notification, status: :ok
   end
 

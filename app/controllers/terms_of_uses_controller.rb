@@ -49,6 +49,13 @@ class TermsOfUsesController < ApplicationController
     render json: {Data: @terms_of_use, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
+  def delete_terms_of_use
+    @terms_of_use = TermsOfUse.find(params[:id])
+    @terms_of_use.deleted_at!
+    @message = "terms-of-use-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_terms_of_use

@@ -43,9 +43,16 @@ class PrivacyPoliciesController < ApplicationController
     @privacy_policy.destroy
   end
 
+  def delete_privacy_policy
+    @privacy_policy = PrivacyPolicy.find(params[:id])
+    @privacy_policy.deleted_at!
+    @message = "privacy-policy-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
   # get /user_terms
   def user_policies
-    @privacy_policy = PrivacyPolicy.where(user_type: @current_user.user_type, country: @current_user.country)
+    @privacy_policy = PrivacyPolicy.where(user_type: @current_user.user_type, country: @current_user.country, deleted_at: nil)
     render json: {Data: @privacy_policy, CanEdit: true, CanDelete: false, Status: :ok, message: 'privacy policy', Token: nil, Success: false}, status: :ok
   end
 

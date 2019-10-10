@@ -50,6 +50,14 @@ class QuestionTypesController < ApplicationController
     render json: { message: @message}, status:  :ok
   end
 
+
+  def delete_question_type
+    @question_type = QuestionType.find(params[:id])
+    @question_type.deleted_at!
+    @message = "question-type-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_question_type

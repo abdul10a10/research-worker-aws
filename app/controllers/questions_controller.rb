@@ -23,7 +23,7 @@ class QuestionsController < ApplicationController
   def create
     @question = Question.new(question_params)
     @temp1 = question_params[:question_category]
-    @category = QuestionCategory.where(name: @temp1).first
+    @category = QuestionCategory.where(name: @temp1, deleted_at: nil).first
     @question_category = @category.id
     @question.question_category = @question_category
     if @question.save
@@ -62,9 +62,9 @@ class QuestionsController < ApplicationController
     @responce = Array.new
     @questions.each do |question|
       @question_id = question.id
-      if Response.where(question_id: @question_id, user_id: @user_id).present?
+      if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
       else
-        @answers = Answer.where(question_id: @question_id).order(id: :asc)
+        @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
         @responce.push({
                            question: question,
                            answer: @answers

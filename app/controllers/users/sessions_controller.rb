@@ -32,6 +32,7 @@ class Users::SessionsController < Devise::SessionsController
         
       else
         user.generate_email_confirmation_token!
+        UserMailer.with(user: user).welcome_email.deliver_later
         @message = "user-not-verified"
         render json: { message: @message  }, status: :ok
       end

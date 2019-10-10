@@ -48,6 +48,13 @@ class QuestionCategoriesController < ApplicationController
   end
 
 
+  def delete_question_type
+    @question_category = QuestionCategory.find(params[:id])
+    @question_category.deleted_at!
+    @message = "question-category-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
   # DELETE /question_categories/1
   # DELETE /question_categories/1.json
   def destroy
