@@ -34,7 +34,7 @@ Rails.application.routes.draw do
 
   resources :question_categories
   get 'about_you', to: 'question_categories#about_you'
-  delete 'delete_question_category', to: 'question_categories#delete_question_category'
+  delete 'delete_question_category/:id', to: 'question_categories#delete_question_category'
 
   resources :notifications
   get 'change_seen_status/:id', to: 'notifications#change_seen_status'
