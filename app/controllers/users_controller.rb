@@ -238,12 +238,16 @@ class UsersController < ApplicationController
     # @message = "studies-not-found"
     @participant = Array.new
     @month = Array.new
+    @study = Array.new
     i = 0
     loop do
       @users = User.where(created_at: @start_time..@end_time, deleted_at: nil)
+      @studies = Study.where(created_at: @start_time..@end_time, deleted_at: nil)
       @users_count = @users.count
+      @study_count = @studies.count
       @month_name = @start_time.strftime("%B")
       @participant.push(@users_count)
+      @study.push(@study_count)
       @month.push(@month_name)
       @end_time = @start_time
       @start_time = @start_time-1.month
@@ -254,7 +258,7 @@ class UsersController < ApplicationController
       end
     end
      
-    render json: {Data: { participant:@participant.reverse, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    render json: {Data: { participant:@participant.reverse,study: @study, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   private
