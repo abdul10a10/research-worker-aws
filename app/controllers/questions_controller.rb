@@ -63,10 +63,19 @@ class QuestionsController < ApplicationController
     @questions.each do |question|
       @question_id = question.id
       if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
+
+        @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
+        @responce.push({
+                           question: question,
+                           answer_filled: "Yes",
+                           answer: @answers
+                       })
+  
       else
         @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
         @responce.push({
                            question: question,
+                           answer_filled: "No",
                            answer: @answers
                        })
   

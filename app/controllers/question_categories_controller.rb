@@ -48,7 +48,7 @@ class QuestionCategoriesController < ApplicationController
   end
 
 
-  def delete_question_type
+  def delete_question_category
     @question_category = QuestionCategory.find(params[:id])
     @question_category.deleted_at!
     @message = "question-category-deleted"
