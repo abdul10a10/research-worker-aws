@@ -242,8 +242,9 @@ class UsersController < ApplicationController
     loop do
       @users = User.where(created_at: @start_time..@end_time, deleted_at: nil)
       @users_count = @users.count
+      @month_name = @start_time.strftime("%B")
       @participant.push(@users_count)
-      @month.push(@start_time.month)
+      @month.push(@month_name)
       @end_time = @start_time
       @start_time = @start_time-1.month
 
@@ -253,7 +254,7 @@ class UsersController < ApplicationController
       end
     end
      
-    render json: {Data: { participant:@participant, month: @month}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    render json: {Data: { participant:@participant.reverse, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   private
