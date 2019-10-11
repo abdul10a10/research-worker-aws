@@ -231,6 +231,31 @@ class UsersController < ApplicationController
     end
   end
 
+  def reports
+    @end_time = Time.now.utc
+    @start_time = Time.now.beginning_of_month
+    # @users = User.where(created_at: Time.now.beginning_of_year-1.month..@time)
+    # @message = "studies-not-found"
+    @participant = Array.new
+    @month = Array.new
+    i = 0
+    loop do
+      @users = User.where(created_at: @start_time..@end_time, deleted_at: nil)
+      @users_count = @users.count
+      @participant.push(@users_count)
+      @month.push(@start_time.month)
+      @end_time = @start_time
+      @start_time = @start_time-1.month
+
+      i += 1
+      if i == 12
+        break       
+      end
+    end
+     
+    render json: {Data: { participant:@participant, month: @month}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
   private
 
   def user_params
