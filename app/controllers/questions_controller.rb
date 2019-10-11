@@ -63,7 +63,7 @@ class QuestionsController < ApplicationController
     @questions.each do |question|
       @question_id = question.id
       if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
-        @response = Response.where(user_id: @user.id, question_id: question_id, deleted_at: nil)
+        @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
         @answers = Array.new
           @response.each do |response|
             @answer = Answer.find(response.answer_id)
