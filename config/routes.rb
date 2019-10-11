@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   put 'complete_study/:id', to:  'studies#complete_study'
 
   resources :responses 
-  post 'delete_response', to: 'responses#delete_response'
+  post 'delete_response/:question_id', to: 'responses#delete_response'
   get 'user_response/:id', to: 'responses#user_response'
  
   resources :answers

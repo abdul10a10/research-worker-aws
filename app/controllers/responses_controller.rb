@@ -1,5 +1,6 @@
 class ResponsesController < ApplicationController
   # before_action :authorize_request, except: :create
+  before_action :authorize_request, only: :delete_response
   before_action :set_response, only: [:show, :update, :destroy]
 
   # GET /responses
@@ -61,7 +62,7 @@ class ResponsesController < ApplicationController
 
   #PUT /delete_response
   def delete_response
-    @user_id = params[:user_id]
+    @user_id = @current_user.id
     @question_id = params[:question_id]
     
     if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
