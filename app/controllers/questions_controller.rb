@@ -62,7 +62,7 @@ class QuestionsController < ApplicationController
     @responce = Array.new
     @questions.each do |question|
       @question_id = question.id
-      if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: !nil).present?
+      if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: [nil, false]).present?
 
         @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
         @responce.push({
