@@ -63,8 +63,12 @@ class QuestionsController < ApplicationController
     @questions.each do |question|
       @question_id = question.id
       if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
-
-        @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
+        @response = Response.where(user_id: @user.id, question_id: question_id, deleted_at: nil)
+        @answers = Array.new
+          @response.each do |response|
+            @answer = Answer.find(response.answer_id)
+            @answers.push(@answer.description)
+          end
         @responce.push({
                            question: question,
                            answer_filled: "Yes",

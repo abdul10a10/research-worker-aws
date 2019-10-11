@@ -13,7 +13,7 @@ class UsersController < ApplicationController
   #GET /dashboard
   def dashboard
       @message = "user-info"
-      @notification = Notification.where(user_id: @current_user.id).order(id: :desc)
+      @notification = Notification.where(user_id: @current_user.id, deleted_at: nil).order(id: :desc)
       render json: {Data: {user: @current_user, notification: @notification}, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     
   end
@@ -83,7 +83,7 @@ class UsersController < ApplicationController
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
       @message = "user-info"
-      @notification = Notification.where(user_id: @user.id).order(id: :desc)
+      @notification = Notification.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
       render json: {Data: {user: @user, notification: @notification}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @message = "user-not-found"
@@ -191,8 +191,8 @@ class UsersController < ApplicationController
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
       @message = "user-info"
-      if Study.where(user_id: params[:id]).present?
-        @studies = Study.where(user_id: params[:id], is_published: nil)
+      if Study.where(user_id: params[:id], deleted_at: nil).present?
+        @studies = Study.where(user_id: params[:id], is_published: nil, deleted_at: nil)
       end
       render json: {Data: {user: @user, studies: @studies}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
@@ -211,7 +211,7 @@ class UsersController < ApplicationController
         # @response = Response.where(user_id: params[:id]).order(question_id: :asc)
         @question_ids = Response.select("DISTINCT question_id").where(user_id: params[:id], deleted_at: nil).map(&:question_id)
         @question_ids.each do |question_id|
-          @response = Response.where(user_id: @user.id, question_id: question_id)
+          @response = Response.where(user_id: @user.id, question_id: question_id, deleted_at: nil)
           @question = Question.find(question_id)
           @answers = Array.new
           @response.each do |response|
