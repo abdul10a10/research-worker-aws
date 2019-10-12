@@ -157,7 +157,8 @@ class UsersController < ApplicationController
           UserMailer.with(user: @user).user_registration_admin_email.deliver_later
           @notification = Notification.new
           @notification.notification_type = "Registration"
-          @notification.user_id = "0"
+          @admin = User.where(user_type: "Admin").first
+          @notification.user_id = @admin.id
           @user_type = @user.user_type
           @notification.message = "New " + @user_type +" has registered"
 
@@ -176,7 +177,8 @@ class UsersController < ApplicationController
       end
       
     else
-      head(:ok)
+      @message = "Not-a-valid-token"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :not_found
     end
   end
 
