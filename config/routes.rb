@@ -25,7 +25,7 @@ Rails.application.routes.draw do
 
   put 'publish_study/:id', to:  'studies#publish_study'
   put 'complete_study/:id', to:  'studies#complete_study'
-  options 'activate_study/:id', to:  'studies#activate_study'
+  post 'activate_study/:id', to:  'studies#activate_study'
   post 'reject_study/:id', to:  'studies#reject_study'
 
   resources :responses 
