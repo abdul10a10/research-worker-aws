@@ -41,6 +41,7 @@ class UserMailer < ApplicationMailer
   def new_study_creation_email
     @user = params[:user]
     @study = params[:study]
+    @link = "http://winpowerllc.karyonsolutions.com/#/adminstudyDetails/#{@study.id}"
     mail(to: @user.email, subject: "New study created")
   end
 

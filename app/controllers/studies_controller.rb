@@ -131,7 +131,7 @@ class StudiesController < ApplicationController
   end
 
   def reject_study
-    @study.update(study_params)
+    @study.deactivate_reason = study_params[:deactivate_reason]
     @study.is_active = 0
     @study.is_published = 0
     @study.save
@@ -142,8 +142,8 @@ class StudiesController < ApplicationController
     @notification.notification_type = "Study Rejected"
     @notification.user_id = @user.id
     @study_name = @study.name
-    @notification.message = "Study " + @study_name +" has been rejected "
-    @notification.redirect_url = "http://winpowerllc.karyonsolutions.com"
+    @notification.message = "Study " + @study_name +" has been rejected"
+    @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/#/studypublished/#{@study.id}"
     @notification.save
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
