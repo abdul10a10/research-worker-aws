@@ -199,8 +199,9 @@ class StudiesController < ApplicationController
   end
 
   def study_detail
+    @user = User.find(@study.user_id)
     @message = "study"
-    render json: {Data: { study: @study}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+    render json: {Data: { study: @study, user: @user}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
 
   def admin_new_study_list
