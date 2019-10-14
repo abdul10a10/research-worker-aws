@@ -1,6 +1,6 @@
 class StudiesController < ApplicationController
   # before_action :authorize_request, except: :create
-  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :complete_study]
+  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :complete_study, :activate_study]
 
   # GET /studies
   # GET /studies.json
@@ -105,10 +105,28 @@ class StudiesController < ApplicationController
   # PUT /publish_study/1
   def publish_study
     @study.is_published = 1
+    # @study.is_active = 1
+    @study.save
+    @user = User.where(user_type: "Admin").first
+    UserMailer.with(user: @user, study: @study).new_study_creation_email.deliver_later
+    @notification = Notification.new
+    @notification.notification_type = "Study Created"
+    @notification.user_id = @user.id
+    @study_name = @study.name
+    @notification.message = "New study " + @study_name +" created by "+ @user.first_name
+    @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/adminnewstudy"
+    @notification.save
+    # find_audience(@study.id)
+    @message = "study-published"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+  end
+
+  def activate_study
     @study.is_active = 1
+    # @study.is_active = 1
     @study.save
     find_audience(@study.id)
-    @message = "study-published"
+    @message = "study-activated"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
@@ -155,13 +173,17 @@ class StudiesController < ApplicationController
 
    
   def delete_study
-    @study = Notification.find(params[:id])
+    @study = Study.find(params[:id])
     @study.deleted_at!
     @message = "study-deleted"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
 
   end
 
+  def admin_new_study_list
+    @studies = Study.where(is_published: "1",deleted_at: nil)
+    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+  end
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_study

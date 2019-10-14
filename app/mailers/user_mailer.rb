@@ -38,4 +38,9 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: "Invitation for new study")
   end
 
+  def new_study_creation_email
+    @user = params[:user]
+    @study = params[:study]
+    mail(to: @user.email, subject: "New study created")
+  end
 end

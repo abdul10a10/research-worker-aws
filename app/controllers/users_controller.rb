@@ -72,7 +72,13 @@ class UsersController < ApplicationController
       @message = "user-info"
       @notification = Notification.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
       # render json: {user: @user, message: @message}, status: :ok
-      render json: {Data: {user: @user,notification: @notification }, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      @notification.each do |notification|
+        if (notification.status == nil)
+          @unread_notification = "yes"
+          break
+        end
+      end
+      render json: {Data: {user: @user,notification: @notification, unread_notification: @unread_notification }, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
 
     else
       @message = "user-not-found"
@@ -261,9 +267,10 @@ class UsersController < ApplicationController
       if i == 12
         break       
       end
+      
     end
      
-    render json: {Data: { participant:@participant.reverse,study: @study.reverse, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    render json: {Data: { participant:@participant.reverse,study: @study.reverse, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   private
