@@ -1,6 +1,6 @@
 class StudiesController < ApplicationController
   # before_action :authorize_request, except: :create
-  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :complete_study, :activate_study, :reject_study]
+  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :complete_study, :activate_study, :reject_study, :study_detail]
 
   # GET /studies
   # GET /studies.json
@@ -196,6 +196,11 @@ class StudiesController < ApplicationController
     @message = "study-deleted"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
 
+  end
+
+  def study_detail
+    @message = "study"
+    render json: {Data: { study: @study}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
 
   def admin_new_study_list
