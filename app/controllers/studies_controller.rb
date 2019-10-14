@@ -131,6 +131,7 @@ class StudiesController < ApplicationController
   end
 
   def reject_study
+    @study.update(study_params)
     @study.is_active = 0
     @study.save
     @message = "study-rejected"
@@ -216,6 +217,6 @@ class StudiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def study_params
-      params.fetch(:study, {}).permit(:user_id, :name, :completionurl, :completioncode, :studyurl, :allowedtime, :estimatetime, :submission, :description, :reward)
+      params.fetch(:study, {}).permit(:user_id, :name, :completionurl, :completioncode, :studyurl, :allowedtime, :estimatetime, :submission, :description, :reward, :deactivate_reason)
     end
 end
