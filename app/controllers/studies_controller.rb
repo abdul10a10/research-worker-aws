@@ -94,6 +94,18 @@ class StudiesController < ApplicationController
     end
   end
 
+  #GET 'rejected_studies/:user_id'
+  def rejected_studies
+    if Study.where(user_id: params[:user_id], is_active: "0", deleted_at: nil).present?
+      @studies = Study.where(user_id: params[:user_id], is_active: "0", deleted_at: nil)
+      @message = "rejected-studies"
+      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+    else
+      @message = "studies-not-found"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok    
+    end
+  end
+
   # DELETE /studies/1
   # DELETE /studies/1.json
   def destroy

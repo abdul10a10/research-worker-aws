@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   get 'unpublished_studies/:user_id', to: 'studies#unpublished_studies'
   get 'active_studies/:user_id', to: 'studies#active_studies'
   get 'completed_studies/:user_id', to: 'studies#completed_studies'
+  get 'rejected_studies/:user_id', to: 'studies#rejected_studies'
   get 'study_detail/:id', to: 'studies#study_detail'
   get 'total_studies', to:  'studies#total_studies'
   get 'admin_new_study_list', to: 'studies#admin_new_study_list'
