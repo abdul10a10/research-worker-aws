@@ -133,8 +133,18 @@ class StudiesController < ApplicationController
   def reject_study
     @study.update(study_params)
     @study.is_active = 0
+    @study.is_published = 0
     @study.save
     @message = "study-rejected"
+    @user = User.find(@study.user_id)
+    UserMailer.with(user: @user, study: @study).study_rejection_email.deliver_later
+    @notification = Notification.new
+    @notification.notification_type = "Study Rejected"
+    @notification.user_id = @user.id
+    @study_name = @study.name
+    @notification.message = "Study " + @study_name +" has been rejected "
+    @notification.redirect_url = "http://winpowerllc.karyonsolutions.com"
+    @notification.save
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
   

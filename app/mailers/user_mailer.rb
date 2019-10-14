@@ -43,4 +43,11 @@ class UserMailer < ApplicationMailer
     @study = params[:study]
     mail(to: @user.email, subject: "New study created")
   end
+
+  def study_rejection_email
+    @user = params[:user]
+    @study = params[:study]
+    mail(to: @user.email, subject: "Study Rejected")
+  end
+
 end
