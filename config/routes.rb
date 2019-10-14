@@ -13,12 +13,20 @@ Rails.application.routes.draw do
 
   resources :studies
   post 'add_description', to: 'studies#add_description'
+  
   get 'unpublished_studies/:user_id', to: 'studies#unpublished_studies'
   get 'active_studies/:user_id', to: 'studies#active_studies'
   get 'completed_studies/:user_id', to: 'studies#completed_studies'
   get 'total_studies', to:  'studies#total_studies'
+  get 'admin_new_study_list', to: 'studies#admin_new_study_list'
+  get 'admin_complete_study_list', to: 'studies#admin_complete_study_list'
+  get 'admin_active_study_list', to: 'studies#admin_active_study_list'
+  get 'admin_inactive_study_list', to: 'studies#admin_inactive_study_list'
+
   put 'publish_study/:id', to:  'studies#publish_study'
   put 'complete_study/:id', to:  'studies#complete_study'
+  put 'activate_study/:id', to:  'studies#activate_study'
+  put 'reject_study/:id', to:  'studies#reject_study'
 
   resources :responses 
   delete 'delete_response/:question_id', to: 'responses#delete_response'

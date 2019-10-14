@@ -1,6 +1,6 @@
 class StudiesController < ApplicationController
   # before_action :authorize_request, except: :create
-  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :complete_study, :activate_study]
+  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :complete_study, :activate_study, :reject_study]
 
   # GET /studies
   # GET /studies.json
@@ -130,6 +130,13 @@ class StudiesController < ApplicationController
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
+  def reject_study
+    @study.is_active = 0
+    @study.save
+    @message = "study-rejected"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+  end
+  
   # PUT /complete_study/1
   def complete_study
     @study.is_complete = 1
@@ -181,9 +188,26 @@ class StudiesController < ApplicationController
   end
 
   def admin_new_study_list
-    @studies = Study.where(is_published: "1",deleted_at: nil)
+    @studies = Study.where(is_published: "1", is_active: nil, is_complete: nil,deleted_at: nil)
     render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
+
+  def admin_complete_study_list
+    @studies = Study.where(is_complete: "1", deleted_at: nil)
+    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+  end
+
+  def admin_active_study_list
+    @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil)
+    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+  end
+
+  def admin_inactive_study_list
+    @studies = Study.where(is_active: "0", is_complete: nil,deleted_at: nil)
+    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+  end
+
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_study
