@@ -16,7 +16,9 @@ class StudiesController < ApplicationController
   # GET /studies/1.json
   def show
     @message = "study"
-    render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    @filtered_candidates = filtered_candidate(@study.id)
+    
+    render json: {Data: {study: @study, filtered_candidates:@filtered_candidates}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
 
   end
 
@@ -176,6 +178,23 @@ class StudiesController < ApplicationController
     @study.save
     @message = "study-completed"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+  end
+
+  def filtered_candidate(id)
+    @study_id = id
+    @user_details = Array.new
+    @study = Study.find(@study_id)
+    # loop to find user_ids
+    if Audience.where(study_id: @study_id, deleted_at: nil).present?
+      @audience = Audience.where(study_id: @study_id, deleted_at: nil)
+      @audience.each do |audience|
+        @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
+        @users.each do |user|
+          @user_details.push(user)
+        end
+      end
+    end
+    return @user_details.uniq
   end
 
   # GET /find_audience/:id
