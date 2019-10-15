@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   get 'admin_complete_study_list', to: 'studies#admin_complete_study_list'
   get 'admin_active_study_list', to: 'studies#admin_active_study_list'
   get 'admin_inactive_study_list', to: 'studies#admin_inactive_study_list'
+  get 'participant_active_study_list', to: 'studies#participant_active_study_list'
 
   put 'publish_study/:id', to:  'studies#publish_study'
   put 'complete_study/:id', to:  'studies#complete_study'

@@ -59,7 +59,7 @@ class NotificationsController < ApplicationController
     @notification.seen_time = Time.now.utc
     @notification.save
     @message = "notification-seen"
-    render json: {notification: @notification,message: @message}, status: :ok
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   #GET /change_status/user_id
