@@ -1,4 +1,5 @@
 class EligibleCandidatesController < ApplicationController
+  before_action :authorize_request, only: [:attempt_study, :submit_study]
   before_action :set_eligible_candidate, only: [:show, :update, :destroy]
 
   # GET /eligible_candidates
@@ -39,6 +40,34 @@ class EligibleCandidatesController < ApplicationController
   def destroy
     @eligible_candidate.destroy
   end
+
+  def attempt_study
+    if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).present?
+      @eligible_candidate = EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id])
+      @eligible_candidate.start_time!
+    else
+      @eligible_candidate = EligibleCandidate.new
+      @eligible_candidate.user_id = @current_user.id
+      @eligible_candidate.study_id = params[:study_id]
+      @eligible_candidate.save
+      @eligible_candidate.start_time!
+    end
+  end
+
+
+  def submit_study
+    if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).present?
+      @eligible_candidate = EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id])
+      @eligible_candidate.submit_time!
+    else
+      @eligible_candidate = EligibleCandidate.new
+      @eligible_candidate.user_id = @current_user.id
+      @eligible_candidate.study_id = params[:study_id]
+      @eligible_candidate.save
+      @eligible_candidate.submit_time!
+    end
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

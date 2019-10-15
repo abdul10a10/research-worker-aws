@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
-  resources :eligible_candidates
   resources :terms_of_uses
+
+  resources :eligible_candidates
+  get 'attempt_study/:study_id', to: 'eligible_candidates#attempt_study'
+  get 'submit_study/:study_id', to: 'eligible_candidates#submit_study'
+
   resources :privacy_policies
   get 'user_policies', to: 'privacy_policies#user_policies'
 
@@ -23,7 +27,7 @@ Rails.application.routes.draw do
 
   get 'study_detail/:id', to: 'studies#study_detail'
   get 'active_study_detail/:id', to: 'studies#active_study_detail'
-  
+
   get 'total_studies', to:  'studies#total_studies'
   get 'admin_new_study_list', to: 'studies#admin_new_study_list'
   get 'admin_complete_study_list', to: 'studies#admin_complete_study_list'

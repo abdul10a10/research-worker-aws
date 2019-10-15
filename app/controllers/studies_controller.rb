@@ -187,17 +187,20 @@ class StudiesController < ApplicationController
       render json: {message: @message}, status: :ok
     end
     @user_ids.uniq.each do |user_id|
+      
       # send mail
       @user = User.find(user_id)
-      UserMailer.with(user: @user, study: @study).new_study_invitation_email.deliver_later
+      UserMailer.with(user: @user, study: @study).new_study_invitation_email.deliver_now
+      
       # send notification
       @notification = Notification.new
       @notification.notification_type = "Study Invitation"
       @notification.user_id = @user.id
       @study_name = @study.name
       @notification.message = "Invitation to participate in " + @study_name +" study"
-      @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/"
+      @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/participantstudy"
       @notification.save
+      
       #  update eligible candidate list
       @eligible_candidate = EligibleCandidate.new
       @eligible_candidate.user_id = @user.id
