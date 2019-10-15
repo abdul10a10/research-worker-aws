@@ -268,14 +268,14 @@ class StudiesController < ApplicationController
     @required_participant = @study.submission
     @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
     if EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).present?
-      @eligible_candidate = EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil)
-      
-      if @eligible_candidate.is_allowed_time?
+      @eligible_candidate = EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).first
+      @estimatetime = @study.estimatetime
+      if ((@eligible_candidate.start_time + @estimatetime.to_i.minutes) > Time.now.utc)
         @is_attempted = "yes"
       else
         @is_attempted = "no"
       end
-      
+
     else
       @is_attempted = "no"
     end
