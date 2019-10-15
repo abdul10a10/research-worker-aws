@@ -17,7 +17,7 @@ class EligibleCandidate < ApplicationRecord
   end   
      
   def is_allowed_time?
-    (self.start_time + self.estimatetime.minutes) > Time.now.utc
+    (self.start_time + self.estimatetime.to_i.minutes) > Time.now.utc
   end
 
 end
