@@ -238,6 +238,7 @@ class StudiesController < ApplicationController
 
 
   def participant_active_study_list
+    @user = User.find(params[:user_id])
     @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil)
     render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
