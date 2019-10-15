@@ -140,6 +140,15 @@ class StudiesController < ApplicationController
     @study.save
     find_audience(@study.id)
     @message = "study-activated"
+    @user = User.find(@study.user_id)
+    UserMailer.with(user: @user, study: @study).study_published_email.deliver_later
+    @notification = Notification.new
+    @notification.notification_type = "Study Published"
+    @notification.user_id = @user.id
+    @study_name = @study.name
+    @notification.message = "Study " + @study_name +" has been published"
+    @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/#/studyactive"
+    @notification.save
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 

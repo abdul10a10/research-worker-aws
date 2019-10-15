@@ -52,4 +52,10 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: "Study Rejected")
   end
 
+  def study_published_email
+    @user = params[:user]
+    @study = params[:study]
+    mail(to: @user.email, subject: "Study Published")
+  end
+
 end
