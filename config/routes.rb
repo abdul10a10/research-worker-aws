@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :eligible_candidates
   resources :terms_of_uses
   resources :privacy_policies
   get 'user_policies', to: 'privacy_policies#user_policies'

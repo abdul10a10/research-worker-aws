@@ -1,0 +1,2 @@
+class EligibleCandidate < ApplicationRecord
+end
