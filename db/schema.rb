@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_15_062939) do
+ActiveRecord::Schema.define(version: 2019_10_15_114731) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -106,8 +106,8 @@ ActiveRecord::Schema.define(version: 2019_10_15_062939) do
     t.string "completionurl"
     t.string "completioncode"
     t.string "studyurl"
-    t.time "allowedtime"
-    t.time "estimatetime"
+    t.string "allowedtime"
+    t.string "estimatetime"
     t.integer "submission"
     t.text "description"
     t.datetime "created_at", null: false
