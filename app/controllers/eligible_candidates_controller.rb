@@ -45,12 +45,16 @@ class EligibleCandidatesController < ApplicationController
     if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).present?
       @eligible_candidate = EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id])
       @eligible_candidate.start_time!
+      @message = "study-attempted"
+      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @eligible_candidate = EligibleCandidate.new
       @eligible_candidate.user_id = @current_user.id
       @eligible_candidate.study_id = params[:study_id]
       @eligible_candidate.save
       @eligible_candidate.start_time!
+      @message = "study-attempted"
+      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
   end
 
@@ -59,12 +63,16 @@ class EligibleCandidatesController < ApplicationController
     if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).present?
       @eligible_candidate = EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id])
       @eligible_candidate.submit_time!
+      @message = "study-submitted"
+      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @eligible_candidate = EligibleCandidate.new
       @eligible_candidate.user_id = @current_user.id
       @eligible_candidate.study_id = params[:study_id]
       @eligible_candidate.save
       @eligible_candidate.submit_time!
+      @message = "study-submitted"
+      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
   end
 
