@@ -1,5 +1,6 @@
 class StudiesController < ApplicationController
   # before_action :authorize_request, except: :create
+  before_action :authorize_request, only: [:active_study_detail]
   before_action :set_study, only: [:show, :update, :destroy, :publish_study, :complete_study, :activate_study, :reject_study, :study_detail, :active_study_detail]
 
   # GET /studies
@@ -257,8 +258,13 @@ class StudiesController < ApplicationController
     @message = "study"
     @required_participant = @study.submission
     @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
+    if EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", deleted_at: nil).present?
+      @is_attempted = "yes"
+    else
+      @is_attempted = "no"
+    end
     @active_candidate = @active_candidates.count
-    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, is_attempted: @is_attempted}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
 
 
