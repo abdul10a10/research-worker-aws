@@ -5,12 +5,18 @@ class EligibleCandidatesController < ApplicationController
   # GET /eligible_candidates
   # GET /eligible_candidates.json
   def index
-    @eligible_candidates = EligibleCandidate.all
+    @eligible_candidates = EligibleCandidate.where(deleted_at: nil)
+    @message = "Eligible-candidates"
+    render json: {Data: @eligible_candidates, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+
   end
 
   # GET /eligible_candidates/1
   # GET /eligible_candidates/1.json
   def show
+    @message = "Eligible-candidate"
+    render json: {Data: @eligible_candidate, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+
   end
 
   # POST /eligible_candidates
