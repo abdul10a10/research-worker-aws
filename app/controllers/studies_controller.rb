@@ -282,7 +282,12 @@ class StudiesController < ApplicationController
     @required_participant = @study.submission
     @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
     @active_candidate = @active_candidates.count
-    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+    @active_candidate_list = Array.new
+    @active_candidates.each do |candidate|
+      @user = User.find(candidate.user_id)
+      @active_candidate_list.push(@user)
+    end
+    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, active_candidate_list: @active_candidate_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
 
 
