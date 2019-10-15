@@ -60,7 +60,7 @@ class EligibleCandidatesController < ApplicationController
 
 
   def submit_study
-    if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).present?
+    if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id], deleted_at: nil).present?
       @eligible_candidate = EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).first
       @eligible_candidate.submit_time!
       @message = "study-submitted"
