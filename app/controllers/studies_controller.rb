@@ -182,7 +182,7 @@ class StudiesController < ApplicationController
 
   def filtered_candidate(id)
     @study_id = id
-    @user_details = Array.new
+    @user_ids = Array.new
     @study = Study.find(@study_id)
     # loop to find user_ids
     if Audience.where(study_id: @study_id, deleted_at: nil).present?
@@ -190,11 +190,16 @@ class StudiesController < ApplicationController
       @audience.each do |audience|
         @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
         @users.each do |user|
-          @user_details.push(user)
+          @user_ids.push(user.user_id)
         end
       end
     end
-    return @user_details.uniq
+    @filtered_candidate_list = Array.new
+    @user_ids.uniq.each do|user_id|
+      @user = User.find(user_id)
+      @filtered_candidate_list.push(@user)
+    end
+    return @filtered_candidate_list
   end
 
   # GET /find_audience/:id
