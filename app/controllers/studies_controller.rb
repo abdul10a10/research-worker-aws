@@ -256,9 +256,9 @@ class StudiesController < ApplicationController
   def active_study_detail
     @message = "study"
     @required_participant = @study.submission
-    @active_candidates = EligibleCandidate.where(study_id: params[:study_id], deleted_at: nil)
+    @active_candidates = EligibleCandidate.where(study_id: params[:study_id])
     @active_candidate = @active_candidates.count
-    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidates}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
 
 
