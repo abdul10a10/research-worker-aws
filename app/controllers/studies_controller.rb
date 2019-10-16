@@ -387,11 +387,11 @@ class StudiesController < ApplicationController
   def submitted_candidate_list
     @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", is_accepted: nil, deleted_at: nil)
     @submitted_candidate_count = @submitted_candidates.count
-    @submitted_candidates_list = Array.new
+    @submitted_candidate_list = Array.new
     @submitted_candidates.each do |candidate|
       @user = User.find(candidate.user_id)
       if (@user.user_type == "Participant")
-        @submitted_candidates_list.push(@user)
+        @submitted_candidate_list.push(@user)
       end
     end
     render json: {Data: { submitted_candidate_list: @submitted_candidate_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
