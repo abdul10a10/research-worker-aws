@@ -128,7 +128,7 @@ class EligibleCandidatesController < ApplicationController
     # send mail
     @study = Study.find(params[:study_id])
     @user = User.find(params[:user_id])
-    UserMailer.with(user: @user, study: @study, reject_reason: @reject_reason).study_rejection_accept_email.deliver_now
+    UserMailer.with(user: @user, study: @study, eligible_candidate: @eligible_candidate).study_rejection_accept_email.deliver_now
     
     # send notification
     @notification = Notification.new

@@ -75,7 +75,7 @@ class UserMailer < ApplicationMailer
   def study_rejection_accept_email
     @user = params[:user]
     @study = params[:study]
-    @reject_reason = params[:reject_reason]
+    @eligible_candidate = params[:eligible_candidate]
     mail(to: @user.email, subject: "Study has been rejected by a Researcher")
   end
 
