@@ -169,9 +169,9 @@ class UsersController < ApplicationController
           @notification.message = "New " + @user_type +" has registered"
 
           if @user.user_type == "Participant"
-            @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/#/dashboards/overviewuser/#{@user.id}"
+            @notification.redirect_url = "/dashboards/overviewuser/#{@user.id}"
           elsif @user.user_type == "Researcher"
-            @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/#/dashboards/overviewresearcheruser/#{@user.id}"
+            @notification.redirect_url = "/dashboards/overviewresearcheruser/#{@user.id}"
           end
           @notification.save
           render json: {message: @message}, status: :ok

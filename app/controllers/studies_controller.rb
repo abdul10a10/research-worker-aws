@@ -129,7 +129,7 @@ class StudiesController < ApplicationController
     @notification.user_id = @user.id
     @study_name = @study.name
     @notification.message = "New study " + @study_name +" created by "+ @user.first_name
-    @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/adminnewstudy"
+    @notification.redirect_url = "/adminnewstudy"
     @notification.save
     # find_audience(@study.id)
     @message = "study-published"
@@ -149,7 +149,7 @@ class StudiesController < ApplicationController
     @notification.user_id = @user.id
     @study_name = @study.name
     @notification.message = "Study " + @study_name +" has been published"
-    @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/#/studyactive"
+    @notification.redirect_url = "/studyactive"
     @notification.save
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
@@ -167,7 +167,7 @@ class StudiesController < ApplicationController
     @notification.user_id = @user.id
     @study_name = @study.name
     @notification.message = "Study " + @study_name +" has been rejected"
-    @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/#/studypublished/#{@study.id}"
+    @notification.redirect_url = "/studypublished/#{@study.id}"
     @notification.save
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
@@ -232,7 +232,7 @@ class StudiesController < ApplicationController
       @notification.user_id = @user.id
       @study_name = @study.name
       @notification.message = "Invitation to participate in " + @study_name +" study"
-      @notification.redirect_url = "http://winpowerllc.karyonsolutions.com/participantstudy"
+      @notification.redirect_url = "/participantstudy"
       @notification.save
       
       #  update eligible candidate list
