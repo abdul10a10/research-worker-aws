@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'attempt_study/:study_id', to: 'eligible_candidates#attempt_study'
   get 'submit_study/:study_id', to: 'eligible_candidates#submit_study'
   get 'accept_study_submission/:study_id/:user_id', to: 'eligible_candidates#submit_study'
+  get 'reject_study_submission/:study_id/:user_id', to: 'eligible_candidates#reject_study_submission'
 
   resources :privacy_policies
   get 'user_policies', to: 'privacy_policies#user_policies'
