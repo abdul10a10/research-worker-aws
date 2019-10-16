@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_15_114731) do
+ActiveRecord::Schema.define(version: 2019_10_16_065737) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -39,6 +39,9 @@ ActiveRecord::Schema.define(version: 2019_10_15_114731) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "is_accepted"
+    t.text "reject_reason"
+    t.string "is_completed"
   end
 
   create_table "notifications", force: :cascade do |t|

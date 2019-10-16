@@ -7,6 +7,7 @@ class EligibleCandidate < ApplicationRecord
   end   
     
   def submit_time!
+    self.is_completed = 1
     self.submit_time = Time.now.utc
     save!
   end   

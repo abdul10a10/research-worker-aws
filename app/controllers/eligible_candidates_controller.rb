@@ -69,6 +69,21 @@ class EligibleCandidatesController < ApplicationController
     if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id], deleted_at: nil).present?
       @eligible_candidate = EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).first
       @eligible_candidate.submit_time!
+       
+      # send mail
+      @study = Study.find(params[:study_id])
+      @user = User.find(@study.user_id)
+      UserMailer.with(user: @user, study: @study).study_completion_email.deliver_now
+      
+      # send notification
+      @notification = Notification.new
+      @notification.notification_type = "Study Completion"
+      @notification.user_id = @user.id
+      @study_name = @study.name
+      @notification.message = "A participant has completed " + @study_name +" study"
+      @notification.redirect_url = "/researcherstudysubmission"
+      @notification.save
+      
       @message = "study-submitted"
       render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
@@ -82,6 +97,26 @@ class EligibleCandidatesController < ApplicationController
     end
   end
 
+  def accept_study_submission
+    @eligible_candidate = EligibleCandidate.where(user_id: params[:user_id], study_id: params[:study_id]).first
+    @eligible_candidate.is_accepted = 1
+    @eligible_candidate.save
+     
+    # send mail
+    @study = Study.find(params[:study_id])
+    @user = User.find(params[:user_id])
+    UserMailer.with(user: @user, study: @study).study_submission_accept_email.deliver_now
+    
+    # send notification
+    @notification = Notification.new
+    @notification.notification_type = "Study Submission Accepted"
+    @notification.user_id = @user.id
+    @study_name = @study.name
+    @notification.message = "Response of " + @study_name +" study has accepted"
+    @notification.redirect_url = "/researcherstudysubmission"
+    @notification.save
+      
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
