@@ -239,6 +239,7 @@ class StudiesController < ApplicationController
       @eligible_candidate = EligibleCandidate.new
       @eligible_candidate.user_id = @user.id
       @eligible_candidate.study_id = @study_id
+      @eligible_candidate.save
     end
     # @message = "user-ids" 
     # render json: {Data: @user,message: @message}

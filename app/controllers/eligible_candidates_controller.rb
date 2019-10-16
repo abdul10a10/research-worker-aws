@@ -113,8 +113,32 @@ class EligibleCandidatesController < ApplicationController
     @notification.user_id = @user.id
     @study_name = @study.name
     @notification.message = "Response of " + @study_name +" study has accepted"
-    @notification.redirect_url = "/researcherstudysubmission"
+    @notification.redirect_url = "/"
     @notification.save
+    @message = "study-accepted"
+    render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
+  def reject_study_submission
+    @eligible_candidate = EligibleCandidate.where(user_id: params[:user_id], study_id: params[:study_id]).first
+    @eligible_candidate.reject_reason = params[:reject_reason]
+    @eligible_candidate.save
+     
+    # send mail
+    @study = Study.find(params[:study_id])
+    @user = User.find(params[:user_id])
+    UserMailer.with(user: @user, study: @study, reject_reason: @reject_reason).study_rejection_accept_email.deliver_now
+    
+    # send notification
+    @notification = Notification.new
+    @notification.notification_type = "Study Submission Rejected"
+    @notification.user_id = @user.id
+    @study_name = @study.name
+    @notification.message = "Response of " + @study_name +" study has been Rejected"
+    @notification.redirect_url = "/"
+    @notification.save
+    @message = "study-rejected"
+    render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
       
   end
 
@@ -126,6 +150,6 @@ class EligibleCandidatesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def eligible_candidate_params
-      params.fetch(:eligible_candidate, {})
+      params.fetch(:eligible_candidate, {}).permit(:reject_reason)
     end
 end
