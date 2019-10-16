@@ -122,6 +122,7 @@ class EligibleCandidatesController < ApplicationController
   def reject_study_submission
     @eligible_candidate = EligibleCandidate.where(user_id: params[:user_id], study_id: params[:study_id]).first
     @eligible_candidate.reject_reason = params[:reject_reason]
+    @eligible_candidate.is_accepted = 0
     @eligible_candidate.save
      
     # send mail
