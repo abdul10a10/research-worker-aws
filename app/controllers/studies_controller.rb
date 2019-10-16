@@ -282,7 +282,13 @@ class StudiesController < ApplicationController
 
   def participant_active_study_list
     @user = User.find(params[:user_id])
-    @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
+    @eligible_studies = EligibleCandidate.where(user_id: @user.id, deleted_at: nil)
+    @studies = Array.new
+    @eligible_studies.each do |study|
+      @eligible_study = Study.find(study.study_id)
+      @studies.push( @eligible_study )
+    end
+    # @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
     render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
 
