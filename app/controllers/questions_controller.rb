@@ -96,7 +96,7 @@ class QuestionsController < ApplicationController
     @question_category = params[:question_category]
     @questions = Question.where(question_category: @question_category, deleted_at: nil).order(id: :asc)
     # arrray to save all things
-    @audience = Array.new
+    @audience_question = Array.new
     @questions.each do |question|
       @question_id = question.id
       if Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil).present?
@@ -106,14 +106,14 @@ class QuestionsController < ApplicationController
             @answer = Answer.find(existing_audience.answer_id)
             @answers.push(@answer.description)
           end
-        @audience.push({
+        @audience_question.push({
                            question: question,
                            answer_filled: "Yes",
                            answer: @answers
                        })  
       else
         @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
-        @audience.push({
+        @audience_question.push({
                            question: question,
                            answer_filled: "No",
                            answer: @answers
@@ -139,7 +139,7 @@ class QuestionsController < ApplicationController
 
     @desired_audience_num = @required_users.uniq.count
     @message = "audience-question"
-    render json: {Data: {audience_question: @audience, desired_audience: @desired_audience_num}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    render json: {Data: {audience_question: @audience_question, desired_audience: @desired_audience_num}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def question_list

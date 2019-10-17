@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   resources :question_types
 
   resources :audiences
-  post 'delete_audience', to: 'audiences#delete_audience'
+  put 'delete_audience/:study_id/:question_id', to: 'audiences#delete_audience'
 
   resources :studies
   post 'add_description', to: 'studies#add_description'
