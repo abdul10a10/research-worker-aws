@@ -91,6 +91,57 @@ class QuestionsController < ApplicationController
     render json: @responce, status: :ok
   end
 
+  def audience_question
+    @study_id = params[:study_id]
+    @question_category = params[:question_category]
+    @questions = Question.where(question_category: @question_category, deleted_at: nil).order(id: :asc)
+    # arrray to save all things
+    @audience = Array.new
+    @questions.each do |question|
+      @question_id = question.id
+      if Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil).present?
+        @existing_audience = Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil)
+        @answers = Array.new
+          @existing_audience.each do |existing_audience|
+            @answer = Answer.find(existing_audience.answer_id)
+            @answers.push(@answer.description)
+          end
+        @audience.push({
+                           question: question,
+                           answer_filled: "Yes",
+                           answer: @answers
+                       })  
+      else
+        @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
+        @audience.push({
+                           question: question,
+                           answer_filled: "No",
+                           answer: @answers
+                       })
+      end
+    end
+
+    # ======================
+
+    @required_users = Array.new
+    @study = Study.find(@study_id)
+    if Audience.where(study_id: @study_id, deleted_at: nil).present?
+      @audience = Audience.where(study_id: @study_id, deleted_at: nil)
+      @audience.each do |audience|
+        @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
+        @users.each do |user|
+          @required_users.push( user)
+        end
+      end
+    end
+    @required_users.uniq.count
+    # ======================
+
+    @desired_audience_num = @required_users.uniq.count
+    @message = "audience-question"
+    render json: {Data: {audience_question: @audience, desired_audience: @desired_audience_num}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
   def question_list
     @question_category = params[:question_category]
     @category = QuestionCategory.find(params[:question_category])

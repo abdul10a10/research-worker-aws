@@ -54,6 +54,7 @@ Rails.application.routes.draw do
 
   resources :questions
   get 'category_question/:question_category', to: 'questions#category_question'
+  get 'audience_question/:question_category/:study_id', to: 'questions#audience_question'
   get 'question_list/:question_category', to: 'questions#question_list'
   post 'delete_question/:id', to: 'questions#delete_question'
 

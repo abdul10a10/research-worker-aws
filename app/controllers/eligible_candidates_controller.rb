@@ -116,6 +116,10 @@ class EligibleCandidatesController < ApplicationController
     @notification.redirect_url = "/"
     @notification.save
     @message = "study-accepted"
+
+    # send reward after 7 days
+    @user.delay(run_at: 7.days.from_now).send_accept_study_reward
+
     render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 

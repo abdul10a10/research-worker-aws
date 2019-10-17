@@ -26,13 +26,6 @@ class AudiencesController < ApplicationController
       @audiencetemp.answer_id = answer_id
       @audiencetemp.save
     end
-    # if @audience.save
-    #   @message = "audience-created"
-    #   render json: {Data: @audience, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    # else
-    #   render json: @audience.errors, status: :unprocessable_entity
-    # end
-
     @message = "audience-response-saved"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end

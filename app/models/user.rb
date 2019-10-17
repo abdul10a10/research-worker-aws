@@ -11,6 +11,10 @@ class User < ApplicationRecord
     save!
   end
 
+  def send_accept_study_reward
+    self.wallet = self.wallet + 10
+    save!
+  end
   def password_token_valid?
     (self.reset_password_sent_at + 3.hours) > Time.now.utc
   end
