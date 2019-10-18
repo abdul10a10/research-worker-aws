@@ -133,7 +133,7 @@ class StudiesController < ApplicationController
     @study.save
 
     @user = User.where(user_type: "Admin").first
-    @user.wallet = @user.wallet + @total_amount
+    @user.wallet = @user.wallet + @commision
     @user.save
     @message = "payment-done"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
