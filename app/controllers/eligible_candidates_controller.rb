@@ -127,7 +127,8 @@ class EligibleCandidatesController < ApplicationController
     @message = "study-accepted"
 
     # send reward after 7 days
-    @user.delay(run_at: 7.days.from_now).send_accept_study_reward(@study.reward)
+    @controller_object = EligibleCandidatesController.new
+    @controller_object.delay(run_at: 7.days.from_now).send_accept_study_reward(@user.id, @study.id)
   end
 
   def accept_study_submission
@@ -150,8 +151,9 @@ class EligibleCandidatesController < ApplicationController
     @notification.save
     @message = "study-accepted"
 
-    # send reward after 7 days
-    @user.delay(run_at: 4.days.from_now).send_accept_study_reward(@study.reward)
+    # send reward after 4 days
+    @controller_object = EligibleCandidatesController.new
+    @controller_object.delay(run_at: 4.days.from_now).send_accept_study_reward(@user.id, @study.id)
 
     render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
@@ -178,6 +180,29 @@ class EligibleCandidatesController < ApplicationController
     @message = "study-rejected"
     render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
       
+  end
+
+  # method to send money for accepted studies
+  def send_accept_study_reward(user_id, study_id)
+    @eligible_candidate = EligibleCandidate.where(user_id: user_id, study_id: study_id).first
+    @eligible_candidate.is_paid = 1
+    @eligible_candidate.save
+
+    @study = Study.find(study_id)
+    @user = User.find(user_id)
+    @study.study_wallet = @study.study_wallet - @study.reward.to_i
+    @user.wallet = @user.wallet + @study.reward.to_i
+    @user.save
+
+    # send notification
+    @notification = Notification.new
+    @notification.notification_type = "Study payment completed"
+    @notification.user_id = @user.id
+    @study_name = @study.name
+    @notification.message = "Payment for " + @study_name +" study of " + @study.reward " has been credited in your account"
+    @notification.redirect_url = "/"
+    @notification.save
+
   end
 
   private
