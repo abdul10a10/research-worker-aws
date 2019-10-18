@@ -1,7 +1,7 @@
 class StudiesController < ApplicationController
   # before_action :authorize_request, except: :create
   before_action :authorize_request, only: [:active_study_detail]
-  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :active_study_detail, :researcher_active_study_detail, :active_candidate_list]
+  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
 
   # GET /studies
   # GET /studies.json
@@ -117,8 +117,32 @@ class StudiesController < ApplicationController
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
+
+  # PUT /publish_study/1
+  def pay_for_study
+    
+    # calculation
+    @amount = @study.reward.to_i * @study.submission
+    @tax = @amount* 0.20
+    @commision = @amount* 0.10
+    @total_amount = @amount + @tax + @commision
+    @study_wallet = @amount + @tax
+    @admin_wallet = @commision
+    @study.is_paid = 1
+    @study.study_wallet = @study_wallet
+    @study.save
+
+    @user = User.where(user_type: "Admin").first
+    @user.wallet = @user.wallet + @total_amount
+    @user.save
+    @message = "payment-done"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+
+  end
+
   # PUT /publish_study/1
   def publish_study
+    @controller_object = StudiesController.new
     @study.is_published = 1
     # @study.is_active = 1
     @study.save
@@ -132,8 +156,41 @@ class StudiesController < ApplicationController
     @notification.redirect_url = "/adminnewstudy"
     @notification.save
     # find_audience(@study.id)
+    @controller_object.delay(run_at: 1.hours.from_now).auto_activate_study(@study.id)
     @message = "study-published"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+  end
+
+  # Auto activate study after 1 hours of study publish
+  def auto_activate_study(id)
+    @study = Study.find(id)
+    if @study.is_active != "1"
+      @study.is_active = 1
+      @study.save
+      find_audience(@study.id)
+
+      # send mail and notification to researcher
+      @user = User.find(@study.user_id)
+      UserMailer.with(user: @user, study: @study).study_published_email.deliver_later
+      @notification = Notification.new
+      @notification.notification_type = "Study Published"
+      @notification.user_id = @user.id
+      @study_name = @study.name
+      @notification.message = "Study " + @study_name +" has been published"
+      @notification.redirect_url = "/studyactive"
+      @notification.save
+
+      # send mail and notification to Admin
+      @user = User.where(user_type: "Admin").first
+      UserMailer.with(user: @user, study: @study).study_published_email.deliver_later
+      @notification = Notification.new
+      @notification.notification_type = "Study Published"
+      @notification.user_id = @user.id
+      @study_name = @study.name
+      @notification.message = "Study " + @study_name +" has been published"
+      @notification.redirect_url = "/adminactivestudy"
+      @notification.save
+    end
   end
 
   def activate_study

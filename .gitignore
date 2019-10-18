@@ -23,5 +23,11 @@
 
 .byebug_history
 
+#idea folder
+/.idea/*
+
+#vendor folder
+/vendor/*
+
 # Ignore master key for decrypting credentials and more.
 /config/master.key

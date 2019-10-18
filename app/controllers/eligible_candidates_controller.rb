@@ -66,10 +66,11 @@ class EligibleCandidatesController < ApplicationController
 
 
   def submit_study
+    @controller_object = EligibleCandidatesController.new
     if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id], deleted_at: nil).present?
       @eligible_candidate = EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).first
       @eligible_candidate.submit_time!
-       
+      
       # send mail
       @study = Study.find(params[:study_id])
       @user = User.find(@study.user_id)
@@ -84,6 +85,9 @@ class EligibleCandidatesController < ApplicationController
       @notification.redirect_url = "/researcherstudysubmission"
       @notification.save
       
+      # auto accept study after 21 days
+      @controller_object.delay(run_at: 21.days.from_now).auto_accept_study_submission(@user.id, @study.id)
+
       @message = "study-submitted"
       render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
@@ -92,9 +96,38 @@ class EligibleCandidatesController < ApplicationController
       @eligible_candidate.study_id = params[:study_id]
       @eligible_candidate.save
       @eligible_candidate.submit_time!
+
+      # auto accept study after 21 days
+      @controller_object.delay(run_at: 21.days.from_now).auto_accept_study_submission(@current_user.id, params[:study_id])
+
       @message = "study-submitted"
       render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
+  end
+
+  # auto accept study after 21 days
+  def auto_accept_study_submission(user_id, study_id)
+    @eligible_candidate = EligibleCandidate.where(user_id: user_id, study_id: study_id).first
+    @eligible_candidate.is_accepted = 1
+    @eligible_candidate.save
+     
+    # send mail
+    @study = Study.find(study_id)
+    @user = User.find(user_id)
+    UserMailer.with(user: @user, study: @study).study_submission_accept_email.deliver_now
+    
+    # send notification
+    @notification = Notification.new
+    @notification.notification_type = "Study Submission Accepted"
+    @notification.user_id = @user.id
+    @study_name = @study.name
+    @notification.message = "Response of " + @study_name +" study has accepted"
+    @notification.redirect_url = "/"
+    @notification.save
+    @message = "study-accepted"
+
+    # send reward after 7 days
+    @user.delay(run_at: 7.days.from_now).send_accept_study_reward
   end
 
   def accept_study_submission

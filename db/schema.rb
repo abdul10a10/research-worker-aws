@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_17_074850) do
+ActiveRecord::Schema.define(version: 2019_10_18_093706) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -136,6 +136,8 @@ ActiveRecord::Schema.define(version: 2019_10_17_074850) do
     t.string "is_complete"
     t.datetime "deleted_at"
     t.text "deactivate_reason"
+    t.integer "is_paid"
+    t.integer "study_wallet", default: 0
   end
 
   create_table "terms_and_conditions", force: :cascade do |t|
