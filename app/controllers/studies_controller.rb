@@ -481,7 +481,7 @@ class StudiesController < ApplicationController
 
   def paid_candidate_list
     @paid_candidates = EligibleCandidate.where(study_id: @study.id, is_paid: "1", deleted_at: nil)
-    @paid_candidate_count = @paid_candidate_list.count
+    @paid_candidate_count = @paid_candidates.count
     @paid_candidate_list = Array.new
     @paid_candidates.each do |candidate|
       @user = User.find(candidate.user_id)

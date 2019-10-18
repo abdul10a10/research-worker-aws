@@ -199,7 +199,7 @@ class EligibleCandidatesController < ApplicationController
     @notification.notification_type = "Study payment completed"
     @notification.user_id = @user.id
     @study_name = @study.name
-    @notification.message = "Payment for " + @study_name +" study of " + @study.reward " has been credited in your account"
+    @notification.message = "Payment for " + @study_name +" study of " + @study.reward + " has been credited in your account"
     @notification.redirect_url = "/"
     @notification.save
 
