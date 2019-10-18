@@ -1,7 +1,7 @@
 class StudiesController < ApplicationController
   # before_action :authorize_request, except: :create
   before_action :authorize_request, only: [:active_study_detail]
-  before_action :set_study, only: [:show, :update, :destroy, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
+  before_action :set_study, only: [:show, :update, :destroy,:paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
 
   # GET /studies
   # GET /studies.json
@@ -478,6 +478,21 @@ class StudiesController < ApplicationController
     render json: {Data: { accepted_candidate_list: @accepted_candidate_list, rejected_candidate_list: @rejected_candidate_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
 
   end
+
+  def paid_candidate_list
+    @paid_candidates = EligibleCandidate.where(study_id: @study.id, is_paid: "1", deleted_at: nil)
+    @paid_candidate_count = @paid_candidate_list.count
+    @paid_candidate_list = Array.new
+    @paid_candidates.each do |candidate|
+      @user = User.find(candidate.user_id)
+      if (@user.user_type == "Participant")
+        @paid_candidate_list_list.push(@user)
+      end
+    end
+    @message = "paid-candidate-list"
+    render json: {Data: { paid_candidate_list: @paid_candidate_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

@@ -127,7 +127,7 @@ class EligibleCandidatesController < ApplicationController
     @message = "study-accepted"
 
     # send reward after 7 days
-    @user.delay(run_at: 7.days.from_now).send_accept_study_reward
+    @user.delay(run_at: 7.days.from_now).send_accept_study_reward(@study.reward)
   end
 
   def accept_study_submission
@@ -151,7 +151,7 @@ class EligibleCandidatesController < ApplicationController
     @message = "study-accepted"
 
     # send reward after 7 days
-    @user.delay(run_at: 7.days.from_now).send_accept_study_reward
+    @user.delay(run_at: 4.days.from_now).send_accept_study_reward(@study.reward)
 
     render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end

@@ -11,8 +11,8 @@ class User < ApplicationRecord
     save!
   end
 
-  def send_accept_study_reward
-    self.wallet = self.wallet + 10
+  def send_accept_study_reward(reward)
+    self.wallet = self.wallet + reward
     save!
   end
   def password_token_valid?

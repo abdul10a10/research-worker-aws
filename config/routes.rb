@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   get 'active_candidate_list/:id', to: 'studies#active_candidate_list'
   get 'submitted_candidate_list/:id', to: 'studies#submitted_candidate_list'
   get 'accepted_candidate_list/:id', to: 'studies#accepted_candidate_list'
+  get 'paid_candidate_list/:id', to: 'studies#paid_candidate_list'
 
   get 'total_studies', to:  'studies#total_studies'
   get 'admin_new_study_list', to: 'studies#admin_new_study_list'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_18_093706) do
+ActiveRecord::Schema.define(version: 2019_10_18_121304) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 2019_10_18_093706) do
     t.string "is_accepted"
     t.text "reject_reason"
     t.string "is_completed"
+    t.integer "is_paid"
   end
 
   create_table "notifications", force: :cascade do |t|
