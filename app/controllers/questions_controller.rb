@@ -123,21 +123,27 @@ class QuestionsController < ApplicationController
 
     # ======================
 
-    @required_users = Array.new
+    @required_audience_list = Array.new
+    @required_audience = User.where(user_type: "Participant", deleted_at: nil)
+    @required_audience.each do |required_audience|
+      @required_audience_list.push(required_audience.id)
+    end
     @study = Study.find(@study_id)
     if Audience.where(study_id: @study_id, deleted_at: nil).present?
       @audience = Audience.where(study_id: @study_id, deleted_at: nil)
       @audience.each do |audience|
+        @required_users = Array.new
         @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
         @users.each do |user|
           @required_users.push( user.user_id)
         end
+        @required_audience_list = @required_audience_list & @required_users
       end
     end
     @required_users.uniq.count
     # ======================
 
-    @desired_audience_num = @required_users.uniq.count
+    @desired_audience_num = @required_audience_list.count
     @message = "audience-question"
     render json: {Data: {audience_question: @audience_question, desired_audience: @desired_audience_num}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
