@@ -58,7 +58,7 @@ class UsersController < ApplicationController
 
   def destroy
     if @user.destroy
-      @message = "user has been deleted"
+      @message = "user-deleted"
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       head(:ok)
