@@ -205,6 +205,16 @@ class EligibleCandidatesController < ApplicationController
 
   end
 
+  def participant_study_submission
+    # @eligible_candidate = EligibleCandidate.where(user_id: user_id, deleted_at: nil)
+    user_id = params[:user_id]
+    @total_submission = EligibleCandidate.where(user_id: user_id, is_completed: "1", deleted_at: nil)
+    @total_attempt = EligibleCandidate.where(user_id: user_id, is_attempted: "1", deleted_at: nil)
+    @accepted_studies = EligibleCandidate.where(user_id: user_id, is_accepted: "1", deleted_at: nil)
+    @rejected_studies = EligibleCandidate.where(user_id: user_id, is_accepted: "0", deleted_at: nil)
+    @message = "participant-study-report"
+    render json: {Data: {total_submission: @total_submission.count, total_attempt: @total_attempt.count, accepted_studies: @accepted_studies.count, rejected_studies: @rejected_studies.count }, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok 
+  end
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_eligible_candidate

@@ -57,12 +57,15 @@ class UsersController < ApplicationController
 
 
   def destroy
-    if @user.destroy
-      @message = "user-deleted"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    else
-      head(:ok)
-    end
+    
+    Notification.where(user_id: @user.id).delete_all
+    EligibleCandidate.where(user_id: @user.id).delete_all
+    Response.where(user_id: @user.id).delete_all
+    Study.where(user_id: @user.id).delete_all
+
+    @user.destroy
+    @message = "user-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   #GET /getuserinfo/:id
