@@ -126,7 +126,7 @@ class QuestionsController < ApplicationController
     @required_audience_list = Array.new
     @required_audience = User.where(user_type: "Participant", deleted_at: nil)
     @required_audience.each do |required_audience|
-      @required_audience_list.push(required_audience.id)
+    @required_audience_list.push(required_audience.id)
     end
     @study = Study.find(@study_id)
     if Audience.where(study_id: @study_id, deleted_at: nil).present?
@@ -144,7 +144,7 @@ class QuestionsController < ApplicationController
             @required_users.push( user.user_id)
           end
 
-          @required_users_list = @required_users_list | @required_users
+          @required_users_list = @required_users_list + @required_users
         end
 
         @required_audience_list = @required_users_list & @required_audience_list
