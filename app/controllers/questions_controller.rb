@@ -140,7 +140,7 @@ class QuestionsController < ApplicationController
         @required_audience_list = @required_audience_list & @required_users
       end
     end
-    @required_users.uniq.count
+    # @required_users.uniq.count
     # ======================
 
     @desired_audience_num = @required_audience_list.count
