@@ -130,7 +130,7 @@ class QuestionsController < ApplicationController
       @audience.each do |audience|
         @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
         @users.each do |user|
-          @required_users.push( user)
+          @required_users.push( user.user_id)
         end
       end
     end
