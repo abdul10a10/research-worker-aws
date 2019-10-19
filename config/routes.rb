@@ -4,9 +4,13 @@ Rails.application.routes.draw do
   resources :eligible_candidates
   get 'attempt_study/:study_id', to: 'eligible_candidates#attempt_study'
   get 'submit_study/:study_id', to: 'eligible_candidates#submit_study'
-  get 'participant_study_submission/:user_id', to: 'eligible_candidates#participant_study_submission'
   get 'accept_study_submission/:study_id/:user_id', to: 'eligible_candidates#accept_study_submission'
   post 'reject_study_submission/:study_id/:user_id', to: 'eligible_candidates#reject_study_submission'
+  get 'participant_study_submission/:user_id', to: 'eligible_candidates#participant_study_submission'
+  get 'total_submission_list/:user_id', to: 'eligible_candidates#total_submission_list'
+  get 'total_attempt_list/:user_id', to: 'eligible_candidates#total_attempt_list'
+  get 'accepted_study_list/:user_id', to: 'eligible_candidates#accepted_study_list'
+  get 'rejected_study_list/:user_id', to: 'eligible_candidates#rejected_study_list'
 
   resources :privacy_policies
   get 'user_policies', to: 'privacy_policies#user_policies'

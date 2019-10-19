@@ -215,6 +215,55 @@ class EligibleCandidatesController < ApplicationController
     @message = "participant-study-report"
     render json: {Data: {total_submission: @total_submission.count, total_attempt: @total_attempt.count, accepted_studies: @accepted_studies.count, rejected_studies: @rejected_studies.count }, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok 
   end
+
+  def total_submission_list
+    user_id = params[:user_id]
+    @total_submissions = EligibleCandidate.where(user_id: user_id, is_completed: "1", is_accepted: nil, deleted_at: nil)
+    @total_submission_count = @total_submissions.count
+    @total_submission_list = Array.new
+    @total_submissions.each do |study|
+      @studies = Study.find(study.study_id)
+      @total_submission_list.push(@studies)
+    end
+    render json: {Data: { total_submission_list: @total_submission_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+  end
+
+  def total_attempt_list
+    user_id = params[:user_id]
+    @total_attempts = EligibleCandidate.where(user_id: user_id, is_attempted: "1", deleted_at: nil)
+    @total_attempt_count = @total_attempts.count
+    @total_attempt_list = Array.new
+    @total_attempts.each do |study|
+      @studies = Study.find(study.study_id)
+      @total_attempt_list.push(@studies)
+    end
+    render json: {Data: { total_attempt_list: @total_attempt_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+  end
+
+  def accepted_study_list
+    user_id = params[:user_id]
+    @accepted_study = EligibleCandidate.where(user_id: user_id, is_accepted: "1", deleted_at: nil)
+    @accepted_study_count = @accepted_study.count
+    @accepted_study_list = Array.new
+    @accepted_study.each do |study|
+      @studies = Study.find(study.study_id)
+      @accepted_study_list.push(@studies)
+    end
+    render json: {Data: { accepted_study_list: @accepted_study_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+  end
+
+  def rejected_study_list
+    user_id = params[:user_id]
+    @rejected_study = EligibleCandidate.where(user_id: user_id, is_accepted: "0", deleted_at: nil)
+    @rejected_study_count = @rejected_study.count
+    @rejected_study_list = Array.new
+    @rejected_study.each do |study|
+      @studies = Study.find(study.study_id)
+      @rejected_study_list.push(@studies)
+    end
+    render json: {Data: { rejected_study_list: @rejected_study_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_eligible_candidate
