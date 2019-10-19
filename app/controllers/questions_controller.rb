@@ -124,45 +124,22 @@ class QuestionsController < ApplicationController
     # ======================
 
     @required_users = Array.new
-    @user_id = User.select("DISTINCT id").where(deleted_at: nil)
-    @user_id.each do |user_id|
-      @required_users.push( user_id.id)
-    end
-
     @study = Study.find(@study_id)
     if Audience.where(study_id: @study_id, deleted_at: nil).present?
-      @new_array = Array.new
-      @question_id = Audience.select("DISTINCT question_id").where(study_id: @study_id, deleted_at: nil)
-      
-      @question_id.each do |question_id|
-        @user_per_question = Array.new
-        @audience = Audience.where(question_id: question_id,study_id: @study_id, deleted_at: nil)
-        @audience.each do |audience|
-          @internal_array = Array.new
-          @users = Response.select("DISTINCT user_id").where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
-          @users.each do |user|
-            @internal_array.push( user.user_id)
-          end
-          @user_per_question = @user_per_question | @internal_array
+      @audience = Audience.where(study_id: @study_id, deleted_at: nil)
+      @audience.each do |audience|
+        @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
+        @users.each do |user|
+          @required_users.push( user)
         end
-        @required_users = @required_users & @user_per_question
       end
-
-      # @audience.each do |audience|
-      #   @internal_array = Array.new
-      #   @users = Response.select("DISTINCT user_id").where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
-      #   @users.each do |user|
-      #     @internal_array.push( user.user_id)
-      #   end
-      #   @new_array = @new_array | @internal_array
-      # end
     end
-    # @required_users = @required_users & @new_array
+    @required_users.uniq.count
     # ======================
-    
+
     @desired_audience_num = @required_users.uniq.count
     @message = "audience-question"
-    render json: {Data: {audience_question: @audience_question, desired_audience: @required_users.count}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    render json: {Data: {audience_question: @audience_question, desired_audience: @desired_audience_num}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def question_list
