@@ -218,7 +218,7 @@ class EligibleCandidatesController < ApplicationController
 
   def total_submission_list
     user_id = params[:user_id]
-    @total_submissions = EligibleCandidate.where(user_id: user_id, is_completed: "1", is_accepted: nil, deleted_at: nil)
+    @total_submissions = EligibleCandidate.where(user_id: user_id, is_completed: "1", deleted_at: nil)
     @total_submission_count = @total_submissions.count
     @total_submission_list = Array.new
     @total_submissions.each do |study|
