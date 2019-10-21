@@ -374,7 +374,12 @@ class StudiesController < ApplicationController
     @studies = Array.new
     @eligible_studies.each do |study|
       @eligible_study = Study.find(study.study_id)
-      @studies.push( @eligible_study )
+      if study.is_attempted == "1"
+        @studies.push( eligible_study: @eligible_study, is_attempted: "yes" )
+      else
+        @studies.push( eligible_study: @eligible_study, is_attempted: "no" )
+      end
+      
     end
     # @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
     render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
