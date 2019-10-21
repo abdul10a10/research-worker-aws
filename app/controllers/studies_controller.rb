@@ -127,7 +127,6 @@ class StudiesController < ApplicationController
     @commision = @amount* 0.10
     @total_amount = @amount + @tax + @commision
     @study_wallet = @amount + @tax
-    @admin_wallet = @commision
     @study.is_paid = 1
     @study.study_wallet = @study_wallet
     @study.save
@@ -135,6 +134,16 @@ class StudiesController < ApplicationController
     @user = User.where(user_type: "Admin").first
     @user.wallet = @user.wallet + @commision
     @user.save
+    
+    #payment notification
+    @notification = Notification.new
+    @notification.notification_type = "Study Payment commision"
+    @notification.user_id = @user.id
+    @study_name = @study.name
+    @notification.message = "Payment for study " + @study_name +" of "+ @commision +" has been added to your wallet"
+    @notification.redirect_url = "/"
+    @notification.save
+    
     @message = "payment-done"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
 
