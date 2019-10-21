@@ -140,7 +140,7 @@ class StudiesController < ApplicationController
     @notification.notification_type = "Study Payment commision"
     @notification.user_id = @user.id
     @study_name = @study.name
-    @notification.message = "Payment for study " + @study_name +" of "+ @commision.to_s +" has been added to your wallet"
+    @notification.message = "Payment for study " + @study_name + " of " + @commision.to_s + " has been added to your wallet"
     @notification.redirect_url = "/"
     @notification.save
     
