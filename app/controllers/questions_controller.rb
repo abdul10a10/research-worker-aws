@@ -121,7 +121,7 @@ class QuestionsController < ApplicationController
       end
     end
 
-    # ======================
+    # ====================== Audience filter ====================== #
 
     @required_audience_list = Array.new
     @required_audience = User.where(user_type: "Participant", deleted_at: nil)
