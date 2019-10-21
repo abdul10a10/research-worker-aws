@@ -282,6 +282,7 @@ class StudiesController < ApplicationController
     @required_audience = User.where(user_type: "Participant", deleted_at: nil)
     @required_audience.each do |required_audience|
     @required_audience_list.push(required_audience.id)
+    end
     if Audience.where(study_id: @study_id, deleted_at: nil).present?
       @study_audience = Audience.select("DISTINCT question_id").where(study_id: @study_id, deleted_at: nil)
 
