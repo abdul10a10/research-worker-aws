@@ -370,7 +370,7 @@ class StudiesController < ApplicationController
 
   def participant_active_study_list
     @user = User.find(params[:user_id])
-    @eligible_studies = EligibleCandidate.where(user_id: @user.id, deleted_at: nil)
+    @eligible_studies = EligibleCandidate.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
     @studies = Array.new
     @eligible_studies.each do |study|
       @eligible_study = Study.find(study.study_id)
