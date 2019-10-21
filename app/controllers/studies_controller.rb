@@ -311,7 +311,7 @@ class StudiesController < ApplicationController
       
       # send mail
       @user = User.find(user_id)
-      UserMailer.with(user: @user, study: @study).new_study_invitation_email.deliver_now
+      UserMailer.with(user: @user, study: @study).new_study_invitation_email.deliver_later
       
       # send notification
       @notification = Notification.new
