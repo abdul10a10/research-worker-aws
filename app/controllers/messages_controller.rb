@@ -19,8 +19,8 @@ class MessagesController < ApplicationController
   def create
     @message = Message.new(message_params)
 
-    if User.where(email: message_params[:email] ).present?
-      @user = User.where(email: message_params[:email] ).first
+    if User.where(email: params[:email] ).present?
+      @user = User.where(email: params[:email] ).first
       @message.reciever_id = @user.id
       if @message.save
         render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "message-sent", Token: nil, Success: true}, status: :ok
@@ -94,6 +94,7 @@ class MessagesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def message_params
-      params.fetch(:message, {}).permit(:reciever_id,:email, :sender_id, :subject, :message)
+      # debugger
+      params.fetch(:message, {}).permit(:reciever_id,:email,:sender_id,:subject, :description)
     end
 end

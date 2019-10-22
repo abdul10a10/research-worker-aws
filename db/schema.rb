@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_22_090146) do
+ActiveRecord::Schema.define(version: 2019_10_22_114050) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 2019_10_22_090146) do
     t.string "reciever_id"
     t.string "sender_id"
     t.string "subject"
-    t.text "message"
+    t.text "description"
     t.string "status"
     t.integer "seen_status"
     t.datetime "seen_time"
