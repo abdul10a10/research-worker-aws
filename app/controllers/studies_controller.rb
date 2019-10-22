@@ -135,6 +135,8 @@ class StudiesController < ApplicationController
     @user = User.where(user_type: "Admin").first
     @user.wallet = @user.wallet + @commision
     @user.save
+
+    @study_name = @study.name
     
     # track transaction for study
     @transaction = Transaction.new
@@ -143,7 +145,7 @@ class StudiesController < ApplicationController
     @transaction.payment_type = "Study Wallet"
     @transaction.sender_id = @study.user_id
     @transaction.amount = @study_wallet
-    @transaction.description = "Amount " + @study_wallet + " has been added to Study wallet"
+    @transaction.description = "Amount " + @study_wallet.to_s + " has been added to Study wallet"
     @transaction.save
     
     # track transaction for Admin commision
@@ -155,6 +157,7 @@ class StudiesController < ApplicationController
     @transaction.receiver_id = @user.id
     @transaction.amount = @commision
     @transaction.description = "Payment for study " + @study_name + " of " + @commision.to_s + " has been added to your wallet"
+    @transaction.save
 
     #payment notification
     @notification = Notification.new
