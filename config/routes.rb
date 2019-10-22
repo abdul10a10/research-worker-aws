@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
+  resources :transactions
   resources :terms_of_uses
+
+  resources :messages
+  get 'sent_mails/:id', to: 'messages#sent_mails'
+  get 'recieved_mails/:id', to: 'messages#recieved_mails'
+  put 'archive_message/:id', to: 'messages#archive_message'
+  delete 'delete_message/:id', to: 'messages#delete_message'
 
   resources :eligible_candidates
   get 'attempt_study/:study_id', to: 'eligible_candidates#attempt_study'

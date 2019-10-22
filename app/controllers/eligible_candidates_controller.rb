@@ -194,11 +194,23 @@ class EligibleCandidatesController < ApplicationController
     @user.wallet = @user.wallet + @study.reward.to_i
     @user.save
 
+    @study_name = @study.name
+
+    # track transaction
+    @transaction = Transaction.new
+    @transaction.transaction_id = SecureRandom.hex(10)
+    @transaction.study_id = @study.id
+    @transaction.payment_type = "Participant study reward"
+    @transaction.sender_id = @study.user_id
+    @transaction.receiver_id = @user.id
+    @transaction.amount = @study.reward.to_i
+    @transaction.description = "Study reward for " + @study_name
+    @transaction.save
+
     # send notification
     @notification = Notification.new
     @notification.notification_type = "Study payment completed"
     @notification.user_id = @user.id
-    @study_name = @study.name
     @notification.message = "Payment for " + @study_name +" study of " + @study.reward + " has been credited in your account"
     @notification.redirect_url = "/"
     @notification.save

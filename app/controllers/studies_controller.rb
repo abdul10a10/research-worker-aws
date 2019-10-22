@@ -135,6 +135,26 @@ class StudiesController < ApplicationController
     @user.wallet = @user.wallet + @commision
     @user.save
     
+    # track transaction for study
+    @transaction = Transaction.new
+    @transaction.transaction_id = SecureRandom.hex(10)
+    @transaction.study_id = @study.id
+    @transaction.payment_type = "Study Wallet"
+    @transaction.sender_id = @study.user_id
+    @transaction.amount = @study_wallet
+    @transaction.description = "Amount " + @study_wallet + " has been added to Study wallet"
+    @transaction.save
+    
+    # track transaction for Admin commision
+    @transaction = Transaction.new
+    @transaction.transaction_id = SecureRandom.hex(10)
+    @transaction.study_id = @study.id
+    @transaction.payment_type = "Admin commision"
+    @transaction.sender_id = @study.user_id
+    @transaction.receiver_id = @user.id
+    @transaction.amount = @commision
+    @transaction.description = "Payment for study " + @study_name + " of " + @commision.to_s + " has been added to your wallet"
+
     #payment notification
     @notification = Notification.new
     @notification.notification_type = "Study Payment commision"

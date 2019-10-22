@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_18_121304) do
+ActiveRecord::Schema.define(version: 2019_10_22_090146) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -58,6 +58,20 @@ ActiveRecord::Schema.define(version: 2019_10_18_121304) do
     t.text "reject_reason"
     t.string "is_completed"
     t.integer "is_paid"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.string "reciever_id"
+    t.string "sender_id"
+    t.string "subject"
+    t.text "message"
+    t.string "status"
+    t.integer "seen_status"
+    t.datetime "seen_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.integer "is_archive"
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -156,6 +170,18 @@ ActiveRecord::Schema.define(version: 2019_10_18_121304) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.string "transaction_id"
+    t.string "study_id"
+    t.string "payment_type"
+    t.string "sender_id"
+    t.string "receiver_id"
+    t.integer "amount"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
