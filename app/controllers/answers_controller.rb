@@ -64,7 +64,7 @@ class AnswersController < ApplicationController
 
   # GET /question_answer/id
   def question_answer
-    if @current_user == "Admin"
+    if @current_user.user_type == "Admin"
       @question_id = params[:id]
       @question = Question.find(params[:id])
       @answers = Answer.where(question_id: @question_id, deleted_at: nil)

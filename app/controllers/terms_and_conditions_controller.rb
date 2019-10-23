@@ -1,12 +1,16 @@
 class TermsAndConditionsController < ApplicationController
-  before_action :authorize_request, only: :user_terms
+  before_action :authorize_request, only: [:user_terms]
   before_action :set_terms_and_condition, only: [:show, :update, :destroy]
 
   # GET /terms_and_conditions
   # GET /terms_and_conditions.json
   def index
-    @terms_and_conditions = TermsAndCondition.where(deleted_at: nil).order(id: :asc)
-    render json: @terms_and_conditions, status: :ok
+    if @current_user.user_type == "Admin"
+      @terms_and_conditions = TermsAndCondition.where(deleted_at: nil).order(id: :asc)
+      render json: @terms_and_conditions, status: :ok
+      else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
   end
 
   # GET /terms_and_conditions/1

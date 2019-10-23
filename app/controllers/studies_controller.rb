@@ -386,10 +386,9 @@ class StudiesController < ApplicationController
       render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok   
     else
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
-    end
-     
+    end     
   end
-  
+
   def admin_complete_study_list
     if @current_user.user_type == "Admin"
       @studies = Study.where(is_complete: "1", deleted_at: nil).order(id: :desc)
@@ -437,23 +436,27 @@ class StudiesController < ApplicationController
 
 
   def active_study_detail
-    @message = "study"
-    @required_participant = @study.submission
-    @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
-    if EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).present?
-      @eligible_candidate = EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).first
-      @estimatetime = @study.estimatetime
-      if ((@eligible_candidate.start_time + @estimatetime.to_i.minutes) > Time.now.utc)
-        @is_attempted = "yes"
+    if @current_user.user_type == "Admin"
+      @message = "study"
+      @required_participant = @study.submission
+      @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
+      if EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).present?
+        @eligible_candidate = EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).first
+        @estimatetime = @study.estimatetime
+        if ((@eligible_candidate.start_time + @estimatetime.to_i.minutes) > Time.now.utc)
+          @is_attempted = "yes"
+        else
+          @is_attempted = "no"
+        end
+  
       else
         @is_attempted = "no"
       end
-
+      @active_candidate = @active_candidates.count
+      render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, is_attempted: @is_attempted}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok  
     else
-      @is_attempted = "no"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok 
     end
-    @active_candidate = @active_candidates.count
-    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, is_attempted: @is_attempted}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
 
 

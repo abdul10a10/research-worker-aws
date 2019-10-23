@@ -170,7 +170,7 @@ class QuestionsController < ApplicationController
   end
 
   def question_list
-    if @current_user == "Admin"
+    if @current_user.user_type == "Admin"
       @question_category = params[:question_category]
       @category = QuestionCategory.find(params[:question_category])
       @questions = Question.where(question_category: @question_category, deleted_at: nil).order(id: :asc)
