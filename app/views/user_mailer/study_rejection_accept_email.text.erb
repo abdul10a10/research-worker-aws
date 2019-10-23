@@ -1,7 +1,9 @@
 Dear <%= @user.first_name + " " + @user.last_name %>,
-Thank you for showing interest on <%= @study.name %>
-We regret to inform you that your submission has been rejected due to <%= @eligible_candidate.reject_reason %>.
+
+Thank you for showing interest in "<%= @study.name %>"
+We regret to inform you that your submission has been rejected due to "<%= @eligible_candidate.reject_reason %>".
+
 Again, thanks for your interest.
-Regards,
+
 Admin
 Research Worker

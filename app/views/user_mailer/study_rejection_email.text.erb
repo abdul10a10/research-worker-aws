@@ -1,3 +1,9 @@
 Hi <%= @user.first_name %> <%= @user.last_name %>,
-The Study <%= @study.name %>  you have created has been rejected due to <%= @study.deactivate_reason %>
-please rectify the issue and republish it again
+
+Thanks, for creating a new study "<%= @study.name %>". I’m afraid it can not be published. The reason for this is "<%= @study.deactivate_reason %>".
+Please check the study and republish it with rectified issue
+
+All the best,
+
+Admin
+Research worker

@@ -70,4 +70,23 @@ class PasswordController < ApplicationController
       render json: {message: @message}, status: :ok
     end
   end
+
+  def check_password
+    # @id = params[:id]
+    @password = params[:currentpassword]
+    @user = User.find_by(id: params[:user_id])
+    if @user.present?
+      if @user && @user.valid_password?(@currentpassword)
+        @message = "Password-match"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      else
+        @message = "Password-mismatch"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      end
+    else
+      @message = "user-not-found"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    end
+  end
+
 end
