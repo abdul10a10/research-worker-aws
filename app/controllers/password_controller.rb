@@ -73,7 +73,7 @@ class PasswordController < ApplicationController
 
   def check_password
     # @id = params[:id]
-    @password = params[:currentpassword]
+    @currentpassword = params[:currentpassword]
     @user = User.find_by(id: params[:user_id])
     if @user.present?
       if @user && @user.valid_password?(@currentpassword)
