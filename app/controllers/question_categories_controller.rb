@@ -6,8 +6,12 @@ class QuestionCategoriesController < ApplicationController
   # GET /question_categories
   # GET /question_categories.json
   def index
-    @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
-    render json: @question_categories, status: :ok
+    if @current_user == "Admin"
+      @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
+      render json: @question_categories, status: :ok  
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
   end
 
   # GET /question_categories/1

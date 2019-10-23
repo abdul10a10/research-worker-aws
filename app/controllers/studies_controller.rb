@@ -1,6 +1,6 @@
 class StudiesController < ApplicationController
   # before_action :authorize_request, except: :create
-  before_action :authorize_request, only: [:active_study_detail]
+  before_action :authorize_request, only: [:active_study_detail, :admin_inactive_study_list, :admin_new_study_list, :admin_complete_study_list, :admin_active_study_list]
   before_action :set_study, only: [:show, :update, :destroy,:paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
 
   # GET /studies
@@ -381,23 +381,40 @@ class StudiesController < ApplicationController
   end
 
   def admin_new_study_list
-    @studies = Study.where(is_published: "1", is_active: nil, is_complete: nil,deleted_at: nil).order(id: :desc)
-    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+    if @current_user.user_type == "Admin"
+      @studies = Study.where(is_published: "1", is_active: nil, is_complete: nil,deleted_at: nil).order(id: :desc)
+      render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok   
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
+     
   end
-
+  
   def admin_complete_study_list
-    @studies = Study.where(is_complete: "1", deleted_at: nil).order(id: :desc)
-    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+    if @current_user.user_type == "Admin"
+      @studies = Study.where(is_complete: "1", deleted_at: nil).order(id: :desc)
+      render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok  
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
   end
 
   def admin_active_study_list
-    @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
-    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+    if @current_user.user_type == "Admin"
+      @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
+      render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
   end
 
   def admin_inactive_study_list
-    @studies = Study.where(is_active: "0", is_complete: nil,deleted_at: nil).order(id: :desc)
-    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+    if @current_user.user_type == "Admin"
+      @studies = Study.where(is_active: "0", is_complete: nil,deleted_at: nil).order(id: :desc)
+      render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
   end
 
 

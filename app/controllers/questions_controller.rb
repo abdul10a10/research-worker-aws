@@ -170,15 +170,19 @@ class QuestionsController < ApplicationController
   end
 
   def question_list
-    @question_category = params[:question_category]
-    @category = QuestionCategory.find(params[:question_category])
-    @questions = Question.where(question_category: @question_category, deleted_at: nil).order(id: :asc)
-    @message = 'questions-per-category'
-    @data = {
-      QuestionCategory: @category,
-      Questions: @questions
-    }
-    render json: {Data: @data, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    if @current_user == "Admin"
+      @question_category = params[:question_category]
+      @category = QuestionCategory.find(params[:question_category])
+      @questions = Question.where(question_category: @question_category, deleted_at: nil).order(id: :asc)
+      @message = 'questions-per-category'
+      @data = {
+        QuestionCategory: @category,
+        Questions: @questions
+      }
+      render json: {Data: @data, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
   end
 
   def delete_question

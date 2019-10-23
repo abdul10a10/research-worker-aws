@@ -64,11 +64,14 @@ class AnswersController < ApplicationController
 
   # GET /question_answer/id
   def question_answer
-    @question_id = params[:id]
-    @question = Question.find(params[:id])
-    @answers = Answer.where(question_id: @question_id, deleted_at: nil)
-    # render :question_answer, status: :ok
-    render json: {question: @question, answer: @answers}, status: :ok
+    if @current_user == "Admin"
+      @question_id = params[:id]
+      @question = Question.find(params[:id])
+      @answers = Answer.where(question_id: @question_id, deleted_at: nil)
+      render json: {Data: {question: @question, answer: @answers}, CanEdit: false, CanDelete: false, Status: :ok, message: nil, Token: nil, Success: true}, status: :ok
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
   end
 
   private
