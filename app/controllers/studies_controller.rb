@@ -1,7 +1,7 @@
 class StudiesController < ApplicationController
   before_action :authorize_request, except: [:create, :index, :filtered_candidate, :find_audience]
   # before_action :authorize_request, only: [:active_study_detail, :admin_inactive_study_list, :admin_new_study_list, :admin_complete_study_list, :admin_active_study_list]
-  before_action :set_study, only: [:show, :update, :destroy,:paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
+  before_action :set_study, only: [:show, :admin_active_study_detail, :update, :destroy,:paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
 
   # GET /studies
   # GET /studies.json
@@ -511,7 +511,68 @@ class StudiesController < ApplicationController
 
 
   def researcher_active_study_detail
-    if @current_user.user_type == "Researcher" || @current_user.user_type == "Admin"
+    if @current_user.user_type == "Researcher"
+      @message = "study"
+      @required_participant = @study.submission
+      @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
+      @active_candidate = @active_candidates.count
+      @active_candidate_list = Array.new
+      @active_candidates.each do |candidate|
+        @user = User.find(candidate.user_id)
+        @active_candidate_list.push(@user)
+      end
+      @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", deleted_at: nil)
+      @submitted_candidate_count = @submitted_candidates.count
+      @submitted_candidates_list = Array.new
+      @submitted_candidates.each do |candidate|
+        @user = User.find(candidate.user_id)
+        if (@user.user_type == "Participant")
+          @submitted_candidates_list.push(@user)
+        end
+      end
+  
+      @accepted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", is_accepted: "1", deleted_at: nil)
+      @accepted_candidate_count = @accepted_candidates.count
+      @accepted_candidate_list = Array.new
+      @accepted_candidates.each do |candidate|
+        @user = User.find(candidate.user_id)
+        if (@user.user_type == "Participant")
+          @accepted_candidate_list.push(@user)
+        end
+      end
+  
+      @rejected_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", is_accepted: "0", deleted_at: nil)
+      @rejected_candidate_count = @rejected_candidates.count
+      @rejected_candidate_list = Array.new
+      @rejected_candidates.each do |candidate|
+        @user = User.find(candidate.user_id)
+        if (@user.user_type == "Participant")
+          @rejected_candidate_list.push(@user)
+        end
+      end
+  
+      render json: {Data: { study: @study, 
+                            required_participant: @required_participant, 
+                            active_candidate: @active_candidate, 
+                            active_candidate_list: @active_candidate_list, 
+                            submitted_candidate_list: @submitted_candidates_list,
+                            accepted_candidate_list: @accepted_candidate_list,
+                            rejected_candidate_list: @rejected_candidate_list,
+                            rejected_candidate_count: @rejected_candidate_count,
+                            accepted_candidate_count: @accepted_candidate_count,
+                            submitted_candidate_count: @submitted_candidate_count
+  
+                          }, 
+                          CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true
+                    }, status: :ok      
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
+  end
+
+
+  def admin_active_study_detail
+    if @current_user.user_type == "Admin"
       @message = "study"
       @required_participant = @study.submission
       @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
