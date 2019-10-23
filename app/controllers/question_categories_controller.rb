@@ -8,7 +8,7 @@ class QuestionCategoriesController < ApplicationController
   def index
     if @current_user == "Admin"
       @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
-      render json: {Data: {@question_categories}, CanEdit: false, CanDelete: false, Status: :ok, message: "question-categories", Token: nil, Success: true}, status: :ok
+      render json: {Data: {question_categories: @question_categories}, CanEdit: false, CanDelete: false, Status: :ok, message: "question-categories", Token: nil, Success: true}, status: :ok
     else
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
     end
