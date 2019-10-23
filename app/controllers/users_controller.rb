@@ -251,16 +251,20 @@ class UsersController < ApplicationController
     # @users = User.where(created_at: Time.now.beginning_of_year-1.month..@time)
     # @message = "studies-not-found"
     @participant = Array.new
+    @researcher = Array.new
     @month = Array.new
     @study = Array.new
     i = 0
     loop do
-      @users = User.where(created_at: @start_time..@end_time, deleted_at: nil)
+      @participant_user = User.where(created_at: @start_time..@end_time, user_type: "Participant",deleted_at: nil)
+      @researcher_user = User.where(created_at: @start_time..@end_time, user_type: "Researcher",deleted_at: nil)
       @studies = Study.where(created_at: @start_time..@end_time, deleted_at: nil)
-      @users_count = @users.count
+      @participant_count = @participant_user.count
+      @researcher_count = @researcher_user.count
       @study_count = @studies.count
       @month_name = @start_time.strftime("%B")
-      @participant.push(@users_count)
+      @participant.push(@participant_count)
+      @researcher.push(@researcher_count)
       @study.push(@study_count)
       @month.push(@month_name)
       @end_time = @start_time
@@ -273,7 +277,7 @@ class UsersController < ApplicationController
       
     end
      
-    render json: {Data: { participant:@participant.reverse,study: @study.reverse, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    render json: {Data: { participant:@participant.reverse, researcher:@researcher.reverse,study: @study.reverse, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   private
