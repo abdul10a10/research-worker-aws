@@ -88,13 +88,17 @@ class StudiesController < ApplicationController
 
   #GET 'completed_studies/:user_id'
   def completed_studies
-    if Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil).present?
-      @studies = Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil).order(id: :desc)
-      @message = "completed-studies"
-      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+    if @current_user.user_type == "Admin"
+      if Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil).present?
+        @studies = Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil).order(id: :desc)
+        @message = "completed-studies"
+        render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+      else
+        @message = "studies-not-found"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok    
+      end  
     else
-      @message = "studies-not-found"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok    
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
     end
   end
 
@@ -371,13 +375,16 @@ class StudiesController < ApplicationController
     @study.deleted_at!
     @message = "study-deleted"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-
   end
 
   def study_detail
-    @user = User.find(@study.user_id)
-    @message = "study"
-    render json: {Data: { study: @study, user: @user}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
+    if @current_user.user_type == "Admin"
+      @user = User.find(@study.user_id)
+      @message = "study"
+      render json: {Data: { study: @study, user: @user}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
   end
 
   def admin_new_study_list
