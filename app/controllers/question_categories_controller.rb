@@ -6,7 +6,7 @@ class QuestionCategoriesController < ApplicationController
   # GET /question_categories
   # GET /question_categories.json
   def index
-    if @current_user.user_type == "Admin"
+    if @current_user.user_type == "Admin" || @current_user.user_type == "Researcher"
       @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
       render json: {Data: {question_categories: @question_categories}, CanEdit: false, CanDelete: false, Status: :ok, message: "question-categories", Token: nil, Success: true}, status: :ok
     else
