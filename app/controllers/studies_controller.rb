@@ -104,7 +104,7 @@ class StudiesController < ApplicationController
 
   #GET 'completed_studies/:user_id'
   def completed_studies
-    if @current_user.user_type == "Researcher" || @current_user.user_type == "Admin"
+    if @current_user.user_type == "Researcher"
       if Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil).present?
         @studies = Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil).order(id: :desc)
         @message = "completed-studies"
