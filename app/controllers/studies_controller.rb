@@ -15,7 +15,7 @@ class StudiesController < ApplicationController
   # GET /studies/1
   # GET /studies/1.json
   def show
-    if @current_user.user_type == "Researcher" || @current_user.user_type == "Admin"
+    if @current_user.user_type == "Researcher"
       @message = "study"
       @filtered_candidates = filtered_candidate(@study.id)
       @filtered_candidates_count = @filtered_candidates.count
