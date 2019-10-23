@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authorize_request, only: :dashboard
+  before_action :authorize_request, only: [:dashboard, :reports, :participantoverview]
   # before_action :authorize_request, except: :create
   before_action :set_user, only: [ :update, :destroy, :activate, :deactivate, :share_referral_code]
 
@@ -217,67 +217,77 @@ class UsersController < ApplicationController
 
   #GET /participantoverview/:id
   def participantoverview
-    if User.exists?(params[:id])
-      @user = User.find_by_id(params[:id])
-      @message = "user-info"
-      if Response.where(user_id: @user.id, deleted_at: nil).present?
-        @demographics = Array.new
-        # @response = Response.where(user_id: params[:id]).order(question_id: :asc)
-        @question_ids = Response.select("DISTINCT question_id").where(user_id: params[:id], deleted_at: nil).map(&:question_id)
-        @question_ids.each do |question_id|
-          @response = Response.where(user_id: @user.id, question_id: question_id, deleted_at: nil)
-          @question = Question.find(question_id)
-          @answers = Array.new
-          @response.each do |response|
-            @answer = Answer.find(response.answer_id)
-            @answers.push(@answer.description)
+    if @current_user.user_type == "Admin"
+      if User.exists?(params[:id])
+        @user = User.find_by_id(params[:id])
+        @message = "user-info"
+        if Response.where(user_id: @user.id, deleted_at: nil).present?
+          @demographics = Array.new
+          # @response = Response.where(user_id: params[:id]).order(question_id: :asc)
+          @question_ids = Response.select("DISTINCT question_id").where(user_id: params[:id], deleted_at: nil).map(&:question_id)
+          @question_ids.each do |question_id|
+            @response = Response.where(user_id: @user.id, question_id: question_id, deleted_at: nil)
+            @question = Question.find(question_id)
+            @answers = Array.new
+            @response.each do |response|
+              @answer = Answer.find(response.answer_id)
+              @answers.push(@answer.description)
+            end
+            @demographics.push({
+              question: @question,
+              answer: @answers
+            })
           end
-          @demographics.push({
-            question: @question,
-            answer: @answers
-          })
         end
+        render json: {Data: {user: @user, demographics: @demographics}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      else
+        @message = "user-not-found"
+        render json: { message: @message}, status: :ok
       end
-      render json: {Data: {user: @user, demographics: @demographics}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      @message = "user-not-found"
-      render json: { message: @message}, status: :ok
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok      
     end
   end
 
   def reports
-    @end_time = Time.now.utc
-    @start_time = Time.now.beginning_of_month
-    # @users = User.where(created_at: Time.now.beginning_of_year-1.month..@time)
-    # @message = "studies-not-found"
-    @participant = Array.new
-    @researcher = Array.new
-    @month = Array.new
-    @study = Array.new
-    i = 0
-    loop do
-      @participant_user = User.where(created_at: @start_time..@end_time, user_type: "Participant",deleted_at: nil)
-      @researcher_user = User.where(created_at: @start_time..@end_time, user_type: "Researcher",deleted_at: nil)
-      @studies = Study.where(created_at: @start_time..@end_time, deleted_at: nil)
-      @participant_count = @participant_user.count
-      @researcher_count = @researcher_user.count
-      @study_count = @studies.count
-      @month_name = @start_time.strftime("%B")
-      @participant.push(@participant_count)
-      @researcher.push(@researcher_count)
-      @study.push(@study_count)
-      @month.push(@month_name)
-      @end_time = @start_time
-      @start_time = @start_time-1.month
+    if @current_user.user_type == "Admin"
+      
+      @end_time = Time.now.utc
+      @start_time = Time.now.beginning_of_month
+      # @users = User.where(created_at: Time.now.beginning_of_year-1.month..@time)
+      # @message = "studies-not-found"
+      @participant = Array.new
+      @researcher = Array.new
+      @month = Array.new
+      @study = Array.new
+      i = 0
 
-      i += 1
-      if i == 12
-        break       
+      loop do
+        @participant_user = User.where(created_at: @start_time..@end_time, user_type: "Participant",deleted_at: nil)
+        @researcher_user = User.where(created_at: @start_time..@end_time, user_type: "Researcher",deleted_at: nil)
+        @studies = Study.where(created_at: @start_time..@end_time, deleted_at: nil)
+        @participant_count = @participant_user.count
+        @researcher_count = @researcher_user.count
+        @study_count = @studies.count
+        @month_name = @start_time.strftime("%B")
+        @participant.push(@participant_count)
+        @researcher.push(@researcher_count)
+        @study.push(@study_count)
+        @month.push(@month_name)
+        @end_time = @start_time
+        @start_time = @start_time-1.month
+
+        i += 1
+        if i == 12
+          break       
+        end
+        
       end
       
+      render json: {Data: { participant:@participant.reverse, researcher:@researcher.reverse,study: @study.reverse, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok      
     end
-     
-    render json: {Data: { participant:@participant.reverse, researcher:@researcher.reverse,study: @study.reverse, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   private
