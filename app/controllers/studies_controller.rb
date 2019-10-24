@@ -485,8 +485,8 @@ class StudiesController < ApplicationController
   end
 
 
-  def active_study_detail
-    if @current_user.user_type == "Admin" || @current_user.user_type == "Researcher"
+  def participant_active_study_detail
+    if @current_user.user_type == "Participant"
       @message = "study"
       @required_participant = @study.submission
       @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
