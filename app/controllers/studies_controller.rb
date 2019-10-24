@@ -633,7 +633,7 @@ class StudiesController < ApplicationController
 
 
   def active_candidate_list
-    if @current_user.user_type == "Researcher"
+    if @current_user.user_type == "Researcher" || @current_user.user_type == "Admin"
       @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
       @active_candidate = @active_candidates.count
       @active_candidate_list = Array.new
@@ -649,7 +649,7 @@ class StudiesController < ApplicationController
 
 
   def submitted_candidate_list
-    if @current_user.user_type == "Researcher"
+    if @current_user.user_type == "Researcher" || @current_user.user_type == "Admin"
       @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", is_accepted: nil, deleted_at: nil)
       @submitted_candidate_count = @submitted_candidates.count
       @submitted_candidate_list = Array.new
@@ -694,7 +694,7 @@ class StudiesController < ApplicationController
   end
 
   def paid_candidate_list
-    if @current_user.user_type == "Researcher"
+    if @current_user.user_type == "Researcher" || @current_user.user_type == "Admin"
       @paid_candidates = EligibleCandidate.where(study_id: @study.id, is_paid: "1", deleted_at: nil)
       @paid_candidate_count = @paid_candidates.count
       @paid_candidate_list = Array.new
