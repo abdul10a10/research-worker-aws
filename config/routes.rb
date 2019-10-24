@@ -113,4 +113,6 @@ Rails.application.routes.draw do
   post 'check_password', to: 'password#check_password'
 
   # post 'admin/login', to: 'sessions#admin_login'
+
+  get 'evai_method', to: 'studies#evai_method'
 end
