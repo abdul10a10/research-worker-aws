@@ -1,7 +1,7 @@
 class StudiesController < ApplicationController
   before_action :authorize_request, except: [:create, :index, :filtered_candidate, :find_audience]
   # before_action :authorize_request, only: [:active_study_detail, :admin_inactive_study_list, :admin_new_study_list, :admin_complete_study_list, :admin_active_study_list]
-  before_action :set_study, only: [:show, :admin_active_study_detail, :update, :destroy,:paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
+  before_action :set_study, only: [:show, :admin_active_study_detail, :update, :destroy,:paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :participant_active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
 
   # GET /studies
   # GET /studies.json
