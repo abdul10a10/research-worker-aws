@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
   # before_action :authorize_request, except: :create
-  before_action :authorize_request, only: :category_question
+  before_action :authorize_request, only: [:category_question, :question_list]
   before_action :set_question, only: [:show, :update, :destroy]
 
   # GET /questions
