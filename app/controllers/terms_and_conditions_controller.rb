@@ -8,8 +8,8 @@ class TermsAndConditionsController < ApplicationController
     # if @current_user.user_type == "Admin"
       @terms_and_conditions = TermsAndCondition.where(deleted_at: nil).order(id: :asc)
       render json: @terms_and_conditions, status: :ok
-      else
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+      # else
+      # render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
     # end
   end
 
