@@ -19,9 +19,9 @@ class MessagesController < ApplicationController
   def create
     @message = Message.new(message_params)
 
-    if User.where(email: params[:email] ).present?
-      @user = User.where(email: params[:email] ).first
-      @message.reciever_id = @user.id
+    if User.where(research_worker_id: params[:research_worker_id] ).present?
+      @user = User.where(research_worker_id: params[:research_worker_id] ).first
+      @message.reciever_id = @user.research_worker_id
       if @message.save
         MessageMailer.with(user: @user, message: @message).message_email.deliver_later
         render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "message-sent", Token: nil, Success: true}, status: :ok
@@ -96,6 +96,6 @@ class MessagesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def message_params
       # debugger
-      params.fetch(:message, {}).permit(:reciever_id,:email,:sender_id,:subject, :description)
+      params.fetch(:message, {}).permit(:reciever_id,:research_worker_id,:sender_id,:subject, :description)
     end
 end
