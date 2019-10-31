@@ -57,8 +57,8 @@ class QuestionsController < ApplicationController
 
   def category_question
     @user_id = @current_user.id
-    @question_category = params[:question_category]
-    @questions = Question.where(question_category: @question_category, deleted_at: nil).order(id: :asc)
+    @question_category = QuestionCategory.find(params[:question_category_id])
+    @questions = @question_category.questions.where(, deleted_at: nil).order(id: :asc)
     @responce = Array.new
     @questions.each do |question|
       @question_id = question.id
@@ -93,8 +93,8 @@ class QuestionsController < ApplicationController
 
   def audience_question
     @study_id = params[:study_id]
-    @question_category = params[:question_category]
-    @questions = Question.where(question_category: @question_category, deleted_at: nil).order(id: :asc)
+    @question_category = QuestionCategory.find(params[:question_category_id])
+    @questions = @question_category.questions.where(deleted_at: nil).order(id: :asc)
     # arrray to save all things
     @audience_question = Array.new
     @questions.each do |question|
@@ -171,9 +171,9 @@ class QuestionsController < ApplicationController
 
   def question_list
     if @current_user.user_type == "Admin"
-      @question_category = params[:question_category]
-      @category = QuestionCategory.find(params[:question_category])
-      @questions = Question.where(question_category: @question_category, deleted_at: nil).order(id: :asc)
+      @question_category = params[:question_category_id]
+      @category = QuestionCategory.find(params[:question_category_id])
+      @questions = @category.questions.where(deleted_at: nil).order(id: :asc)
       @message = 'questions-per-category'
       @data = {
         QuestionCategory: @category,
@@ -200,6 +200,6 @@ class QuestionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def question_params
-      params.fetch(:question, {}).permit(:question_category, :question_type, :title, :description, :description2)
+      params.fetch(:question, {}).permit(:question_category_id, :question_type, :title, :description, :description2)
     end
 end
