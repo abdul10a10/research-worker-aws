@@ -68,9 +68,9 @@ Rails.application.routes.draw do
   get 'question_answer/:id', to: 'answers#question_answer'
 
   resources :questions
-  get 'category_question/:question_category', to: 'questions#category_question'
-  get 'audience_question/:question_category/:study_id', to: 'questions#audience_question'
-  get 'question_list/:question_category', to: 'questions#question_list'
+  get 'category_question/:question_category_id', to: 'questions#category_question'
+  get 'audience_question/:question_category_id/:study_id', to: 'questions#audience_question'
+  get 'question_list/:question_category_id', to: 'questions#question_list'
   post 'delete_question/:id', to: 'questions#delete_question'
 
   resources :question_categories
