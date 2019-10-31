@@ -21,7 +21,7 @@ class ResponsesController < ApplicationController
   def create
     @response = Response.new(response_params)
     @question = Question.find(@response.question_id)
-    if @question.question_type == 2
+    if @question.question_type_id == 2
       answer_ids = response_params[:answer_id]
       for answer_id in answer_ids do
         @responsetemp = Response.new(response_params)
@@ -89,7 +89,7 @@ class ResponsesController < ApplicationController
 
   def user_response_per_category
     @user_id = params[:id]
-    @question_category = params[:question_category]
+    @question_category = params[:question_category_id]
     @responses = Response.where(user_id: @user_id, deleted_at: nil)
     @message = "user-responses-per-category"
     render json: {Data: @responses, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
