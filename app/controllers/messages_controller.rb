@@ -76,7 +76,7 @@ class MessagesController < ApplicationController
   def archive_message
     @message.is_archive = "1"
     @message.save
-    render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "no-mail-found", Token: nil, Success: true}, status: :ok
+    render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "message-archived", Token: nil, Success: true}, status: :ok
   end
 
 
