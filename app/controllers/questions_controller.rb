@@ -58,7 +58,7 @@ class QuestionsController < ApplicationController
   def category_question
     @user_id = @current_user.id
     @question_category = QuestionCategory.find(params[:question_category_id])
-    @questions = @question_category.questions.where(, deleted_at: nil).order(id: :asc)
+    @questions = @question_category.questions.where(deleted_at: nil).order(id: :asc)
     @responce = Array.new
     @questions.each do |question|
       @question_id = question.id
