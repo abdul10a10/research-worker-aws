@@ -75,7 +75,8 @@ class QuestionCategoriesController < ApplicationController
     @total_response = 0
     @question_categories.each do |category|
       @question_category = category.id
-      @question = Question.where(question_category: @question_category, deleted_at: nil)
+      @question = category.questions.where(deleted_at: nil)
+      # @question = Question.where(question_category: @question_category, deleted_at: nil)
       @question_count = @question.count
       @total_question = @total_question + @question_count
       @response=0
