@@ -281,7 +281,7 @@ class StudiesController < ApplicationController
   end
 
 
-  # PUT /publish_study/1
+  # PUT /pay_for_study/1
   def pay_for_study
     if @current_user.user_type == "Researcher"
       # calculation

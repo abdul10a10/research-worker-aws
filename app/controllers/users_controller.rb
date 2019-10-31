@@ -89,8 +89,9 @@ class UsersController < ApplicationController
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
       @message = "user-info"
+      @notification = @user.notifications.where(deleted_at: nil).order(id: :desc)
       # @notification = Notification.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
-      @notification = Notification.joins(:user).where(notifications:{user_id: @user.id}).order(id: :desc)
+      # @notification = Notification.joins(:user).where(notifications:{user_id: @user.id}).order(id: :desc)
       # render json: {user: @user, message: @message}, status: :ok
       @notification.each do |notification|
         if (notification.status == nil)
@@ -211,7 +212,7 @@ class UsersController < ApplicationController
 
 
   def share_referral_code
-    if @current_user.user_type == "Admin"
+    if @current_user.user_type == "Participant"
       @receiver = params[:email]
       UserMailer.with(user: @user, receiver: @receiver).share_referral_code_email.deliver_later
       @message = "Code-shared"

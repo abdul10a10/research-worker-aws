@@ -1,5 +1,7 @@
 class EligibleCandidate < ApplicationRecord
-
+  belongs_to :user
+  belongs_to :study
+  
   def start_time!
     self.is_attempted = 1
     self.start_time = Time.now.utc
