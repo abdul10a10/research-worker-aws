@@ -53,7 +53,7 @@ class MessagesController < ApplicationController
   def sent_mails
     @user = User.find(params[:id])
     @sender_id = @user.research_worker_id
-    if Message.where(sender_id: @sender_id, deleted_at: nil).present?
+    if Message.where(sender_id: @sender_id, is_archive: nil, deleted_at: nil).present?
       @messages = Message.where(sender_id: @sender_id, deleted_at: nil).order(id: :desc)
       render json: {Data: {messages: @messages}, CanEdit: false, CanDelete: true, Status: :ok, message: "sent-mails", Token: nil, Success: true}, status: :ok
     else
