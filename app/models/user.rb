@@ -6,6 +6,11 @@ class User < ApplicationRecord
   
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
+  
+  def generate_unique_id!
+    self.research_worker_id = generate_token
+    save!
+  end
 
   def generate_password_token!
     self.reset_password_token = generate_token
@@ -17,6 +22,7 @@ class User < ApplicationRecord
     self.wallet = self.wallet + reward
     save!
   end
+
   def password_token_valid?
     (self.reset_password_sent_at + 3.hours) > Time.now.utc
   end

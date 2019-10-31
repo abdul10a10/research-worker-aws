@@ -58,6 +58,7 @@ class UsersController < ApplicationController
     if @validation
       if @user.save
         @user.generate_email_confirmation_token!
+        @user.generate_unique_id!
         UserMailer.with(user: @user).welcome_email.deliver_later
         @message = "user-registered"
         render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
@@ -88,6 +89,11 @@ class UsersController < ApplicationController
   def show
     if User.exists?(params[:id])
       @user = User.find_by_id(params[:id])
+      # ==== research worker id generated ===
+      if @user.research_worker_id === nil
+        @user.generate_unique_id!
+      end
+      
       @message = "user-info"
       @notification = @user.notifications.where(deleted_at: nil).order(id: :desc)
       # @notification = Notification.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
