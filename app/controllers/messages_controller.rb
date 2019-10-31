@@ -19,8 +19,8 @@ class MessagesController < ApplicationController
   def create
     @message = Message.new(message_params)
 
-    if User.where(research_worker_id: params[:research_worker_id] ).present?
-      @user = User.where(research_worker_id: params[:research_worker_id] ).first
+    if User.where(research_worker_id: params[:reciever_id] ).present?
+      @user = User.where(research_worker_id: params[:reciever_id] ).first
       if @message.save
         MessageMailer.with(user: @user, message: @message).message_email.deliver_later
         render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "message-sent", Token: nil, Success: true}, status: :ok
