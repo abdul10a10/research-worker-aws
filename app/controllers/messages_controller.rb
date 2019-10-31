@@ -63,7 +63,8 @@ class MessagesController < ApplicationController
 
 
   def recieved_mails
-    @reciever_id = params[:id]
+    @user = User.find(params[:id])
+    @reciever_id = @user.research_worker_id
     if Message.where(reciever_id: @reciever_id, is_archive: nil, deleted_at: nil).present?
       @messages = Message.where(reciever_id: @reciever_id, deleted_at: nil, is_archive: nil).order(id: :desc)
       render json: {Data: {messages: @messages}, CanEdit: false, CanDelete: true, Status: :ok, message: "recieved-mails", Token: nil, Success: true}, status: :ok
