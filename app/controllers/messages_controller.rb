@@ -23,6 +23,7 @@ class MessagesController < ApplicationController
       @user = User.where(email: params[:email] ).first
       @message.reciever_id = @user.id
       if @message.save
+        MessageMailer.with(user: @user, message: @message).message_email.deliver_later
         render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "message-sent", Token: nil, Success: true}, status: :ok
       else
         render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "message-not-sent", Token: nil, Success: true}, status: :ok
