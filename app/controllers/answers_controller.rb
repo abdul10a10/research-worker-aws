@@ -23,7 +23,7 @@ class AnswersController < ApplicationController
     @question_id = @answer.question_id
     @description = @answer.description
 
-    if Answer.where(question_id: @question_id, description: @description, deleted_at: nil)
+    if Answer.where(question_id: @question_id, description: @description, deleted_at: nil).present?
       @message = "answer-already-exist"
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
     else
