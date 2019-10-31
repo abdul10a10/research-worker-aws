@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :messages
   get 'sent_mails/:id', to: 'messages#sent_mails'
   get 'recieved_mails/:id', to: 'messages#recieved_mails'
+  get 'archive_mails/:id', to: 'messages#archive_mails'
   put 'archive_message/:id', to: 'messages#archive_message'
   delete 'delete_message/:id', to: 'messages#delete_message'
 

@@ -72,6 +72,17 @@ class MessagesController < ApplicationController
     end
   end
 
+  def archive_mails
+    @user = User.find(params[:id])
+    @sender_id = @user.research_worker_id
+    if Message.where(sender_id: @sender_id, is_archive: "1", deleted_at: nil).present?
+      @messages = Message.where(sender_id: @sender_id, deleted_at: nil).order(id: :desc)
+      render json: {Data: {messages: @messages}, CanEdit: false, CanDelete: true, Status: :ok, message: "archive-mails", Token: nil, Success: true}, status: :ok
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "no-mail-found", Token: nil, Success: true}, status: :ok      
+    end
+  end
+
 
   def archive_message
     @message.is_archive = "1"
