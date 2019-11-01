@@ -298,8 +298,8 @@ class UsersController < ApplicationController
       i = 0
 
       loop do
-        @participant_user = User.where(created_at: @start_time..@end_time, user_type: "Participant",deleted_at: nil)
-        @researcher_user = User.where(created_at: @start_time..@end_time, user_type: "Researcher",deleted_at: nil)
+        @participant_user = User.where(created_at: @start_time..@end_time, user_type: "Participant",verification_status: '1', deleted_at: nil)
+        @researcher_user = User.where(created_at: @start_time..@end_time, user_type: "Researcher", verification_status: '1', deleted_at: nil)
         @studies = Study.where(created_at: @start_time..@end_time, deleted_at: nil)
         @participant_count = @participant_user.count
         @researcher_count = @researcher_user.count
