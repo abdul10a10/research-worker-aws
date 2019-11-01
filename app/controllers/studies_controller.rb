@@ -698,7 +698,7 @@ class StudiesController < ApplicationController
     if @current_user.user_type == "Participant" || @current_user.user_type == "Admin"
       @user = @study.user
       @message = "user-detail-of-study"
-      render json: {Data: { user: @user}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+      render json: {Data: { research_worker_id: @user.research_worker_id}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
     else
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok 
     end
