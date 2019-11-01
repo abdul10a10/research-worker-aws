@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   get 'submitted_candidate_list/:id', to: 'studies#submitted_candidate_list'
   get 'accepted_candidate_list/:id', to: 'studies#accepted_candidate_list'
   get 'paid_candidate_list/:id', to: 'studies#paid_candidate_list'
+  get 'researcher_unique_id/:id', to: 'studies#researcher_unique_id'
 
   get 'total_studies', to:  'studies#total_studies'
   get 'admin_new_study_list', to: 'studies#admin_new_study_list'

@@ -1,7 +1,7 @@
 class StudiesController < ApplicationController
   before_action :authorize_request, except: [ :index, :filtered_candidate, :find_audience, :auto_activate_study]
   # before_action :authorize_request, only: [:active_study_detail, :admin_inactive_study_list, :admin_new_study_list, :admin_complete_study_list, :admin_active_study_list]
-  before_action :set_study, only: [:show, :admin_active_study_detail, :update, :destroy,:paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :participant_active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
+  before_action :set_study, only: [:show, :researcher_unique_id, :admin_active_study_detail, :update, :destroy,:paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, :activate_study, :reject_study, :study_detail, :participant_active_study_detail, :researcher_active_study_detail, :active_candidate_list, :pay_for_study]
 
   # GET /studies
   # GET /studies.json
@@ -694,6 +694,16 @@ class StudiesController < ApplicationController
     end
   end
 
+  def researcher_unique_id
+    if @current_user.user_type == "Participant" || @current_user.user_type == "Admin"
+      @user = @study.user
+      @message = "user-detail-of-study"
+      render json: {Data: { user: @user}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok 
+    end
+    
+  end
 # ============================================ Admin, Researcher ===========================================================================
 
   def study_detail
