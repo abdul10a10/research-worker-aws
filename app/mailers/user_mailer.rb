@@ -35,7 +35,7 @@ class UserMailer < ApplicationMailer
   def new_study_invitation_email
     @user = params[:user]
     @study = params[:study]
-    @link = "http://winpowerllc.karyonsolutions.com/participantstudy"
+    @link = "http://winpowerllc.karyonsolutions.com/#/participantstudy"
     mail(to: @user.email, subject: "Invitation for new study")
   end
 
