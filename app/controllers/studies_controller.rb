@@ -46,24 +46,52 @@ class StudiesController < ApplicationController
 
   def filtered_candidate(id)
     @study_id = id
-    @user_ids = Array.new
+    # @user_ids = Array.new
+    # @study = Study.find(@study_id)
+    # # loop to find user_ids
+    # if Audience.where(study_id: @study_id, deleted_at: nil).present?
+    #   @audience = Audience.where(study_id: @study_id, deleted_at: nil)
+    #   @audience.each do |audience|
+    #     @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
+    #     @users.each do |user|
+    #       @user_ids.push(user.user_id)
+    #     end
+    #   end
+    # end
+    # @filtered_candidate_list = Array.new
+    # @user_ids.uniq.each do|user_id|
+    #   @user = User.find(user_id)
+    #   @filtered_candidate_list.push(@user)
+    # end
+    # return @filtered_candidate_list
+    @required_audience_list = Array.new
+    @required_audience = User.where(user_type: "Participant", deleted_at: nil)
+    @required_audience.each do |required_audience|
+    @required_audience_list.push(required_audience.id)
+    end
     @study = Study.find(@study_id)
-    # loop to find user_ids
     if Audience.where(study_id: @study_id, deleted_at: nil).present?
-      @audience = Audience.where(study_id: @study_id, deleted_at: nil)
-      @audience.each do |audience|
-        @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
-        @users.each do |user|
-          @user_ids.push(user.user_id)
+      @study_audience = Audience.select("DISTINCT question_id").where(study_id: @study_id, deleted_at: nil)
+
+      @study_audience.each do |study_audience|
+        @audience = Audience.where(question_id: study_audience.question_id, study_id: @study_id, deleted_at: nil)
+        @required_users_list = Array.new
+
+        @audience.each do |audience|
+          @required_users = Array.new
+          @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
+
+          @users.each do |user|
+            @required_users.push( user.user_id)
+          end
+
+          @required_users_list = @required_users_list + @required_users
         end
+
+        @required_audience_list = @required_users_list & @required_audience_list
+
       end
-    end
-    @filtered_candidate_list = Array.new
-    @user_ids.uniq.each do|user_id|
-      @user = User.find(user_id)
-      @filtered_candidate_list.push(@user)
-    end
-    return @filtered_candidate_list
+      return @required_audience_list
   end
 
   # GET /find_audience/:id
