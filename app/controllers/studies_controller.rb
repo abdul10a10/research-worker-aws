@@ -425,8 +425,9 @@ class StudiesController < ApplicationController
         @user = User.find(candidate.user_id)
         @active_candidate_list.push(@user)
       end
-      @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", deleted_at: nil)
-      @submitted_candidate_count = @submitted_candidates.count
+      
+      @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", is_accepted: nil, deleted_at: nil)
+      
       @submitted_candidates_list = Array.new
       @submitted_candidates.each do |candidate|
         @user = User.find(candidate.user_id)
@@ -434,7 +435,8 @@ class StudiesController < ApplicationController
           @submitted_candidates_list.push(@user)
         end
       end
-  
+      @submitted_candidate_count = @submitted_candidates_list.count
+
       @accepted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", is_accepted: "1", deleted_at: nil)
       @accepted_candidate_count = @accepted_candidates.count
       @accepted_candidate_list = Array.new
@@ -730,6 +732,7 @@ class StudiesController < ApplicationController
           @submitted_candidate_list.push(@user)
         end
       end
+      @message = "submitted-candidate-list"
       render json: {Data: { submitted_candidate_list: @submitted_candidate_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok  
     else
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
