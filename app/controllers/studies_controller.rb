@@ -92,6 +92,7 @@ class StudiesController < ApplicationController
 
       end
       return @required_audience_list
+    end
   end
 
   # GET /find_audience/:id
