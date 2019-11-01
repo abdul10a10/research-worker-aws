@@ -235,7 +235,7 @@ class StudiesController < ApplicationController
   # GET 'unpublished_studies/:user_id'
   def unpublished_studies
     if @current_user.user_type == "Researcher"
-      if Study.where(user_id: params[:user_id], is_published: nil, deleted_at: nil)
+      if Study.where(user_id: params[:user_id], is_active: nil, deleted_at: nil)
         @studies = Study.where(user_id: params[:user_id], is_published: nil, deleted_at: nil).order(id: :desc)
         @message = "user-studies"
         render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok 
