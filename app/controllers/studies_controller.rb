@@ -168,7 +168,7 @@ class StudiesController < ApplicationController
     # render json: {Data: @user,message: @message}
   end
 
-  # ==================================================== Reseaarcher ============================================================================
+  # ==================================================== Researcher ============================================================================
 
   # GET /studies/1
   # GET /studies/1.json
@@ -771,7 +771,12 @@ class StudiesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_study
-      @study = Study.find(params[:id])
+      if Study.exists?(params[:id])
+        @study = Study.find(params[:id])
+      else
+        @message = "Study-not-found"
+        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+      end  
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
