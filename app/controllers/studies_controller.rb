@@ -5,6 +5,7 @@ class StudiesController < ApplicationController
   before_action :is_researcher, only: [:show, :create, :update, :add_description, :unpublished_studies, :active_studies,
     :completed_studies, :rejected_studies, :destroy, :pay_for_study, :publish_study, :complete_study, :delete_study, 
     :researcher_active_study_detail, :accepted_candidate_list]
+  before_action :is_participant, only: [:participant_active_study_list, :participant_active_study_detail, :researcher_unique_id]
   before_action :set_study, only: [:show, :researcher_unique_id, :admin_active_study_detail, :update, :destroy,
     :paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, 
     :activate_study, :reject_study, :study_detail, :participant_active_study_detail, :researcher_active_study_detail, 
@@ -499,11 +500,11 @@ class StudiesController < ApplicationController
     render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
+  #  rejected study list
   def admin_inactive_study_list
     @studies = Study.where(is_active: "0", is_complete: nil,deleted_at: nil).order(id: :desc)
     render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
-
 
   def admin_active_study_detail
     @message = "study"
@@ -564,62 +565,49 @@ class StudiesController < ApplicationController
   # ============================================== Participant ===============================================================
 
   def participant_active_study_list
-    if @current_user.user_type == "Participant"
-      @user = User.find(params[:user_id])
-      @eligible_studies = EligibleCandidate.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
-      @studies = Array.new
-      @eligible_studies.each do |study|
-        @eligible_study = Study.find(study.study_id)
-        if study.is_attempted == "1"
-          @studies.push( eligible_study: @eligible_study, is_attempted: "yes" )
-        else
-          @studies.push( eligible_study: @eligible_study, is_attempted: "no" )
-        end
-        
+    @user = User.find(params[:user_id])
+    @eligible_studies = EligibleCandidate.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
+    @studies = Array.new
+    @eligible_studies.each do |study|
+      @eligible_study = Study.find(study.study_id)
+      if study.is_attempted == "1"
+        @studies.push( eligible_study: @eligible_study, is_attempted: "yes" )
+      else
+        @studies.push( eligible_study: @eligible_study, is_attempted: "no" )
       end
-      # @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
-      render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
-    else
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok 
-    end    
+      
+    end
+    # @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
+    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
-
   def participant_active_study_detail
-    if @current_user.user_type == "Participant"
-      @message = "study"
-      @required_participant = @study.submission
-      @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
-      if EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).present?
-        @eligible_candidate = EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).first
-        @estimatetime = @study.estimatetime
-        if ((@eligible_candidate.start_time + @estimatetime.to_i.minutes) > Time.now.utc)
-          @is_attempted = "yes"
-        else
-          @is_attempted = "no"
-        end
-  
+    @message = "study"
+    @required_participant = @study.submission
+    @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
+    if EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).present?
+      @eligible_candidate = EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).first
+      @estimatetime = @study.estimatetime
+      if ((@eligible_candidate.start_time + @estimatetime.to_i.minutes) > Time.now.utc)
+        @is_attempted = "yes"
       else
         @is_attempted = "no"
       end
-      @active_candidate = @active_candidates.count
-      render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, is_attempted: @is_attempted}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok  
+
     else
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok 
+      @is_attempted = "no"
     end
+    @active_candidate = @active_candidates.count
+    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, is_attempted: @is_attempted}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   def researcher_unique_id
-    if @current_user.user_type == "Participant" || @current_user.user_type == "Admin"
-      @user = @study.user
-      @message = "user-detail-of-study"
-      render json: {Data: { research_worker_id: @user.research_worker_id}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
-    else
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok 
-    end
-    
+    @user = @study.user
+    @message = "user-detail-of-study"
+    render json: {Data: { research_worker_id: @user.research_worker_id}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
-# ============================================ Admin, Researcher =============================================================
+  
+  # ============================================ Admin, Researcher =============================================================
 
   def study_detail
     if @current_user.user_type == "Admin" || @current_user.user_type == "Researcher"

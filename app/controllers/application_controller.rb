@@ -32,4 +32,12 @@ class ApplicationController < ActionController::API
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
     end
   end
+
+  def is_participant
+    if @current_user.user_type == "Participant" 
+    else
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
+    end
+  end
+  
 end

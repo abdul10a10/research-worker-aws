@@ -24,7 +24,7 @@ class QuestionCategoriesController < ApplicationController
   # POST /question_categories.json
   def create
     @question_category = QuestionCategory.new(question_category_params)
-    @name = QuestionCategory.find_by(name: question_category_params[:name])
+    @name = QuestionCategory.find_by(name: question_category_params[:name], deleted_at: nil)
     if @name.present?
       @message = "category-already-exist"
       render json: { message: @message}, status: :ok
