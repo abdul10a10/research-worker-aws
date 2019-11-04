@@ -583,12 +583,14 @@ class StudiesController < ApplicationController
 
   def participant_active_study_detail
     @message = "study"
+    @timer = nil
     @required_participant = @study.submission
     @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
     if EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).present?
       @eligible_candidate = EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).first
       @estimatetime = @study.estimatetime
       if ((@eligible_candidate.start_time + @estimatetime.to_i.minutes) > Time.now.utc)
+        @timer = @eligible_candidate.start_time + @estimatetime.to_i.minutes
         @is_attempted = "yes"
       else
         @is_attempted = "time-out"
@@ -600,7 +602,7 @@ class StudiesController < ApplicationController
     end
     @active_candidate = @active_candidates.count
     render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, 
-      is_attempted: @is_attempted}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, 
+      is_attempted: @is_attempted, timer: @timer}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, 
       status: :ok
   end
 
