@@ -591,7 +591,7 @@ class StudiesController < ApplicationController
       if ((@eligible_candidate.start_time + @estimatetime.to_i.minutes) > Time.now.utc)
         @is_attempted = "yes"
       else
-        @is_attempted = "no"
+        @is_attempted = "time-out"
       end
 
     else
