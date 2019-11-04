@@ -593,12 +593,15 @@ class StudiesController < ApplicationController
       else
         @is_attempted = "time-out"
       end
-
+    elsif EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_completed: "1", deleted_at: nil).present?
+      @is_attempted = "completed"
     else
       @is_attempted = "no"
     end
     @active_candidate = @active_candidates.count
-    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, is_attempted: @is_attempted}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, 
+      is_attempted: @is_attempted}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, 
+      status: :ok
   end
 
   def researcher_unique_id
