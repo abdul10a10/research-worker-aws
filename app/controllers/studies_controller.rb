@@ -106,7 +106,7 @@ class StudiesController < ApplicationController
   # GET /find_audience/:id
   def find_audience(id)
     @study_id = id
-    @user_ids = Array.new
+    # @user_ids = Array.new
     @study = Study.find(@study_id)
     # loop to find user_ids
     # if Audience.where(study_id: @study_id, deleted_at: nil).present?
@@ -578,7 +578,7 @@ class StudiesController < ApplicationController
       
     end
     # @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
-    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    render json: {Data: { studies: @studies.uniq}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   def participant_active_study_detail
@@ -684,6 +684,7 @@ class StudiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def study_params
-      params.fetch(:study, {}).permit(:user_id, :name, :completionurl, :completioncode, :studyurl, :allowedtime, :estimatetime, :submission, :description, :reward, :deactivate_reason)
+      params.fetch(:study, {}).permit(:user_id, :name, :completionurl, :completioncode, :studyurl, :allowedtime, :estimatetime,
+        :submission, :description, :reward, :deactivate_reason)
     end
 end
