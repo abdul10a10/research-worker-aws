@@ -341,3 +341,5 @@ class UsersController < ApplicationController
     end
   end
 end
+
+# helpers.time_ago_in_words helper to use time time difference 
