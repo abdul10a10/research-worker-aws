@@ -583,7 +583,7 @@ class StudiesController < ApplicationController
 
   def participant_active_study_detail
     @message = "study"
-    @timer = nil
+    # @timer = nil
     @required_participant = @study.submission
     @active_candidates = EligibleCandidate.where(study_id: @study.id, is_attempted: "1", deleted_at: nil)
     if EligibleCandidate.where(study_id: @study.id, user_id: @current_user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).present?
