@@ -72,7 +72,7 @@ class StudiesController < ApplicationController
     # end
     # return @filtered_candidate_list
     @required_audience_list = Array.new
-    @required_audience = User.where(user_type: "Participant", deleted_at: nil)
+    @required_audience = User.where(user_type: "Participant", verification_status: '1', deleted_at: nil)
     @required_audience.each do |required_audience|
     @required_audience_list.push(required_audience.id)
     end
