@@ -192,13 +192,15 @@ class StudiesController < ApplicationController
   # POST /studies.json
   def create
     @study = Study.new(study_params)
-    allowedtime = study_params[:allowedtime]
-    estimatetime = study_params[:estimatetime]
-    if @study.save
-      @message = "study-saved"
-      render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+    if Study.find_by(completioncode: @study.completioncode).present?
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "completion-code-already-exist", Token: nil, Success: false}, status: :ok
     else
-      render json: @study.errors, status: :unprocessable_entity
+      if @study.save
+        @message = "study-saved"
+        render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+      else
+        render json: @study.errors, status: :unprocessable_entity
+      end
     end
   end
 
