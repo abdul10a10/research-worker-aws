@@ -295,7 +295,7 @@ class UsersController < ApplicationController
     end
     
     render json: {Data: { participant:@participant.reverse, researcher:@researcher.reverse, study: @study.reverse, 
-      month: @month.reverse, uae_studies: @uae_studies.reverse, indian_studies: @indian_studies.reverse },
+      month: @month.reverse, UAE_studies: @uae_studies.reverse, indian_studies: @indian_studies.reverse },
       CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
