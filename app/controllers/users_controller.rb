@@ -268,7 +268,7 @@ class UsersController < ApplicationController
       @studies.each do |study|
         if study.user.country == "India"
           @indian_study = @indian_study + 1
-        elsif study.user.country == "United Arab Emirates"
+        elsif study.user.country == "United Arab Emirates" || study.user.country == "UAE"
           @uae_study = @uae_study + 1
         end
       end
