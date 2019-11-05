@@ -630,8 +630,14 @@ class StudiesController < ApplicationController
       @is_attempted = "no"
     end
     @active_candidate = @active_candidates.count
+    if @active_candidate < @required_participant
+      @study_status = "active"
+    else
+      @study_status = "finished"
+    end
     render json: {Data: { study: @study, required_participant: @required_participant, active_candidate: @active_candidate, 
-      is_attempted: @is_attempted, timer: @timer}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, 
+      is_attempted: @is_attempted, timer: @timer, study_status: @study_status}, 
+      CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, 
       status: :ok
   end
 
