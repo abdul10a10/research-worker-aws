@@ -255,12 +255,25 @@ class UsersController < ApplicationController
     @researcher = Array.new
     @month = Array.new
     @study = Array.new
+    @indian_studies = Array.new
+    @uae_studies = Array.new
     i = 0
 
     loop do
       @participant_user = User.where(created_at: @start_time..@end_time, user_type: "Participant",verification_status: '1', deleted_at: nil)
       @researcher_user = User.where(created_at: @start_time..@end_time, user_type: "Researcher", verification_status: '1', deleted_at: nil)
       @studies = Study.where(created_at: @start_time..@end_time, deleted_at: nil)
+      @indian_study = 0
+      @uae_study = 0
+      @studies.each do |study|
+        if study.user.country == "India"
+          @indian_study = @indian_study + 1
+        elsif study.user.country == "United Arab Emirates"
+          @uae_study = @uae_study + 1
+        end
+      end
+      # @indian_studies = @studies.user.where(country: "India", deleted_at: nil)
+      # @studies = Study.where(created_at: @start_time..@end_time, deleted_at: nil)
       @participant_count = @participant_user.count
       @researcher_count = @researcher_user.count
       @study_count = @studies.count
@@ -269,6 +282,8 @@ class UsersController < ApplicationController
       @researcher.push(@researcher_count)
       @study.push(@study_count)
       @month.push(@month_name)
+      @indian_studies.push(@indian_study)
+      @uae_studies.push(@uae_study) 
       @end_time = @start_time
       @start_time = @start_time-1.month
 
@@ -279,7 +294,9 @@ class UsersController < ApplicationController
       
     end
     
-    render json: {Data: { participant:@participant.reverse, researcher:@researcher.reverse,study: @study.reverse, month: @month.reverse}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    render json: {Data: { participant:@participant.reverse, researcher:@researcher.reverse, study: @study.reverse, 
+      month: @month.reverse, uae_studies: @uae_studies.reverse, indian_studies: @indian_studies.reverse },
+      CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   private
