@@ -1,6 +1,7 @@
 class QuestionsController < ApplicationController
   # before_action :authorize_request, except: :create
   before_action :authorize_request, only: [:category_question, :question_list]
+  before_action :is_admin, only: [:question_list]
   before_action :set_question, only: [:show, :update, :destroy]
 
   # GET /questions
@@ -170,19 +171,15 @@ class QuestionsController < ApplicationController
   end
 
   def question_list
-    if @current_user.user_type == "Admin"
-      @question_category = params[:question_category_id]
-      @category = QuestionCategory.find(params[:question_category_id])
-      @questions = @category.questions.where(deleted_at: nil).order(id: :asc)
-      @message = 'questions-per-category'
-      @data = {
-        QuestionCategory: @category,
-        Questions: @questions
-      }
-      render json: {Data: @data, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
-    else
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
-    end
+    @question_category = params[:question_category_id]
+    @category = QuestionCategory.find(params[:question_category_id])
+    @questions = @category.questions.where(deleted_at: nil).order(id: :asc)
+    @message = 'questions-per-category'
+    @data = {
+      QuestionCategory: @category,
+      Questions: @questions
+    }
+    render json: {Data: @data, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
   def delete_question

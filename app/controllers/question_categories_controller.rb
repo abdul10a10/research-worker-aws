@@ -1,17 +1,14 @@
 class QuestionCategoriesController < ApplicationController
   # before_action :authorize_request, except: :create
   before_action :authorize_request, only: [:about_you, :index]
+  before_action :is_admin_or_researcher, only: [:index]
   before_action :set_question_category, only: [:show, :update, :destroy]
 
   # GET /question_categories
   # GET /question_categories.json
   def index
-    if @current_user.user_type == "Admin" || @current_user.user_type == "Researcher"
-      @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
-      render json: {Data: {question_categories: @question_categories}, CanEdit: false, CanDelete: false, Status: :ok, message: "question-categories", Token: nil, Success: true}, status: :ok
-    else
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
-    end
+    @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
+    render json: {Data: {question_categories: @question_categories}, CanEdit: false, CanDelete: false, Status: :ok, message: "question-categories", Token: nil, Success: true}, status: :ok
   end
 
   # GET /question_categories/1

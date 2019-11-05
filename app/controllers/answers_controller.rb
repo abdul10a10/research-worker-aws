@@ -1,6 +1,7 @@
 class AnswersController < ApplicationController
   # before_action :authorize_request, except: :create
   before_action :authorize_request, only: [:question_answer]
+  before_action :is_admin, only:[:question_answer]
   before_action :set_answer, only: [:show, :update, :destroy]
 
   # GET /answers
@@ -65,14 +66,10 @@ class AnswersController < ApplicationController
 
   # GET /question_answer/id
   def question_answer
-    if @current_user.user_type == "Admin"
-      @question_id = params[:id]
-      @question = Question.find(params[:id])
-      @answers = Answer.where(question_id: @question_id, deleted_at: nil)
-      render json: {Data: {question: @question, answer: @answers}, CanEdit: false, CanDelete: false, Status: :ok, message: nil, Token: nil, Success: true}, status: :ok
-    else
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "unauthorised-user", Token: nil, Success: true}, status: :ok
-    end
+    @question_id = params[:id]
+    @question = Question.find(params[:id])
+    @answers = Answer.where(question_id: @question_id, deleted_at: nil)
+    render json: {Data: {question: @question, answer: @answers}, CanEdit: false, CanDelete: false, Status: :ok, message: nil, Token: nil, Success: true}, status: :ok
   end
 
   private

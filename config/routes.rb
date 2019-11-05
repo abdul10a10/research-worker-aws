@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
   resources :eligible_candidates
   get 'attempt_study/:study_id', to: 'eligible_candidates#attempt_study'
+  get 'seen_study/:study_id', to: 'eligible_candidates#seen_study'
   get 'submit_study/:study_id', to: 'eligible_candidates#submit_study'
   get 'accept_study_submission/:study_id/:user_id', to: 'eligible_candidates#accept_study_submission'
   post 'reject_study_submission/:study_id/:user_id', to: 'eligible_candidates#reject_study_submission'
@@ -39,6 +40,7 @@ Rails.application.routes.draw do
   get 'completed_studies/:user_id', to: 'studies#completed_studies'
   get 'rejected_studies/:user_id', to: 'studies#rejected_studies'
   get 'participant_active_study_list/:user_id', to: 'studies#participant_active_study_list'
+  get 'track_active_study_list', to: 'studies#track_active_study_list'
 
   get 'study_detail/:id', to: 'studies#study_detail'
   get 'participant_active_study_detail/:id', to: 'studies#participant_active_study_detail'
