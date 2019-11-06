@@ -4,12 +4,12 @@ class StudiesController < ApplicationController
     :admin_active_study_list, :admin_inactive_study_list, :admin_active_study_detail]
   before_action :is_researcher, only: [:show, :create, :update, :add_description, :unpublished_studies, :active_studies,
     :completed_studies, :rejected_studies, :destroy, :pay_for_study, :publish_study, :complete_study, :delete_study, 
-    :researcher_active_study_detail, :accepted_candidate_list, :track_active_study_list]
+    :researcher_active_study_detail, :accepted_candidate_list, :track_active_study_list, :republish]
   before_action :is_participant, only: [:participant_active_study_list, :participant_active_study_detail, :researcher_unique_id]
   before_action :set_study, only: [:show, :researcher_unique_id, :admin_active_study_detail, :update, :destroy,
     :paid_candidate_list, :publish_study, :accepted_candidate_list ,:complete_study, :submitted_candidate_list, 
     :activate_study, :reject_study, :study_detail, :participant_active_study_detail, :researcher_active_study_detail, 
-    :active_candidate_list, :pay_for_study]
+    :active_candidate_list, :pay_for_study, :republish]
   before_action :is_admin_or_researcher, only: [:study_detail, :active_candidate_list, :submitted_candidate_list, 
     :paid_candidate_list]
 
@@ -483,6 +483,29 @@ class StudiesController < ApplicationController
   def new_study
     @completioncode = SecureRandom.hex
     render json: {Data: @completioncode, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
+    status: :ok
+  end
+
+  def republish
+    @eligible_candidates = @study.eligible_candidates.where(is_seen: "1", is_attempted: nil, deleted_at: nil)
+    # send notification and mail
+    @eligible_candidates.each do |eligible_candidate|
+
+      # send email
+      @user = eligible_candidate.user
+      StudyMailer.with(user: @user, study: @study).study_reinvitation_email.deliver_later
+
+      # send notification
+      @notification = Notification.new
+      @notification.notification_type = "Study has been activated again"
+      @notification.user_id = eligible_candidate.user.id
+      @study_name = @study.name
+      @notification.message = "Study " + @study_name +" has been published"
+      @notification.redirect_url = "/participantstudy"
+      @notification.save
+    end
+    @message = "study-republished"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
     status: :ok
   end
   # ============================================================ Admin =======================================================
