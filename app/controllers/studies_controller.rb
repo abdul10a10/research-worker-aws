@@ -184,7 +184,7 @@ class StudiesController < ApplicationController
   def show
     @message = "study"
     @filtered_candidates = filtered_candidate(@study.id)
-    @filtered_candidates_count = @filtered_candidates.count    
+    @filtered_candidates_count = @filtered_candidates.count
     render json: {Data: {study: @study, filtered_candidates:@filtered_candidates, filtered_candidates_count: @filtered_candidates_count}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
@@ -674,13 +674,15 @@ class StudiesController < ApplicationController
   end
 
   def submitted_candidate_list
-    @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", is_accepted: nil, deleted_at: nil)
+    @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", deleted_at: nil)
     @submitted_candidate_count = @submitted_candidates.count
     @submitted_candidate_list = Array.new
     @submitted_candidates.each do |candidate|
       @user = User.find(candidate.user_id)
       if (@user.user_type == "Participant")
-        @submitted_candidate_list.push(@user)
+        @completion_time = helpers.distance_of_time_in_words(candidate.submit_time , candidate.start_time)
+        @submission = candidate.is_completed
+        @submitted_candidate_list.push(user: @user, completion_time: @completion_time, submission: @submission)
       end
     end
     @message = "submitted-candidate-list"
