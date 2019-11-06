@@ -487,7 +487,10 @@ class StudiesController < ApplicationController
   end
 
   def republish
+    @study.is_republish = 1
+    @study.save
     @eligible_candidates = @study.eligible_candidates.where(is_seen: "1", is_attempted: nil, deleted_at: nil)
+
     # send notification and mail
     @eligible_candidates.each do |eligible_candidate|
 
