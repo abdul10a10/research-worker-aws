@@ -603,18 +603,26 @@ class StudiesController < ApplicationController
 
   def participant_active_study_list
     @user = User.find(params[:user_id])
-    @eligible_studies = EligibleCandidate.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
+    @eligible_candidates = EligibleCandidate.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
     @studies = Array.new
-    @eligible_studies.each do |study|
-      @eligible_study = Study.find(study.study_id)
-      if study.is_attempted == "1"
-        @studies.push( eligible_study: @eligible_study, is_attempted: "yes" )
+    @eligible_candidates.each do |eligible_candidate|
+      @eligible_study = eligible_candidate.study
+      if @eligible_study.max_participation_date == nil
+        if eligible_candidate.is_attempted == "1"
+          @studies.push( eligible_study: @eligible_study, is_attempted: "yes" )
+        else
+          @studies.push( eligible_study: @eligible_study, is_attempted: "no" )
+        end          
       else
-        @studies.push( eligible_study: @eligible_study, is_attempted: "no" )
-      end
-      
+        if @eligible_study.max_participation_date >= Time.now.utc
+          if eligible_candidate.is_attempted == "1"
+            @studies.push( eligible_study: @eligible_study, is_attempted: "yes" )
+          else
+            @studies.push( eligible_study: @eligible_study, is_attempted: "no" )
+          end          
+        end  
+      end      
     end
-    # @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
     render json: {Data: { studies: @studies.uniq}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
