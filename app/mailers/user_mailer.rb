@@ -61,8 +61,8 @@ class UserMailer < ApplicationMailer
   def study_completion_email
     @user = params[:user]
     @study = params[:study]
-    @link = "http://winpowerllc.karyonsolutions.com/#/researcherstudysubmission"
-    mail(to: @user.email, subject: "Study has been submitted by a user")
+    @link = "http://winpowerllc.karyonsolutions.com/#/candidatesubmissionlist/#{@study.id}"
+    mail(to: @user.email, subject: "Maximum attempt has been done for " + @study.name)
   end
 
   def study_submission_accept_email

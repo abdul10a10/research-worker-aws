@@ -41,6 +41,7 @@ Rails.application.routes.draw do
   get 'rejected_studies/:user_id', to: 'studies#rejected_studies'
   get 'participant_active_study_list/:user_id', to: 'studies#participant_active_study_list'
   get 'track_active_study_list', to: 'studies#track_active_study_list'
+  get 'new_study', to: 'studies#new_study'
 
   get 'study_detail/:id', to: 'studies#study_detail'
   get 'participant_active_study_detail/:id', to: 'studies#participant_active_study_detail'

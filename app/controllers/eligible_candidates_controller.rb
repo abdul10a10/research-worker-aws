@@ -86,29 +86,33 @@ class EligibleCandidatesController < ApplicationController
 
   def submit_study
     @controller_object = EligibleCandidatesController.new
+    @study_id = params[:study_id]
     if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id], deleted_at: nil).present?
       @eligible_candidate = EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).first
       @eligible_candidate.submit_time!
       
-      # send mail
-      @study = Study.find(params[:study_id])
-      @user = User.find(@study.user_id)
-      UserMailer.with(user: @user, study: @study).study_completion_email.deliver_now
-      
-      # send notification
-      @notification = Notification.new
-      @notification.notification_type = "Study Completion"
-      @notification.user_id = @user.id
-      @study_name = @study.name
-      @notification.message = "A participant has completed " + @study_name +" study"
-      @notification.redirect_url = "/researcherstudysubmission"
-      @notification.save
+      # send mail if maximum submission limit reached
+      @study = @eligible_candidate.study
+      @eligible_candidates = @study.eligible_candidates.where(is_attempted: '1', deleted_at: nil)
+      @attempted_candidate_count = @eligible_candidates.count
+      if @attempted_candidate_count >= @study.submission
+        UserMailer.with(user: @study.user, study: @study).study_completion_email.deliver_later
+        
+        # send notification
+        @notification = Notification.new
+        @notification.notification_type = "Study Completion"
+        @notification.user_id = @user.id
+        @study_name = @study.name
+        @notification.message = "Maximum attempt has been done for " + @study_name
+        @notification.redirect_url = "/candidatesubmissionlist/" + @study_id.to_s
+        @notification.save          
+      end
       
       # auto accept study after 21 days
-      @controller_object.delay(run_at: 21.days.from_now).auto_accept_study_submission(@user.id, @study.id)
+      @controller_object.delay(run_at: 21.days.from_now).auto_accept_study_submission(@study.user.id, @study.id)
 
       @message = "study-submitted"
-      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      render json: {Data: @attempted_candidate_count, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @eligible_candidate = EligibleCandidate.new
       @eligible_candidate.user_id = @current_user.id

@@ -382,7 +382,7 @@ class StudiesController < ApplicationController
       @active_candidate_list.push(@user)
     end
     
-    @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", is_accepted: nil, deleted_at: nil)
+    @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", deleted_at: nil)
     
     @submitted_candidates_list = Array.new
     @submitted_candidates.each do |candidate|
@@ -480,6 +480,11 @@ class StudiesController < ApplicationController
     end
   end
 
+  def new_study
+    @completioncode = SecureRandom.hex
+    render json: {Data: @completioncode, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
+    status: :ok
+  end
   # ============================================================ Admin =======================================================
 
   def activate_study
