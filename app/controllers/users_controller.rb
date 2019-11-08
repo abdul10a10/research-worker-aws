@@ -142,8 +142,8 @@ class UsersController < ApplicationController
       @user.status = "deactive"
       @user.save
       @message = "user-deactivated"
-      # DeactivateUser.perform_async(@user.id, @reason)
-      UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
+      DeactivateUser.perform_async(@user.id, @reason)
+      # UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @message = "User-not-found"
