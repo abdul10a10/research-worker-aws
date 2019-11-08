@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivate, :activate, 
     :researcheroverview, :participantoverview, :reports]
   # before_action :is_participant, only: [:share_referral_code]
-  before_action :set_user, only: [ :update, :destroy, :activate, :deactivate, :share_referral_code]
+  before_action :set_user, only: [ :update, :destroy, :activate, :deactivate]
 
   #GET /users
   def index
