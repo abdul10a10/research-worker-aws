@@ -98,7 +98,7 @@ Rails.application.routes.draw do
   get 'researcherlist', to: 'users#researcher_list'
   get 'welcome/:confirmation_token', to: 'users#welcome'
   post 'users', to: 'users#create'
-  post 'sharerefferalcode', to: 'users#share_referral_code'
+  post 'share_referral_code', to: 'users#share_referral_code'
   put 'updateuserinfo/:id', to: 'users#update'
   put 'activateuser/:id', to: 'users#activate'
   put 'deactivateuser/:id', to: 'users#deactivate'

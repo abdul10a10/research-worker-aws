@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   before_action :authorize_request, except: [:create, :destroy, :show, :welcome]
   before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivate, :activate, 
     :researcheroverview, :participantoverview, :reports]
-  before_action :is_participant, only: [:share_referral_code]
+  # before_action :is_participant, only: [:share_referral_code]
   before_action :set_user, only: [ :update, :destroy, :activate, :deactivate, :share_referral_code]
 
   #GET /users
@@ -44,6 +44,7 @@ class UsersController < ApplicationController
       if @user.save
         @user.generate_email_confirmation_token!
         @user.generate_unique_id!
+        # DeactivateUser.perform_async(@user.id)
         UserMailer.with(user: @user).welcome_email.deliver_later
         @message = "user-registered"
         render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
@@ -141,6 +142,7 @@ class UsersController < ApplicationController
       @user.status = "deactive"
       @user.save
       @message = "user-deactivated"
+      # DeactivateUser.perform_async(@user.id, @reason)
       UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else

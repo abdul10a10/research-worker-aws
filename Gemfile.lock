@@ -1,3 +1,15 @@
+GIT
+  remote: https://github.com/sinatra/sinatra.git
+  revision: 04a02ac2b7400ab456126dbfce5519cbc200b61a
+  specs:
+    rack-protection (2.0.7)
+      rack
+    sinatra (2.0.7)
+      mustermann (~> 1.0)
+      rack (~> 2.0)
+      rack-protection (= 2.0.7)
+      tilt (~> 2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -49,6 +61,7 @@ GEM
     builder (3.2.3)
     byebug (11.0.1)
     concurrent-ruby (1.1.5)
+    connection_pool (2.2.2)
     crass (1.0.5)
     delayed_job (4.1.8)
       activesupport (>= 3.0, < 6.1)
@@ -65,6 +78,8 @@ GEM
     ffi (1.11.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    hooks (0.4.1)
+      uber (~> 0.0.14)
     i18n (1.7.0)
       concurrent-ruby (~> 1.0)
     jbuilder (2.9.1)
@@ -87,8 +102,9 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.13.0)
     msgpack (1.3.1)
+    mustermann (1.0.3)
     nio4r (2.5.2)
-    nokogiri (1.10.4)
+    nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
     orm_adapter (0.5.0)
     pg (1.1.4)
@@ -125,10 +141,20 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
+    recommendable (2.2.2)
+      activesupport (>= 3.0.0)
+      hooks (>= 0.2.1)
+      redis (>= 2.2.0)
+    redis (4.1.3)
     responders (3.0.0)
       actionpack (>= 5.0)
       railties (>= 5.0)
     ruby_dep (1.5.0)
+    sidekiq (5.2.7)
+      connection_pool (~> 2.2, >= 2.2.2)
+      rack (>= 1.5.0)
+      rack-protection (>= 1.5.0)
+      redis (>= 3.3.5, < 5)
     simple_token_authentication (1.17.0)
       actionmailer (>= 3.2.6, < 7)
       actionpack (>= 3.2.6, < 7)
@@ -147,8 +173,10 @@ GEM
     sqlite3 (1.4.1)
     thor (0.20.3)
     thread_safe (0.3.6)
+    tilt (2.0.10)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
+    uber (0.0.15)
     warden (1.2.8)
       rack (>= 2.0.6)
     websocket-driver (0.7.1)
@@ -170,7 +198,10 @@ DEPENDENCIES
   puma (~> 3.11)
   rack-cors
   rails (~> 5.2.3)
+  recommendable
+  sidekiq (~> 5.2, >= 5.2.7)
   simple_token_authentication (~> 1.0)
+  sinatra!
   spring
   spring-watcher-listen (~> 2.0.0)
   sqlite3

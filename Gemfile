@@ -19,6 +19,9 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 
+gem 'sidekiq', '~> 5.2', '>= 5.2.7'
+gem 'sinatra', github: 'sinatra/sinatra'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
@@ -28,6 +31,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # gem for delay update
 gem 'delayed_job_active_record', '~> 4.1', '>= 4.1.4'
 
+gem 'recommendable'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
