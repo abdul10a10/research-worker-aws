@@ -20,5 +20,4 @@ class UserConfirmation
     render json: {message: @message}, status: :ok
   end
     
-  end
 end
