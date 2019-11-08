@@ -142,8 +142,8 @@ class UsersController < ApplicationController
       @user.status = "deactive"
       @user.save
       @message = "user-deactivated"
-      DeactivateUser.perform_async(@user.id, @reason)
-      # UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
+      # DeactivateUser.perform_async(@user.id, @reason)
+      UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @message = "User-not-found"
@@ -198,7 +198,7 @@ class UsersController < ApplicationController
 
   def share_referral_code
     @receiver = params[:email]
-    UserMailer.with(user: @user, receiver: @receiver).share_referral_code_email.deliver_later
+    UserMailer.with(user: @current_user, receiver: @receiver).share_referral_code_email.deliver_later
     @message = "Code-shared"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
