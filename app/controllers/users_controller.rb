@@ -1,10 +1,10 @@
-class UsersController < ApplicationController
+class UsersController < ApplicationController 
   # before_action :authorize_request, only: [:dashboard, :reports, :participantoverview]
   before_action :authorize_request, except: [:create, :destroy, :show, :welcome]
   before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivate, :activate, 
     :researcheroverview, :participantoverview, :reports]
   # before_action :is_participant, only: [:share_referral_code]
-  before_action :set_user, only: [ :update, :destroy, :activate, :deactivate]
+  before_action :set_user, only: [:show, :update, :destroy, :activate, :deactivate, :participant_overview, :researcher_overview, :participant_info]
 
   #GET /users
   def index
@@ -44,7 +44,7 @@ class UsersController < ApplicationController
       if @user.save
         @user.generate_email_confirmation_token!
         @user.generate_unique_id!
-        # DeactivateUser.perform_async(@user.id)
+        # UserConfirmation.perform_async(@user.id)
         UserMailer.with(user: @user).welcome_email.deliver_later
         @message = "user-registered"
         render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
@@ -73,44 +73,27 @@ class UsersController < ApplicationController
 
   #GET /getuserinfo/:id
   def show
-    if User.exists?(params[:id])
-      @user = User.find_by_id(params[:id])
-      # ==== research worker id generated ===
-      if @user.research_worker_id === nil
-        @user.generate_unique_id!
-      end
-      
-      @message = "user-info"
-      @notification = @user.notifications.where(deleted_at: nil).order(id: :desc)
-      # @notification = Notification.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
-      # @notification = Notification.joins(:user).where(notifications:{user_id: @user.id}).order(id: :desc)
-      # render json: {user: @user, message: @message}, status: :ok
-      @notification.each do |notification|
-        if (notification.status == nil)
-          @unread_notification = "yes"
-          break
-        end
-      end
-      render json: {Data: {user: @user,notification: @notification, unread_notification: @unread_notification }, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
-
-    else
-      @message = "user-not-found"
-      render json: { message: @message}, status: :ok
+    # ==== research worker id generated ===
+    if @user.research_worker_id === nil
+      @user.generate_unique_id!
     end
+    
+    @message = "user-info"
+    @notification = @user.notifications.where(deleted_at: nil).order(id: :desc)
+    @notification.each do |notification|
+      if (notification.status == nil)
+        @unread_notification = "yes"
+        break
+      end
+    end
+    render json: {Data: {user: @user,notification: @notification, unread_notification: @unread_notification }, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
 
   #GET /participantinfo/:id
-  def participantInfo
-    if User.exists?(params[:id])
-      @user = User.find_by_id(params[:id])
-      @message = "user-info"
-      @notification = Notification.where(user_id: @user.id, deleted_at: nil).order(id: :desc)
-      render json: {Data: {user: @user, notification: @notification}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    else
-      @message = "user-not-found"
-      render json: { message: @message}, status: :ok
-    end
+  def participant_info
+    render json: {Data: {user: @user, notification: @user.notifications.where(deleted_at: nil).order(id: :desc)},
+      CanEdit: false, CanDelete: false, Status: :ok, message: "user-info", Token: nil, Success: false}, status: :ok
   end
 
 
@@ -124,31 +107,20 @@ class UsersController < ApplicationController
   end
 
   def activate
-    if @user.present?
-      @user.status = "active"
-      @user.save
-      @message = "user-activated"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    else
-      @message = "user-not-found"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    end
+    @user.status = "active"
+    @user.save
+    @message = "user-activated"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
 
   def deactivate
-    if @user.present?
-      @reason = params[:reason]
-      @user.status = "deactive"
-      @user.save
-      @message = "user-deactivated"
-      # DeactivateUser.perform_async(@user.id, @reason)
-      UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    else
-      @message = "User-not-found"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :not_found
-    end
+    @reason = params[:reason]
+    @message = "user-deactivated"
+    UserService.deactivate_user(@user, @reason)
+    # DeactivateUser.perform_async(@user.id, @reason)
+    # UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
 
@@ -161,34 +133,14 @@ class UsersController < ApplicationController
           @message = "already-activated-account"
           render json: {message: @message}, status: :ok
         else
-          @user.status = "active"
-          @user.verification_status = "1"
-          @user.save
-          @user.generate_referral_code!
+          UserService.verify_user(@user)
           @message = "user-activated"
-
-          UserMailer.with(user: @user).user_registration_admin_email.deliver_later
-          @notification = Notification.new
-          @notification.notification_type = "Registration"
-          @admin = User.where(user_type: "Admin").first
-          @notification.user_id = @admin.id
-          @user_type = @user.user_type
-          @notification.message = "New " + @user_type +" has registered"
-
-          if @user.user_type == "Participant"
-            @notification.redirect_url = "/dashboards/overviewuser/#{@user.id}"
-          elsif @user.user_type == "Researcher"
-            @notification.redirect_url = "/dashboards/overviewresearcheruser/#{@user.id}"
-          end
-          @notification.save
           render json: {message: @message}, status: :ok
         end
-
       else
         @message = "Link-expired"
         render json: {message: @message}, status: :ok
-      end
-      
+      end      
     else
       @message = "Not-a-valid-token"
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :not_found
@@ -198,30 +150,20 @@ class UsersController < ApplicationController
 
   def share_referral_code
     @receiver = params[:email]
+    # ReferUser.perform_async(@current_user.id, @receiver)
     UserMailer.with(user: @current_user, receiver: @receiver).share_referral_code_email.deliver_later
     @message = "Code-shared"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   #GET /researcheroverview/:id
-  def researcheroverview
-    if User.exists?(params[:id])
-      @user = User.find_by_id(params[:id])
-      @message = "user-info"
-      if Study.where(user_id: params[:id], deleted_at: nil).present?
-        @studies = Study.where(user_id: params[:id], is_published: nil, deleted_at: nil)
-      end
-      render json: {Data: {user: @user, studies: @studies}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    else
-      @message = "user-not-found"
-      render json: { message: @message}, status: :ok
-    end
+  def researcher_overview
+    render json: {Data: {user: @user, studies: @user.studies.where(is_published: nil, deleted_at: nil)}, 
+      CanEdit: false, CanDelete: false, Status: :ok, message: "user-info", Token: nil, Success: false}, status: :ok
   end
 
   #GET /participantoverview/:id
-  def participantoverview
-    if User.exists?(params[:id])
-      @user = User.find_by_id(params[:id])
+  def participant_overview
       @message = "user-info"
       if Response.where(user_id: @user.id, deleted_at: nil).present?
         @demographics = Array.new
@@ -242,10 +184,6 @@ class UsersController < ApplicationController
         end
       end
       render json: {Data: {user: @user, demographics: @demographics}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    else
-      @message = "user-not-found"
-      render json: { message: @message}, status: :ok
-    end
   end
 
   def reports

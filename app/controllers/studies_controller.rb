@@ -31,7 +31,9 @@ class StudiesController < ApplicationController
       find_audience(@study.id)
 
       # send mail and notification to researcher
-      @user = User.find(@study.user_id)
+      @user = @study.user
+
+      # StudyPublish.perform_async(@study.id)
       UserMailer.with(user: @user, study: @study).study_published_email.deliver_later
       @notification = Notification.new
       @notification.notification_type = "Study Published"
@@ -51,6 +53,7 @@ class StudiesController < ApplicationController
       @notification.message = "Study " + @study_name +" has been published"
       @notification.redirect_url = "/adminactivestudy"
       @notification.save
+
     end
   end
 
@@ -110,20 +113,6 @@ class StudiesController < ApplicationController
     @study_id = id
     # @user_ids = Array.new
     @study = Study.find(@study_id)
-    # loop to find user_ids
-    # if Audience.where(study_id: @study_id, deleted_at: nil).present?
-    #   @audience = Audience.where(study_id: @study_id, deleted_at: nil)
-    #   @audience.each do |audience|
-    #     @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
-    #     @users.each do |user|
-    #       @user_ids.push( user.user_id )
-    #     end
-    #   end
-    # else
-    #   @message = "audience-not-exist"
-    #   render json: {message: @message}, status: :ok
-    # end
-
     @required_audience_list = Array.new
     @required_audience = User.where(user_type: "Participant", deleted_at: nil)
     @required_audience.each do |required_audience|
@@ -174,8 +163,6 @@ class StudiesController < ApplicationController
       @eligible_candidate.study_id = @study_id
       @eligible_candidate.save
     end
-    # @message = "user-ids" 
-    # render json: {Data: @user,message: @message}
   end
 
   # ==================================================== Researcher ==========================================================
@@ -341,6 +328,8 @@ class StudiesController < ApplicationController
     @study.is_published = 1
     # @study.is_active = 1
     @study.save
+
+    # StudyPublish.perform_async(@study.id)
     @user = User.where(user_type: "Admin").first
     UserMailer.with(user: @user, study: @study).new_study_creation_email.deliver_later
     @notification = Notification.new
@@ -350,7 +339,7 @@ class StudiesController < ApplicationController
     @notification.message = "New study " + @study_name +" created by "+ @user.first_name
     @notification.redirect_url = "/adminnewstudy"
     @notification.save
-    # find_audience(@study.id)
+
     @controller_object.delay(run_at: 1.hours.from_now).auto_activate_study(@study.id)
     @message = "study-published"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok          
@@ -489,15 +478,14 @@ class StudiesController < ApplicationController
   def republish
     @study.is_republish = 1
     @study.save
-    @eligible_candidates = @study.eligible_candidates.where(is_seen: "1", is_attempted: nil, deleted_at: nil)
 
+    # StudyRepublish.perform_async(@study.id)
+    @eligible_candidates = @study.eligible_candidates.where(is_seen: "1", is_attempted: nil, deleted_at: nil)
     # send notification and mail
     @eligible_candidates.each do |eligible_candidate|
-
       # send email
       @user = eligible_candidate.user
       StudyMailer.with(user: @user, study: @study).study_reinvitation_email.deliver_later
-
       # send notification
       @notification = Notification.new
       @notification.notification_type = "Study has been activated again"
@@ -507,6 +495,7 @@ class StudiesController < ApplicationController
       @notification.redirect_url = "/participantstudy"
       @notification.save
     end
+
     @message = "study-republished"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
     status: :ok
@@ -516,8 +505,9 @@ class StudiesController < ApplicationController
   def activate_study
     @study.is_active = 1
     @study.save
+
+    # StudyActivate.perform_async(@study.id)
     find_audience(@study.id)
-    @message = "study-activated"
     @user = User.find(@study.user_id)
     UserMailer.with(user: @user, study: @study).study_published_email.deliver_later
     @notification = Notification.new
@@ -527,6 +517,8 @@ class StudiesController < ApplicationController
     @notification.message = "Study " + @study_name +" has been published"
     @notification.redirect_url = "/studyactive"
     @notification.save
+
+    @message = "study-activated"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
@@ -536,7 +528,9 @@ class StudiesController < ApplicationController
     @study.is_published = 0
     @study.save
     @message = "study-rejected"
-    @user = User.find(@study.user_id)
+
+    # StudyReject.perform_async(@study.id)
+    @user = @study.user
     UserMailer.with(user: @user, study: @study).study_rejection_email.deliver_later
     @notification = Notification.new
     @notification.notification_type = "Study Rejected"
@@ -545,6 +539,7 @@ class StudiesController < ApplicationController
     @notification.message = "Study " + @study_name +" has been rejected"
     @notification.redirect_url = "/studypublished/#{@study.id}"
     @notification.save
+
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok    
   end
   
@@ -691,7 +686,7 @@ class StudiesController < ApplicationController
   # ============================================ Admin, Researcher =============================================================
 
   def study_detail
-    @user = User.find(@study.user_id)
+    @user = @study.user
     @message = "study"
     render json: {Data: { study: @study, user: @user}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end

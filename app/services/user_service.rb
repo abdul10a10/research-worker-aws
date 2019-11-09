@@ -1,8 +1,19 @@
-class WelcomeUser
-  include Sidekiq::Worker
-  
-  def perform(user_id)
-    @user = User.find(user_id)
+class UserService
+
+  def self.deactivate_user(user, reason)
+    @user = user
+    @reason = reason
+    UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later    
+  end
+
+  def self.verify_user(user)
+    @user = user
+    @user.status = "active"
+    @user.verification_status = "1"
+    @user.save
+    @user.generate_referral_code!
+
+    # WelcomeUser.perform_async(@user.id)
     UserMailer.with(user: @user).user_registration_admin_email.deliver_later
     @notification = Notification.new
     @notification.notification_type = "Registration"
@@ -18,5 +29,5 @@ class WelcomeUser
     end
     @notification.save
   end
-  
+
 end

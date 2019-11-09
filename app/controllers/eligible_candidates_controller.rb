@@ -244,7 +244,7 @@ class EligibleCandidatesController < ApplicationController
     # @eligible_candidate = EligibleCandidate.where(user_id: user_id, deleted_at: nil)
     user_id = params[:user_id]
     @total_submission = EligibleCandidate.where(user_id: user_id, is_completed: "1", deleted_at: nil)
-    @total_attempt = EligibleCandidate.where(user_id: user_id, is_attempted: "1", deleted_at: nil)
+    @total_attempt = EligibleCandidate.where(user_id: user_id, is_attempted: "1", is_completed: nil, deleted_at: nil)
     @accepted_studies = EligibleCandidate.where(user_id: user_id, is_accepted: "1", deleted_at: nil)
     @rejected_studies = EligibleCandidate.where(user_id: user_id, is_accepted: "0", deleted_at: nil)
     @message = "participant-study-report"
@@ -265,7 +265,7 @@ class EligibleCandidatesController < ApplicationController
 
   def total_attempt_list
     user_id = params[:user_id]
-    @total_attempts = EligibleCandidate.where(user_id: user_id, is_attempted: "1", deleted_at: nil)
+    @total_attempts = EligibleCandidate.where(user_id: user_id, is_attempted: "1", is_completed: nil, deleted_at: nil)
     @total_attempt_count = @total_attempts.count
     @total_attempt_list = Array.new
     @total_attempts.each do |study|
