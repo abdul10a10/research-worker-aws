@@ -91,8 +91,8 @@ class EligibleCandidatesController < ApplicationController
     @study = Study.find_by(completioncode: params[:completioncode])
     @controller_object = EligibleCandidatesController.new
     @study_id = @study.id
-    if EligibleCandidate.where(user_id: @user.id, study_id: @study.id, deleted_at: nil).present?
-      @eligible_candidate = EligibleCandidate.where(user_id: @user.id, study_id: params[:study_id]).first
+    if EligibleCandidate.where(user_id: @user.id, study_id: @study_id, deleted_at: nil).present?
+      @eligible_candidate = EligibleCandidate.where(user_id: @user.id, study_id: @study_id).first
       @eligible_candidate.submit_time!
       
       # send mail if maximum submission limit reached
