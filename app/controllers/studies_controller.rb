@@ -635,7 +635,7 @@ class StudiesController < ApplicationController
           @studies.push( eligible_study: @eligible_study, is_attempted: "no" )
         end          
       else
-        if @eligible_study.max_participation_date >= Time.now.utc
+        if (@eligible_study.max_participation_date + 1.days) >= Time.now.utc
           if eligible_candidate.is_attempted == "1"
             @studies.push( eligible_study: @eligible_study, is_attempted: "yes" )
           else
@@ -709,9 +709,11 @@ class StudiesController < ApplicationController
     @submitted_candidates.each do |candidate|
       @user = User.find(candidate.user_id)
       if (@user.user_type == "Participant")
-        @completion_time = helpers.distance_of_time_in_words(candidate.submit_time , candidate.start_time)
+        # @completion_time = helpers.distance_of_time_in_words(candidate.submit_time , candidate.start_time)
+        time_difference = candidate.submit_time - candidate.start_time
+        @completion_time = Time.at(time_difference.to_i.abs).utc.strftime("%H:%M:%S")
         @submission = candidate.is_completed
-        @submitted_candidate_list.push(user: @user, completion_time: @completion_time, submission: @submission)
+        @submitted_candidate_list.push(user: @user, completion_time: @completion_time, start_time: candidate.start_time, submission: @submission)
       end
     end
     @message = "submitted-candidate-list"
