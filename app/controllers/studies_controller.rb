@@ -471,7 +471,8 @@ class StudiesController < ApplicationController
 
   def new_study
     @completioncode = SecureRandom.hex
-    render json: {Data: @completioncode, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
+    @completionurl = "http://winpowerllc.karyonsolutions.com/#/studysubmission/#{SecureRandom.hex(5)}"
+    render json: {Data: {completioncode: @completioncode, completionurl: @completionurl}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
     status: :ok
   end
 
@@ -703,7 +704,7 @@ class StudiesController < ApplicationController
   end
 
   def submitted_candidate_list
-    @submitted_candidates = EligibleCandidate.where(study_id: @study.id, is_completed: "1", deleted_at: nil)
+    @submitted_candidates = @study.eligible_candidates.where(is_completed: "1", deleted_at: nil)
     @submitted_candidate_count = @submitted_candidates.count
     @submitted_candidate_list = Array.new
     @submitted_candidates.each do |candidate|

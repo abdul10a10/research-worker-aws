@@ -85,10 +85,14 @@ class EligibleCandidatesController < ApplicationController
 
 
   def submit_study
+    # @user_mail = params[:email]
+    # @completioncode = params[:completioncode]
+    @user = User.find_by(email: params[:email])
+    @study = Study.find_by(completioncode: params[:completioncode])
     @controller_object = EligibleCandidatesController.new
-    @study_id = params[:study_id]
-    if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id], deleted_at: nil).present?
-      @eligible_candidate = EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).first
+    @study_id = @study.id
+    if EligibleCandidate.where(user_id: @user.id, study_id: @study.id, deleted_at: nil).present?
+      @eligible_candidate = EligibleCandidate.where(user_id: @user.id, study_id: params[:study_id]).first
       @eligible_candidate.submit_time!
       
       # send mail if maximum submission limit reached
@@ -114,17 +118,8 @@ class EligibleCandidatesController < ApplicationController
       @message = "study-submitted"
       render json: {Data: @attempted_candidate_count, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      @eligible_candidate = EligibleCandidate.new
-      @eligible_candidate.user_id = @current_user.id
-      @eligible_candidate.study_id = params[:study_id]
-      @eligible_candidate.save
-      @eligible_candidate.submit_time!
-
-      # auto accept study after 21 days
-      @controller_object.delay(run_at: 21.days.from_now).auto_accept_study_submission(@current_user.id, params[:study_id])
-
-      @message = "study-submitted"
-      render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      @message = "not-eligible-for-study"
+      render json: {Data: @attempted_candidate_count, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok 
     end
   end
 

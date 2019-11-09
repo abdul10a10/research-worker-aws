@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   resources :eligible_candidates
   get 'attempt_study/:study_id', to: 'eligible_candidates#attempt_study'
   get 'seen_study/:study_id', to: 'eligible_candidates#seen_study'
-  get 'submit_study/:study_id', to: 'eligible_candidates#submit_study'
+  post 'submit_study', to: 'eligible_candidates#submit_study'
   get 'accept_study_submission/:study_id/:user_id', to: 'eligible_candidates#accept_study_submission'
   post 'reject_study_submission/:study_id/:user_id', to: 'eligible_candidates#reject_study_submission'
   get 'participant_study_submission/:user_id', to: 'eligible_candidates#participant_study_submission'
