@@ -555,8 +555,14 @@ class StudiesController < ApplicationController
   end
 
   def admin_active_study_list
-    @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
-    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    if Study.where(is_active: "1", is_complete: nil,deleted_at: nil).present?
+      @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
+      @message = "active-studies"
+      render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok  
+    else
+      @message = "no-study-found"
+      render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok  
+    end
   end
 
   #  rejected study list
