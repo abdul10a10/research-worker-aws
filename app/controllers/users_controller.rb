@@ -44,8 +44,6 @@ class UsersController < ApplicationController
       if @user.save
         @user.generate_email_confirmation_token!
         @user.generate_unique_id!
-        # UserConfirmation.perform_async(@user.id)
-        # UserMailer.with(user: @user).welcome_email.deliver_later
         MailService.delay.user_welcome_email(@user.id)
         @message = "user-registered"
         render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
@@ -119,8 +117,6 @@ class UsersController < ApplicationController
     @reason = params[:reason]
     @message = "user-deactivated"
     MailService.delay.deactivate_user(@user.id, @reason)
-    # DeactivateUser.perform_async(@user.id, @reason)
-    # UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
@@ -151,9 +147,7 @@ class UsersController < ApplicationController
 
   def share_referral_code
     @receiver = params[:email]
-    # ReferUser.perform_async(@current_user.id, @receiver)
     MailService.delay.share_referral_code(@current_user.id, @receiver)
-    # UserMailer.with(user: @current_user, receiver: @receiver).share_referral_code_email.deliver_later
     @message = "Code-shared"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end

@@ -103,7 +103,7 @@ class StudyService
     required_audience_list.each do |user_id|
       # send mail
       user = User.find(user_id)
-      UserMailer.with(user: user, study: study).new_study_invitation_email.deliver_later
+      MailService.delay.new_study_invitation_email(user.id, study.id)
       # send notification
       notification = Notification.new
       notification.notification_type = "Study Invitation"
@@ -128,8 +128,7 @@ class StudyService
       StudyService.find_audience(study)
       # send mail and notification to researcher
       user = study.user
-      # StudyPublish.perform_async(study.id)
-      UserMailer.with(user: user, study: study).study_published_email.deliver_later
+      MailService.delay.study_published_email(study.id)
       notification = Notification.new
       notification.notification_type = "Study Published"
       notification.user_id = user.id
@@ -139,7 +138,7 @@ class StudyService
       notification.save
       # send mail and notification to Admin
       user = User.where(user_type: "Admin").first
-      UserMailer.with(user: user, study: study).study_published_email.deliver_later
+      MailService.delay.study_auto_activate_email(user.id, study.id)
       notification = Notification.new
       notification.notification_type = "Study Published"
       notification.user_id = user.id
@@ -198,7 +197,7 @@ class StudyService
     study.save
     # StudyPublish.perform_async(study.id)
     user = User.where(user_type: "Admin").first
-    UserMailer.with(user: user, study: study).new_study_creation_email.deliver_later
+    MailService.delay.new_study_creation_email(user.id, study.id)
     notification = Notification.new
     notification.notification_type = "Study Created"
     notification.user_id = user.id
@@ -269,7 +268,7 @@ class StudyService
     eligible_candidates.each do |eligible_candidate|
       # send email
       user = eligible_candidate.user
-      StudyMailer.with(user: user, study: study).study_reinvitation_email.deliver_later
+      MailService.delay.study_reinvitation_email(user.id, study.id)
       # send notification
       notification = Notification.new
       notification.notification_type = "Study has been activated again"
@@ -425,7 +424,7 @@ class StudyService
     study.save
     # StudyReject.perform_async(study.id)
     user = study.user
-    UserMailer.with(user: user, study: study).study_rejection_email.deliver_later
+    MailService.delay.study_rejection_email(user.id, study.id)
     notification = Notification.new
     notification.notification_type = "Study Rejected"
     notification.user_id = user.id
@@ -441,7 +440,7 @@ class StudyService
     # StudyActivate.perform_async(study.id)
     StudyService.find_audience(study)
     user = User.find(study.user_id)
-    UserMailer.with(user: user, study: study).study_published_email.deliver_later
+    MailService.delay.study_published_email(user.id, study.id)
     notification = Notification.new
     notification.notification_type = "Study Published"
     notification.user_id = user.id

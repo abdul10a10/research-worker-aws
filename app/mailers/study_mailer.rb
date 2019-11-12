@@ -6,4 +6,10 @@ class StudyMailer < ApplicationMailer
     mail(to: @user.email, subject: "Exclusive invitation for new study")
   end
 
+  def study_auto_activate_email
+    @user = params[:user]
+    @study = params[:study]
+    mail(to: @user.email, subject: "Study Published")
+  end
+
 end

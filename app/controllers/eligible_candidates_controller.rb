@@ -49,7 +49,7 @@ class EligibleCandidatesController < ApplicationController
       @eligible_candidates = @study.eligible_candidates.where(is_attempted: '1', deleted_at: nil)
       @attempted_candidate_count = @eligible_candidates.count
       if @attempted_candidate_count >= @study.submission
-        UserMailer.with(user: @study.user, study: @study).study_completion_email.deliver_later
+        MailService.delay.study_completion_email(@study.id)
         # send notification
         @notification = Notification.new
         @notification.notification_type = "Study Completion"
@@ -118,7 +118,8 @@ class EligibleCandidatesController < ApplicationController
     # send mail
     @study = Study.find(study_id)
     @user = User.find(user_id)
-    UserMailer.with(user: @user, study: @study).study_submission_accept_email.deliver_now
+    MailService.delay.study_submission_accept_email(@user.id, @study.id)
+
     # send notification
     @notification = Notification.new
     @notification.notification_type = "Study Submission Accepted"
@@ -140,7 +141,7 @@ class EligibleCandidatesController < ApplicationController
     # send mail
     @study = Study.find(params[:study_id])
     @user = User.find(params[:user_id])
-    UserMailer.with(user: @user, study: @study).study_submission_accept_email.deliver_now
+    MailService.delay.study_submission_accept_email(@user.id, @study.id)
     # send notification
     @notification = Notification.new
     @notification.notification_type = "Study Submission Accepted"
@@ -164,7 +165,7 @@ class EligibleCandidatesController < ApplicationController
     # send mail
     @study = Study.find(params[:study_id])
     @user = User.find(params[:user_id])
-    UserMailer.with(user: @user, study: @study, eligible_candidate: @eligible_candidate).study_rejection_accept_email.deliver_now
+    MailService.delay.study_rejection_accept_email(@user.id, @study.id, @eligible_candidate.id)
     # send notification
     @notification = Notification.new
     @notification.notification_type = "Study Submission Rejected"
