@@ -101,7 +101,7 @@ Rails.application.routes.draw do
   post 'share_referral_code', to: 'users#share_referral_code'
   put 'updateuserinfo/:id', to: 'users#update'
   put 'activateuser/:id', to: 'users#activate'
-  put 'deactivateuser/:id', to: 'users#deactivate'
+  put 'deactivateuser/:id', to: 'users#deactivateuser'
   delete 'deleteuser/:id', to: 'users#destroy'
   get 'reports', to: 'users#reports'
 

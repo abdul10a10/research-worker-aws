@@ -1,11 +1,5 @@
 class UserService
 
-  def self.deactivate_user(user, reason)
-    @user = user
-    @reason = reason
-    UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later    
-  end
-
   def self.verify_user(user)
     @user = user
     @user.status = "active"
@@ -14,7 +8,8 @@ class UserService
     @user.generate_referral_code!
 
     # WelcomeUser.perform_async(@user.id)
-    UserMailer.with(user: @user).user_registration_admin_email.deliver_later
+    # UserMailer.with(user: @user).user_registration_admin_email.deliver_later
+    MailService.delay.user_registration_admin_email(@user.id)
     @notification = Notification.new
     @notification.notification_type = "Registration"
     @admin = User.where(user_type: "Admin").first

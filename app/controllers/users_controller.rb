@@ -1,10 +1,10 @@
 class UsersController < ApplicationController 
   # before_action :authorize_request, only: [:dashboard, :reports, :participantoverview]
   before_action :authorize_request, except: [:create, :destroy, :show, :welcome]
-  before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivate, :activate, 
+  before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivateuser, :activate, 
     :researcheroverview, :participantoverview, :reports]
   # before_action :is_participant, only: [:share_referral_code]
-  before_action :set_user, only: [:show, :update, :destroy, :activate, :deactivate, :participant_overview, :researcher_overview, :participant_info]
+  before_action :set_user, only: [:show, :update, :destroy, :activate, :deactivateuser, :participant_overview, :researcher_overview, :participant_info]
 
   #GET /users
   def index
@@ -45,7 +45,8 @@ class UsersController < ApplicationController
         @user.generate_email_confirmation_token!
         @user.generate_unique_id!
         # UserConfirmation.perform_async(@user.id)
-        UserMailer.with(user: @user).welcome_email.deliver_later
+        # UserMailer.with(user: @user).welcome_email.deliver_later
+        MailService.delay.user_welcome_email(@user.id)
         @message = "user-registered"
         render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
       else
@@ -114,10 +115,10 @@ class UsersController < ApplicationController
   end
 
 
-  def deactivate
+  def deactivateuser
     @reason = params[:reason]
     @message = "user-deactivated"
-    UserService.deactivate_user(@user, @reason)
+    MailService.delay.deactivate_user(@user.id, @reason)
     # DeactivateUser.perform_async(@user.id, @reason)
     # UserMailer.with(user: @user, reason: @reason).rejection_email.deliver_later
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
@@ -151,7 +152,8 @@ class UsersController < ApplicationController
   def share_referral_code
     @receiver = params[:email]
     # ReferUser.perform_async(@current_user.id, @receiver)
-    UserMailer.with(user: @current_user, receiver: @receiver).share_referral_code_email.deliver_later
+    MailService.delay.share_referral_code(@current_user.id, @receiver)
+    # UserMailer.with(user: @current_user, receiver: @receiver).share_referral_code_email.deliver_later
     @message = "Code-shared"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
@@ -190,5 +192,3 @@ class UsersController < ApplicationController
     end
   end
 end
-
-# helpers.time_ago_in_words helper to use time time difference 

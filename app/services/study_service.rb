@@ -1,0 +1,453 @@
+class StudyService
+
+  def self.admin_active_study_detail(study)
+    required_participant = study.submission
+    active_candidates = study.eligible_candidates.where(is_attempted: "1", deleted_at: nil)
+    active_candidate = active_candidates.count
+    active_candidate_list = Array.new
+    active_candidates.each do |candidate|
+      user = candidate.user
+      active_candidate_list.push(user)
+    end
+    submitted_candidates = study.eligible_candidates.where(is_completed: "1", deleted_at: nil)
+    submitted_candidate_count = submitted_candidates.count
+    submitted_candidates_list = Array.new
+    submitted_candidates.each do |candidate|
+      user = candidate.user
+      if (user.user_type == "Participant")
+        submitted_candidates_list.push(user)
+      end
+    end
+
+    accepted_candidates = study.eligible_candidates.where(is_completed: "1", is_accepted: "1", deleted_at: nil)
+    accepted_candidate_count = accepted_candidates.count
+    accepted_candidate_list = Array.new
+    accepted_candidates.each do |candidate|
+      user = candidate.user
+      if (user.user_type == "Participant")
+        accepted_candidate_list.push(user)
+      end
+    end
+
+    rejected_candidates = study.eligible_candidates.where(is_completed: "1", is_accepted: "0", deleted_at: nil)
+    rejected_candidate_count = rejected_candidates.count
+    rejected_candidate_list = Array.new
+    rejected_candidates.each do |candidate|
+      user = candidate.user
+      if (user.user_type == "Participant")
+        rejected_candidate_list.push(user)
+      end
+    end
+
+    admin_active_study_detail = { study: study, 
+      required_participant: required_participant, 
+      active_candidate: active_candidate, 
+      active_candidate_list: active_candidate_list, 
+      submitted_candidate_list: submitted_candidates_list,
+      accepted_candidate_list: accepted_candidate_list,
+      rejected_candidate_list: rejected_candidate_list,
+      rejected_candidate_count: rejected_candidate_count,
+      accepted_candidate_count: accepted_candidate_count,
+      submitted_candidate_count: submitted_candidate_count
+    }
+    return admin_active_study_detail
+  end
+  
+  def self.filtered_candidate(study)
+    required_audience_list = Array.new
+    required_audience = User.where(user_type: "Participant", verification_status: '1', deleted_at: nil)
+    required_audience.each do |required_audience|
+    required_audience_list.push(required_audience.id)
+    end
+    if study.audiences.where(deleted_at: nil).present?
+      study_audiences = study.audiences.select("DISTINCT question_id").where( deleted_at: nil)
+      study_audiences.each do |study_audience|
+        audiences = study.audiences.where(question_id: study_audience.question_id, deleted_at: nil)
+        required_users_list = Array.new
+        audiences.each do |audience|
+          required_users = Array.new
+          responses = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
+          responses.each do |response|
+            required_users.push( response.user_id)
+          end
+          required_users_list = required_users_list + required_users
+        end
+        required_audience_list = required_users_list & required_audience_list
+      end
+    end
+    return required_audience_list
+  end
+
+  def self.find_audience(study)
+    required_audience_list = Array.new
+    required_audience = User.where(user_type: "Participant", deleted_at: nil)
+    required_audience.each do |required_audience|
+    required_audience_list.push(required_audience.id)
+    end
+    if study.audiences.where(deleted_at: nil).present?
+      study_audience = study.audiences.select("DISTINCT question_id").where(deleted_at: nil)
+      study_audience.each do |study_audience|
+        audience = study.audiences.where(question_id: study_audience.question_id, deleted_at: nil)
+        required_users_list = Array.new
+        audience.each do |audience|
+          required_users = Array.new
+          users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
+          users.each do |user|
+            required_users.push( user.user_id)
+          end
+          required_users_list = required_users_list + required_users
+        end
+        required_audience_list = required_users_list & required_audience_list
+      end
+    end
+    required_audience_list.each do |user_id|
+      # send mail
+      user = User.find(user_id)
+      UserMailer.with(user: user, study: study).new_study_invitation_email.deliver_later
+      # send notification
+      notification = Notification.new
+      notification.notification_type = "Study Invitation"
+      notification.user_id = user.id
+      study_name = study.name
+      notification.message = "Invitation to participate in " + study_name +" study"
+      notification.redirect_url = "/participantstudy"
+      notification.save
+      #  update eligible candidate list
+      eligible_candidate = EligibleCandidate.new
+      eligible_candidate.user_id = user.id
+      eligible_candidate.study_id = study.id
+      eligible_candidate.save
+    end
+  end
+
+  # Auto activate study after 1 hours of study publish
+  def self.auto_activate_study(study)
+    if study.is_active != "1"
+      study.is_active = 1
+      study.save
+      StudyService.find_audience(study)
+      # send mail and notification to researcher
+      user = study.user
+      # StudyPublish.perform_async(study.id)
+      UserMailer.with(user: user, study: study).study_published_email.deliver_later
+      notification = Notification.new
+      notification.notification_type = "Study Published"
+      notification.user_id = user.id
+      study_name = study.name
+      notification.message = "Study " + study_name +" has been published"
+      notification.redirect_url = "/studyactive"
+      notification.save
+      # send mail and notification to Admin
+      user = User.where(user_type: "Admin").first
+      UserMailer.with(user: user, study: study).study_published_email.deliver_later
+      notification = Notification.new
+      notification.notification_type = "Study Published"
+      notification.user_id = user.id
+      study_name = study.name
+      notification.message = "Study " + study_name +" has been published"
+      notification.redirect_url = "/adminactivestudy"
+      notification.save
+    end
+  end
+
+  def self.pay_for_study(study)
+    # calculation
+    amount = study.reward.to_i * study.submission
+    tax = amount* 0.20
+    commision = amount* 0.10
+    total_amount = amount + tax + commision
+    study_wallet = amount + tax
+    study.is_paid = 1
+    study.study_wallet = study_wallet
+    study.save
+    user = User.where(user_type: "Admin").first
+    user.wallet = user.wallet + commision
+    user.save
+    study_name = study.name
+    # track transaction for study
+    transaction = Transaction.new
+    transaction.transaction_id = SecureRandom.hex(10)
+    transaction.study_id = study.id
+    transaction.payment_type = "Study Wallet"
+    transaction.sender_id = study.user_id
+    transaction.amount = study_wallet
+    transaction.description = "Amount " + study_wallet.to_s + " has been added to Study wallet"
+    transaction.save
+    # track transaction for Admin commision
+    transaction = Transaction.new
+    transaction.transaction_id = SecureRandom.hex(10)
+    transaction.study_id = study.id
+    transaction.payment_type = "Admin commision"
+    transaction.sender_id = study.user_id
+    transaction.receiver_id = user.id
+    transaction.amount = commision
+    transaction.description = "Payment for study " + study_name + " of " + commision.to_s + " has been added to your wallet"
+    transaction.save
+    #payment notification
+    notification = Notification.new
+    notification.notification_type = "Study Payment commision"
+    notification.user_id = user.id
+    study_name = study.name
+    notification.message = "Payment for study " + study_name + " of " + commision.to_s + " has been added to your wallet"
+    notification.redirect_url = "/"
+    notification.save  
+  end
+
+  def self.publish_study(study)
+    study.is_published = 1
+    study.save
+    # StudyPublish.perform_async(study.id)
+    user = User.where(user_type: "Admin").first
+    UserMailer.with(user: user, study: study).new_study_creation_email.deliver_later
+    notification = Notification.new
+    notification.notification_type = "Study Created"
+    notification.user_id = user.id
+    study_name = study.name
+    notification.message = "New study " + study_name +" created by "+ user.first_name
+    notification.redirect_url = "/adminnewstudy"
+    notification.save
+
+    StudyService.delay(run_at: 1.hours.from_now).auto_activate_study(study)
+  end
+
+  def self.researcher_active_study_detail(study)
+    required_participant = study.submission
+    active_candidates = study.eligible_candidates.where(is_attempted: "1", deleted_at: nil)
+    active_candidate = active_candidates.count
+    active_candidate_list = Array.new
+    active_candidates.each do |candidate|
+      user = candidate.user
+      active_candidate_list.push(user)
+    end    
+    submitted_candidates = study.eligible_candidates..where(is_completed: "1", deleted_at: nil)
+    submitted_candidates_list = Array.new
+    submitted_candidates.each do |candidate|
+      user = candidate.user
+      if (user.user_type == "Participant")
+        submitted_candidates_list.push(user)
+      end
+    end
+    submitted_candidate_count = submitted_candidates_list.count
+    accepted_candidates = study.eligible_candidates..where(is_completed: "1", is_accepted: "1", deleted_at: nil)
+    accepted_candidate_count = accepted_candidates.count
+    accepted_candidate_list = Array.new
+    accepted_candidates.each do |candidate|
+      user = candidate.user
+      if (user.user_type == "Participant")
+        accepted_candidate_list.push(user)
+      end
+    end
+    rejected_candidates = study.eligible_candidates.where(is_completed: "1", is_accepted: "0", deleted_at: nil)
+    rejected_candidate_count = rejected_candidates.count
+    rejected_candidate_list = Array.new
+    rejected_candidates.each do |candidate|
+      user = candidate.user
+      if (user.user_type == "Participant")
+        rejected_candidate_list.push(user)
+      end
+    end
+    data = { study: study, 
+      required_participant: required_participant, 
+      active_candidate: active_candidate, 
+      active_candidate_list: active_candidate_list, 
+      submitted_candidate_list: submitted_candidates_list,
+      accepted_candidate_list: accepted_candidate_list,
+      rejected_candidate_list: rejected_candidate_list,
+      rejected_candidate_count: rejected_candidate_count,
+      accepted_candidate_count: accepted_candidate_count,
+      submitted_candidate_count: submitted_candidate_count
+    }
+    return data
+  end
+
+  def self.republish(study)
+    study.is_republish = 1
+    study.save
+    # StudyRepublish.perform_async(study.id)
+    eligible_candidates = study.eligible_candidates.where(is_seen: "1", is_attempted: nil, deleted_at: nil)
+    # send notification and mail
+    eligible_candidates.each do |eligible_candidate|
+      # send email
+      user = eligible_candidate.user
+      StudyMailer.with(user: user, study: study).study_reinvitation_email.deliver_later
+      # send notification
+      notification = Notification.new
+      notification.notification_type = "Study has been activated again"
+      notification.user_id = eligible_candidate.user.id
+      study_name = study.name
+      notification.message = "Study " + study_name +" has been published"
+      notification.redirect_url = "/participantstudy"
+      notification.save
+    end
+  end
+
+  def self.accepted_candidate_list(study)
+    accepted_candidates = study.eligible_candidates.where( is_completed: "1", is_accepted: "1", deleted_at: nil)
+    accepted_candidate_count = accepted_candidates.count
+    accepted_candidate_list = Array.new
+    accepted_candidates.each do |candidate|
+      user = candidate.user
+      if (user.user_type == "Participant")
+        accepted_candidate_list.push(user)
+      end
+    end
+    rejected_candidates = study.eligible_candidates.where(is_completed: "1", is_accepted: "0", deleted_at: nil)
+    rejected_candidate_count = rejected_candidates.count
+    rejected_candidate_list = Array.new
+    rejected_candidates.each do |candidate|
+      user = candidate.user
+      if (user.user_type == "Participant")
+        rejected_candidate_list.push(user)
+      end
+    end
+    data = { accepted_candidate_list: accepted_candidate_list, rejected_candidate_list: rejected_candidate_list}
+    return data
+    
+  end
+
+  def self.track_active_study_list(user)
+    studies = user.studies.where(is_active: "1", is_complete: nil, deleted_at: nil).order(id: :desc)
+    study_list = Array.new
+    studies.each do |study|
+      seen_candidates = study.eligible_candidates.where(is_seen: "1", deleted_at: nil)
+      attempted_candidates = study.eligible_candidates.where(is_attempted: "1", deleted_at: nil)
+      submitted_candidates = study.eligible_candidates.where(is_completed: "1", deleted_at: nil)
+      accepted_candidates = study.eligible_candidates.where(is_accepted: "1", deleted_at: nil)
+      rejected_candidates = study.eligible_candidates.where(is_accepted: "0", deleted_at: nil)
+      study_list.push(
+        study: study,
+        seen_candidates: seen_candidates.count,
+        attempted_candidates: attempted_candidates.count,
+        submitted_candidates: submitted_candidates.count,
+        accepted_candidates: accepted_candidates.count,
+        rejected_candidates: rejected_candidates.count
+      )
+    end
+    return study_list
+  end
+
+  def self.participant_active_study_list(user)
+    eligible_candidates = user.eligible_candidates.where(deleted_at: nil).order(id: :desc)
+    studies = Array.new
+    eligible_candidates.each do |eligible_candidate|
+      eligible_study = eligible_candidate.study
+      if eligible_study.max_participation_date == nil
+        if eligible_candidate.is_attempted == "1"
+          studies.push( eligible_study: eligible_study, is_attempted: "yes" )
+        else
+          studies.push( eligible_study: eligible_study, is_attempted: "no" )
+        end          
+      else
+        if (eligible_study.max_participation_date + 1.days) >= Time.now.utc
+          if eligible_candidate.is_attempted == "1"
+            studies.push( eligible_study: eligible_study, is_attempted: "yes" )
+          else
+            studies.push( eligible_study: eligible_study, is_attempted: "no" )
+          end          
+        end  
+      end      
+    end
+    data = { studies: studies.uniq}
+    return data
+  end
+
+  def self.participant_active_study_detail(study, user)
+    required_participant = study.submission
+    active_candidates = study.eligible_candidates.where(is_attempted: "1", deleted_at: nil)
+    if study.eligible_candidates.where(user_id: user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).present?
+      eligible_candidate = study.eligible_candidates.where(user_id: user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).first
+      estimatetime = study.estimatetime
+      if ((eligible_candidate.start_time + estimatetime.to_i.minutes) > Time.now.utc)
+        timer = eligible_candidate.start_time + estimatetime.to_i.minutes
+        is_attempted = "yes"
+      else
+        is_attempted = "time-out"
+      end
+    elsif study.eligible_candidates.where(user_id: user.id ,is_completed: "1", deleted_at: nil).present?
+      is_attempted = "completed"
+    else
+      is_attempted = "no"
+    end
+    active_candidate = active_candidates.count
+    if active_candidate < required_participant
+      study_status = "active"
+    else
+    study_status = "finished"
+    end
+    data = { study: study, required_participant: required_participant, active_candidate: active_candidate, 
+      is_attempted: is_attempted, timer: timer, study_status: study_status}
+    return data
+  end
+
+  def self.active_candidate_list(study)
+    active_candidates = study.eligible_candidates.where(is_attempted: "1", deleted_at: nil)
+    active_candidate = active_candidates.count
+    active_candidate_list = Array.new
+    active_candidates.each do |candidate|
+      user = candidate.user
+      active_candidate_list.push(user)
+    end
+    data = { active_candidate_list: active_candidate_list}
+    return data
+  end
+
+  def self.submitted_candidate_list(study)
+    submitted_candidates = study.eligible_candidates.where(is_completed: "1", deleted_at: nil)
+    submitted_candidate_count = submitted_candidates.count
+    submitted_candidate_list = Array.new
+    submitted_candidates.each do |candidate|
+      user = candidate.user
+      if (user.user_type == "Participant")
+        # completion_time = helpers.distance_of_time_in_words(candidate.submit_time , candidate.start_time)
+        time_difference = candidate.submit_time - candidate.start_time
+        completion_time = Time.at(time_difference.to_i.abs).utc.strftime("%H:%M:%S")
+        estimate_min_time = candidate.start_time + study.allowedtime.to_i.minutes
+        estimate_max_time = candidate.start_time + study.estimatetime.to_i.minutes
+        if candidate.submit_time < estimate_min_time
+          submission_status = "before-time"
+        elsif candidate.submit_time > estimate_min_time && candidate.submit_time < estimate_max_time
+          submission_status = "within-time"
+        else
+          submission_status = "after-time"
+        end
+        submission = candidate.is_completed
+        submitted_candidate_list.push(user: user, completion_time: completion_time, start_time: candidate.start_time, submission: submission, submission_status: submission_status)
+      end
+    end
+    data = { submitted_candidate_list: submitted_candidate_list}
+    return data
+  end
+
+  def self.reject_study(study,deactivate_reason )
+    study.deactivate_reason = deactivate_reason
+    study.is_active = 0
+    study.is_published = 0
+    study.save
+    # StudyReject.perform_async(study.id)
+    user = study.user
+    UserMailer.with(user: user, study: study).study_rejection_email.deliver_later
+    notification = Notification.new
+    notification.notification_type = "Study Rejected"
+    notification.user_id = user.id
+    study_name = study.name
+    notification.message = "Study " + study_name +" has been rejected"
+    notification.redirect_url = "/studypublished/#{study.id}"
+    notification.save
+  end
+
+  def self.activate_study(study)
+    study.is_active = 1
+    study.save
+    # StudyActivate.perform_async(study.id)
+    StudyService.find_audience(study)
+    user = User.find(study.user_id)
+    UserMailer.with(user: user, study: study).study_published_email.deliver_later
+    notification = Notification.new
+    notification.notification_type = "Study Published"
+    notification.user_id = user.id
+    study_name = study.name
+    notification.message = "Study " + study_name +" has been published"
+    notification.redirect_url = "/studyactive"
+    notification.save
+  end
+end
