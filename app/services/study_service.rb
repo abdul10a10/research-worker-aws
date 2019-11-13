@@ -187,7 +187,7 @@ class StudyService
       user = candidate.user
       active_candidate_list.push(user)
     end    
-    submitted_candidates = study.eligible_candidates..where(is_completed: "1", deleted_at: nil)
+    submitted_candidates = study.eligible_candidates.where(is_completed: "1", deleted_at: nil)
     submitted_candidates_list = Array.new
     submitted_candidates.each do |candidate|
       user = candidate.user
@@ -196,7 +196,7 @@ class StudyService
       end
     end
     submitted_candidate_count = submitted_candidates_list.count
-    accepted_candidates = study.eligible_candidates..where(is_completed: "1", is_accepted: "1", deleted_at: nil)
+    accepted_candidates = study.eligible_candidates.where(is_completed: "1", is_accepted: "1", deleted_at: nil)
     accepted_candidate_count = accepted_candidates.count
     accepted_candidate_list = Array.new
     accepted_candidates.each do |candidate|
