@@ -49,7 +49,6 @@ class BlacklistUsersController < ApplicationController
   end
 
   def blacklisted_users
-    debugger
     @blacklist_users = BlacklistUser.where(study_id: params[:study_id], deleted_at: nil)
     @blacklist_user_list = Array.new
     @blacklist_users.each do |blacklist_user|
