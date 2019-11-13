@@ -16,12 +16,20 @@ class WhitelistUsersController < ApplicationController
   # POST /whitelist_users.json
   def create
     @whitelist_user = WhitelistUser.new(whitelist_user_params)
-
-    if @whitelist_user.save
-      render :show, status: :created, location: @whitelist_user
+    @research_worker_id = params[:research_worker_id]
+    @user = User.find_by(research_worker_id: @research_worker_id )
+    
+    if WhitelistUser.where(user_id: @user.id, study_id: params[:study_id]).present?
+      @message = "user-already-whitelisted"      
     else
-      render json: @whitelist_user.errors, status: :unprocessable_entity
+      @whitelist_user.user_id = @user.id
+      if @whitelist_user.save
+        @message = "user-black-listed"
+      else
+        @message = "error in black-listing"
+      end        
     end
+    render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   # PATCH/PUT /whitelist_users/1
@@ -48,6 +56,6 @@ class WhitelistUsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def whitelist_user_params
-      params.fetch(:whitelist_user, {})
+      params.fetch(:whitelist_user, {}).permit(:study_id, :user_id)
     end
 end
