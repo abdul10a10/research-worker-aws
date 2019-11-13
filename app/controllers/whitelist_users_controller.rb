@@ -48,6 +48,15 @@ class WhitelistUsersController < ApplicationController
     @whitelist_user.destroy
   end
 
+  def whitelisted_users
+    @whitelist_users = WhitelistUser.where(study_id: params[:study_id], deleted_at: nil)
+    @whitelist_user_list = Array.new
+    @whitelist_user_list.each do |whitelist_user|
+      @whitelist_user_list.push(whitelist_user.user)
+    end
+    render json: {Data: @whitelist_user_list, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_whitelist_user
