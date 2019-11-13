@@ -49,9 +49,10 @@ class BlacklistUsersController < ApplicationController
   end
 
   def blacklisted_users
+    debugger
     @blacklist_users = BlacklistUser.where(study_id: params[:study_id], deleted_at: nil)
     @blacklist_user_list = Array.new
-    @blacklist_user_list.each do |blacklist_user|
+    @blacklist_users.each do |blacklist_user|
       @blacklist_user_list.push(blacklist_user.user)
     end
     render json: {Data: @blacklist_user_list, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
