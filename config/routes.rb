@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :whitelist_users
+  resources :blacklist_users
   resources :transactions
   resources :terms_of_uses
 

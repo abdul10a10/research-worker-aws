@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_06_124648) do
+ActiveRecord::Schema.define(version: 2019_11_13_120707) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -26,6 +26,13 @@ ActiveRecord::Schema.define(version: 2019_11_06_124648) do
     t.string "question_id"
     t.string "answer_id"
     t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "blacklist_users", force: :cascade do |t|
+    t.string "user_id"
+    t.string "study_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -224,6 +231,13 @@ ActiveRecord::Schema.define(version: 2019_11_06_124648) do
     t.index ["research_worker_id"], name: "index_users_on_research_worker_id", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["user_referral_code"], name: "index_users_on_user_referral_code", unique: true
+  end
+
+  create_table "whitelist_users", force: :cascade do |t|
+    t.string "user_id"
+    t.string "study_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

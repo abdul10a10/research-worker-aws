@@ -4,6 +4,8 @@ class User < ApplicationRecord
   has_many :notifications
   has_many :studies
   has_many :eligible_candidates
+  has_many :whitelist_users
+  has_many :blacklist_users
   
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
