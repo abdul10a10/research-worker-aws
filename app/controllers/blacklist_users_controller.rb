@@ -18,14 +18,18 @@ class BlacklistUsersController < ApplicationController
     @blacklist_user = BlacklistUser.new(blacklist_user_params)
     @research_worker_id = params[:research_worker_id]
     @user = User.find_by(research_worker_id: @research_worker_id )
-    @blacklist_user.user_id = @user.id
-    if @blacklist_user.save
-      message = "user-black-listed"
-      render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok      
+    
+    if BlacklistUser.where(user_id: @user.id, study_id: params[:study_id]).present?
+      @message = "user-already-blacklisted"      
     else
-      message = "error in black-listing"
-      render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok      
+      @blacklist_user.user_id = @user.id
+      if @blacklist_user.save
+        @message = "user-black-listed"
+      else
+        @message = "error in black-listing"
+      end        
     end
+    render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   # PATCH/PUT /blacklist_users/1
