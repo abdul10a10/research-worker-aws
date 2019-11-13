@@ -19,7 +19,7 @@ class BlacklistUsersController < ApplicationController
     @research_worker_id = params[:research_worker_id]
     @user = User.find_by(research_worker_id: @research_worker_id )
     
-    if BlacklistUser.where(user_id: @user.id, study_id: params[:study_id]).present?
+    if BlacklistUser.where(user_id: @user.id, study_id: params[:study_id], deleted_at: nil).present?
       @message = "user-already-blacklisted"      
     else
       @blacklist_user.user_id = @user.id
@@ -46,6 +46,15 @@ class BlacklistUsersController < ApplicationController
   # DELETE /blacklist_users/1.json
   def destroy
     @blacklist_user.destroy
+  end
+
+  def blacklisted_users
+    @blacklist_users = BlacklistUser.where(study_id: params[:study_id], deleted_at: nil)
+    @blacklist_user_list = Array.new
+    @blacklist_user_list.each do |blacklist_user|
+      @blacklist_user_list.push(blacklist_user.user)
+    end
+    render json: {Data: @blacklist_user_list, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
   end
 
   private

@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   resources :whitelist_users
   resources :blacklist_users
+  get 'blacklisted_users', to: 'blacklist_users#blacklisted_users'
   resources :transactions
   resources :terms_of_uses
 
