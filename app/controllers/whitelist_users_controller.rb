@@ -24,9 +24,9 @@ class WhitelistUsersController < ApplicationController
     else
       @whitelist_user.user_id = @user.id
       if @whitelist_user.save
-        @message = "user-black-listed"
+        @message = "user-white-listed"
       else
-        @message = "error in black-listing"
+        @message = "error in whitelisting"
       end        
     end
     render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
