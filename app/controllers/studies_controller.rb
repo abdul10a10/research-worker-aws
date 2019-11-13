@@ -13,7 +13,6 @@ class StudiesController < ApplicationController
     :admin_active_study_list, :admin_inactive_study_list, :participant_active_study_list]
 
   # GET /studies
-  # GET /studies.json
   def index
     @studies = Study.where(deleted_at: nil).order(id: :desc)
     @message = "all-study"
@@ -22,7 +21,6 @@ class StudiesController < ApplicationController
 
   # ==================================================== Researcher ==========================================================
   # GET /studies/1
-  # GET /studies/1.json
   def show
     @message = "study"
     @filtered_candidates = StudyService.filtered_candidate(@study)
@@ -31,7 +29,6 @@ class StudiesController < ApplicationController
   end
 
   # POST /studies
-  # POST /studies.json
   def create
     @study = Study.new(study_params)
     if Study.find_by(completioncode: @study.completioncode).present?
@@ -47,7 +44,6 @@ class StudiesController < ApplicationController
   end
 
   # PATCH/PUT /studies/1
-  # PATCH/PUT /studies/1.json
   def update
     if @study.update(study_params)
       @message = "study-updated"
@@ -297,7 +293,6 @@ class StudiesController < ApplicationController
     @message = "paid-candidate-list"
     render json: {Data: { paid_candidate_list: @paid_candidate_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok  
   end
-
 
   private
     # Use callbacks to share common setup or constraints between actions.

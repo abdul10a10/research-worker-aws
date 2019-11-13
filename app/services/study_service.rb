@@ -105,17 +105,8 @@ class StudyService
       user = User.find(user_id)
       MailService.delay.new_study_invitation_email(user.id, study.id)
       # send notification
-      notification = Notification.new
-      notification.notification_type = "Study Invitation"
-      notification.user_id = user.id
-      study_name = study.name
-      notification.message = "Invitation to participate in " + study_name +" study"
-      notification.redirect_url = "/participantstudy"
-      notification.save
-      #  update eligible candidate list
-      eligible_candidate = EligibleCandidate.new
-      eligible_candidate.user_id = user.id
-      eligible_candidate.study_id = study.id
+      NotificationService.create_notification("Study Invitation", user.id, "Invitation to participate in #{study.name} study", "/participantstudy")
+      eligible_candidate = EligibleCandidate.new(user_id: user.id, study_id: study.id)
       eligible_candidate.save
     end
   end
@@ -129,23 +120,13 @@ class StudyService
       # send mail and notification to researcher
       user = study.user
       MailService.delay.study_published_email(study.id)
-      notification = Notification.new
-      notification.notification_type = "Study Published"
-      notification.user_id = user.id
-      study_name = study.name
-      notification.message = "Study " + study_name +" has been published"
-      notification.redirect_url = "/studyactive"
-      notification.save
+      NotificationService.create_notification("Study Published", user.id, 
+        "Study #{study.name} has been published", "/studyactive")
       # send mail and notification to Admin
       user = User.where(user_type: "Admin").first
       MailService.delay.study_auto_activate_email(user.id, study.id)
-      notification = Notification.new
-      notification.notification_type = "Study Published"
-      notification.user_id = user.id
-      study_name = study.name
-      notification.message = "Study " + study_name +" has been published"
-      notification.redirect_url = "/adminactivestudy"
-      notification.save
+      NotificationService.create_notification("Study Published", user.id, 
+        "Study #{study.name} has been published", "/adminactivestudy")
     end
   end
 
@@ -182,14 +163,8 @@ class StudyService
     transaction.amount = commision
     transaction.description = "Payment for study " + study_name + " of " + commision.to_s + " has been added to your wallet"
     transaction.save
-    #payment notification
-    notification = Notification.new
-    notification.notification_type = "Study Payment commision"
-    notification.user_id = user.id
-    study_name = study.name
-    notification.message = "Payment for study " + study_name + " of " + commision.to_s + " has been added to your wallet"
-    notification.redirect_url = "/"
-    notification.save  
+    NotificationService.create_notification("Study Payment commision", user.id, 
+      "Payment for study #{study.name } of #{ commision} has been added to your wallet", "/")
   end
 
   def self.publish_study(study)
@@ -198,14 +173,8 @@ class StudyService
     # StudyPublish.perform_async(study.id)
     user = User.where(user_type: "Admin").first
     MailService.delay.new_study_creation_email(user.id, study.id)
-    notification = Notification.new
-    notification.notification_type = "Study Created"
-    notification.user_id = user.id
-    study_name = study.name
-    notification.message = "New study " + study_name +" created by "+ user.first_name
-    notification.redirect_url = "/adminnewstudy"
-    notification.save
-
+    NotificationService.create_notification("Study Created", user.id, 
+      "New study #{study.name} created by #{user.first_name}", "/adminnewstudy")
     StudyService.delay(run_at: 1.hours.from_now).auto_activate_study(study)
   end
 
@@ -264,19 +233,11 @@ class StudyService
     study.save
     # StudyRepublish.perform_async(study.id)
     eligible_candidates = study.eligible_candidates.where(is_seen: "1", is_attempted: nil, deleted_at: nil)
-    # send notification and mail
     eligible_candidates.each do |eligible_candidate|
-      # send email
       user = eligible_candidate.user
       MailService.delay.study_reinvitation_email(user.id, study.id)
-      # send notification
-      notification = Notification.new
-      notification.notification_type = "Study has been activated again"
-      notification.user_id = eligible_candidate.user.id
-      study_name = study.name
-      notification.message = "Study " + study_name +" has been published"
-      notification.redirect_url = "/participantstudy"
-      notification.save
+      NotificationService.create_notification("Study reactivated", eligible_candidate.user.id, 
+        "Study #{study.name} has been published", "/participantstudy")
     end
   end
 
@@ -425,13 +386,7 @@ class StudyService
     # StudyReject.perform_async(study.id)
     user = study.user
     MailService.delay.study_rejection_email(user.id, study.id)
-    notification = Notification.new
-    notification.notification_type = "Study Rejected"
-    notification.user_id = user.id
-    study_name = study.name
-    notification.message = "Study " + study_name +" has been rejected"
-    notification.redirect_url = "/studypublished/#{study.id}"
-    notification.save
+    NotificationService.create_notification("Study Rejected", user.id, "Study #{study.name} has been rejected", "/studypublished/#{study.id}")
   end
 
   def self.activate_study(study)
@@ -441,12 +396,7 @@ class StudyService
     StudyService.find_audience(study)
     user = User.find(study.user_id)
     MailService.delay.study_published_email(user.id, study.id)
-    notification = Notification.new
-    notification.notification_type = "Study Published"
-    notification.user_id = user.id
-    study_name = study.name
-    notification.message = "Study " + study_name +" has been published"
-    notification.redirect_url = "/studyactive"
-    notification.save
+    NotificationService.create_notification("Study Published", user.id, 
+      "Study #{study.name.upcase} has been activated", "/studyactive")
   end
 end
