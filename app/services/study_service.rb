@@ -80,31 +80,38 @@ class StudyService
 
   def self.find_audience(study)
     required_audience_list = Array.new
-    required_audience = User.where(user_type: "Participant", deleted_at: nil)
-    required_audience.each do |required_audience|
-    required_audience_list.push(required_audience.id)
-    end
-    if study.audiences.where(deleted_at: nil).present?
-      study_audience = study.audiences.select("DISTINCT question_id").where(deleted_at: nil)
-      study_audience.each do |study_audience|
-        audience = study.audiences.where(question_id: study_audience.question_id, deleted_at: nil)
-        required_users_list = Array.new
-        audience.each do |audience|
-          required_users = Array.new
-          responses = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
-          responses.each do |response|
-            if response.user.blacklist_users.where(study_id: study.id, deleted_at: nil).empty? # To check for blacklisted candidate
-              required_users.push( response.user.user_id)
-            end
-          end
-          required_users_list = required_users_list + required_users
-        end
-        required_audience_list = required_users_list & required_audience_list
+    if study.only_whitelisted == nil
+      required_audience = User.where(user_type: "Participant", deleted_at: nil)
+      required_audience.each do |required_audience|
+        required_audience_list.push(required_audience)
       end
+      if study.audiences.where(deleted_at: nil).present?
+        study_audience = study.audiences.select("DISTINCT question_id").where(deleted_at: nil)
+        study_audience.each do |study_audience|
+          audience = study.audiences.where(question_id: study_audience.question_id, deleted_at: nil)
+          required_users_list = Array.new
+          audience.each do |audience|
+            required_users = Array.new
+            responses = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
+            responses.each do |response|
+              if response.user.blacklist_users.where(study_id: study.id, deleted_at: nil).empty? # To check for blacklisted candidate
+                required_users.push( response.user)
+              end
+            end
+            required_users_list = required_users_list + required_users
+          end
+          required_audience_list = required_users_list & required_audience_list
+        end
+      end     
     end
-    required_audience_list.each do |user_id|
+    whitelisted_users = study.whitelist_users
+    whitelisted_user_list = Array.new
+    whitelisted_users.each do |whitelisted_user|
+      whitelisted_user_list.push( whitelisted_user.user)
+    end
+    required_audience_list = required_audience_list + whitelisted_user_list
+    required_audience_list.each do |user|
       # send mail
-      user = User.find(user_id)
       MailService.delay.new_study_invitation_email(user.id, study.id)
       # send notification
       NotificationService.create_notification("Study Invitation", user.id, "Invitation to participate in #{study.name} study", "/participantstudy")
@@ -392,11 +399,11 @@ class StudyService
   end
 
   def self.activate_study(study)
-    study.is_active = 1
+    study.is_active = "1"
     study.save
     # StudyActivate.perform_async(study.id)
     StudyService.find_audience(study)
-    user = User.find(study.user_id)
+    user = study.user
     MailService.delay.study_published_email(user.id, study.id)
     NotificationService.create_notification("Study Published", user.id, 
       "Study #{study.name.upcase} has been activated", "/studyactive")
