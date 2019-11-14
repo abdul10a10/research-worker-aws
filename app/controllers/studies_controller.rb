@@ -186,7 +186,7 @@ class StudiesController < ApplicationController
     status: :ok
   end
 
-  def only_whitelisted_users
+  def select_only_whitelisted
     @study.only_whitelisted = 1
     @study.save
     @message = "only-whitelisted-users-selected"
