@@ -91,10 +91,10 @@ class StudyService
         required_users_list = Array.new
         audience.each do |audience|
           required_users = Array.new
-          users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
-          users.each do |user|
-            if user.blacklist_users.where(study_id: study.id, deleted_at: nil).empty? # To check for blacklisted candidate
-              required_users.push( user.user_id)
+          responses = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
+          responses.each do |response|
+            if response.user.blacklist_users.where(study_id: study.id, deleted_at: nil).empty? # To check for blacklisted candidate
+              required_users.push( response.user.user_id)
             end
           end
           required_users_list = required_users_list + required_users

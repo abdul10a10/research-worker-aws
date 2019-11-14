@@ -185,6 +185,22 @@ class StudiesController < ApplicationController
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
     status: :ok
   end
+
+  def only_whitelisted_users
+    @study.only_whitelisted = 1
+    @study.save
+    @message = "only-whitelisted-users-selected"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
+    status: :ok
+  end
+
+  def reject_only_whitelisted
+    @study.only_whitelisted = nil
+    @study.save
+    @message = "only-whitelisted-users-rejected"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
+    status: :ok
+  end
   # ============================================================ Admin =======================================================
 
   def activate_study

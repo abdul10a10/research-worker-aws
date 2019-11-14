@@ -63,6 +63,8 @@ Rails.application.routes.draw do
   get 'paid_candidate_list/:id', to: 'studies#paid_candidate_list'
   get 'researcher_unique_id/:id', to: 'studies#researcher_unique_id'
   get 'republish/:id', to: 'studies#republish'
+  get 'only_whitelisted_users/:id', to: 'studies#only_whitelisted_users'
+  get 'reject_only_whitelisted/:id', to: 'studies#reject_only_whitelisted'
 
   get 'total_studies', to:  'studies#total_studies'
   get 'admin_new_study_list', to: 'studies#admin_new_study_list'

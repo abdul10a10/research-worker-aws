@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_13_131833) do
+ActiveRecord::Schema.define(version: 2019_11_14_071035) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -164,6 +164,7 @@ ActiveRecord::Schema.define(version: 2019_11_13_131833) do
     t.integer "study_wallet", default: 0
     t.datetime "max_participation_date"
     t.integer "is_republish"
+    t.integer "only_whitelisted"
   end
 
   create_table "terms_and_conditions", force: :cascade do |t|
