@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   resources :whitelist_users
   get 'whitelisted_users/:study_id', to: 'whitelist_users#whitelisted_users'
+  get 'delete_whitelisted_user/:user_id/:study_id', to: 'whitelist_users#delete_whitelisted_user'
+  get 'blacklist_whitelisted_user/:user_id/:study_id', to: 'whitelist_users#blacklist_whitelisted_user'
   
   resources :blacklist_users
   get 'blacklisted_users/:study_id', to: 'blacklist_users#blacklisted_users'
