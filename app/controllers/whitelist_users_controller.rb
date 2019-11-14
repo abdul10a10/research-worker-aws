@@ -57,6 +57,22 @@ class WhitelistUsersController < ApplicationController
     render json: {Data: @whitelist_user_list, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
   end
 
+  def delete_whitelisted_user
+    @blacklist_user = BlacklistUser.where(user_id: params[:user_id], study_id: params[:study_id], deleted_at: nil).first
+    @blacklist_user.deleted_at!
+    @message = "blacklisted-user-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+  end
+
+  def blacklist_whitelisted_user
+    @blacklist_user = BlacklistUser.where(user_id: params[:user_id], study_id: params[:study_id]).first
+    @blacklist_user.deleted_at!
+    @whitelist_user = WhitelistUser.new(user_id: params[:user_id],study_id: params[:study_id])
+    @whitelist_user.save
+    @message = "whitelist-blacklisted-user"
+    render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_whitelist_user

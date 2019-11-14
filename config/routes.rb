@@ -4,8 +4,8 @@ Rails.application.routes.draw do
   
   resources :blacklist_users
   get 'blacklisted_users/:study_id', to: 'blacklist_users#blacklisted_users'
-  get 'delete_blacklisted_user/:user_id/:study_id', to: 'blacklisted_users#delete_blacklisted_user'
-  get 'whitelist_blacklisted_user/:user_id/:study_id', to: 'blacklisted_users#whitelist_blacklisted_user'
+  get 'delete_blacklisted_user/:user_id/:study_id', to: 'blacklist_users#delete_blacklisted_user'
+  get 'whitelist_blacklisted_user/:user_id/:study_id', to: 'blacklist_users#whitelist_blacklisted_user'
 
   resources :transactions
   resources :terms_of_uses
