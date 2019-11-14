@@ -49,12 +49,13 @@ class WhitelistUsersController < ApplicationController
   end
 
   def whitelisted_users
-    @whitelist_users = WhitelistUser.where(study_id: params[:study_id], deleted_at: nil)
+    @study = Study.find(params[:study_id])
+    @whitelist_users = @study.whitelist_users.where(deleted_at: nil)
     @whitelist_user_list = Array.new
     @whitelist_users.each do |whitelist_user|
       @whitelist_user_list.push(whitelist_user.user)
     end
-    render json: {Data: @whitelist_user_list, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+    render json: {Data: {whitelist_user_list: @whitelist_user_list, study: @study}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
   end
 
   def delete_whitelisted_user
