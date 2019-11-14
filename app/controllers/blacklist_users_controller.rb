@@ -49,12 +49,29 @@ class BlacklistUsersController < ApplicationController
   end
 
   def blacklisted_users
-    @blacklist_users = BlacklistUser.where(study_id: params[:study_id], deleted_at: nil)
+    @study = Study.find(params[:study_id])
+    @blacklist_users = @study.blacklist_users.where(deleted_at: nil)
     @blacklist_user_list = Array.new
     @blacklist_users.each do |blacklist_user|
       @blacklist_user_list.push(blacklist_user.user)
     end
-    render json: {Data: @blacklist_user_list, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+    render json: {Data: {blacklist_user_list: @blacklist_user_list, study: @study}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+  end
+
+  def delete_blacklisted_user
+    @blacklist_user = BlacklistUser.where(user_id: params[:user_id], study_id: params[:study_id], deleted_at: nil).first
+    @blacklist_user.deleted_at!
+    @message = "blacklisted-user-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+  end
+
+  def whitelist_blacklisted_user
+    @blacklist_user = BlacklistUser.where(user_id: params[:user_id], study_id: params[:study_id]).first
+    @blacklist_user.deleted_at!
+    @whitelist_user = WhitelistUser.new(user_id: params[:user_id],study_id: params[:study_id])
+    @whitelist_user.save
+    @message = "whitelist-blacklisted-user"
+    render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
   end
 
   private
