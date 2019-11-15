@@ -75,9 +75,20 @@ class StudyService
         required_audience_list = required_users_list & required_audience_list
       end
     end
-    required_audience_list = required_audience_list | study.whitelist_users
-    required_audience_list = required_audience_list - study.blacklist_users
-    return study.blacklist_users
+    # blacklist user array
+    blacklist_user_list = Array.new
+    study.blacklist_users.each do |blacklist_user|
+      blacklist_user_list.push(blacklist_user.user)
+    end
+    # whitelist user array
+    whitelist_user_list = Array.new
+    study.whitelist_users.each do |whitelist_user|
+      whitelist_user_list.push(whitelist_user.user)
+    end
+
+    required_audience_list = required_audience_list | study.whitelist_user_list
+    required_audience_list = required_audience_list - study.blacklist_user_list
+    return required_audience_list
   end
 
   def self.find_audience(study)
