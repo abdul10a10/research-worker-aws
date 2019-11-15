@@ -57,7 +57,7 @@ class StudyService
     required_audience_list = Array.new
     required_audience = User.where(user_type: "Participant", verification_status: '1', deleted_at: nil)
     required_audience.each do |required_audience|
-    required_audience_list.push(required_audience.id)
+    required_audience_list.push(required_audience)
     end
     if study.audiences.where(deleted_at: nil).present?
       study_audiences = study.audiences.select("DISTINCT question_id").where( deleted_at: nil)
@@ -68,7 +68,7 @@ class StudyService
           required_users = Array.new
           responses = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
           responses.each do |response|
-            required_users.push( response.user_id)
+            required_users.push( response.user)
           end
           required_users_list = required_users_list | required_users
         end
