@@ -86,8 +86,8 @@ class StudyService
       whitelist_user_list.push(whitelist_user.user)
     end
 
-    required_audience_list = required_audience_list | study.whitelist_user_list
-    required_audience_list = required_audience_list - study.blacklist_user_list
+    required_audience_list = required_audience_list | whitelist_user_list
+    required_audience_list = required_audience_list - blacklist_user_list
     return required_audience_list
   end
 
