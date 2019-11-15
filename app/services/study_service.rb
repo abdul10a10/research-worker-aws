@@ -77,7 +77,7 @@ class StudyService
     end
     required_audience_list = required_audience_list | study.whitelist_users
     required_audience_list = required_audience_list - study.blacklist_users
-    return required_audience_list
+    return study.blacklist_users
   end
 
   def self.find_audience(study)
