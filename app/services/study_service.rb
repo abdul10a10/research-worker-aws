@@ -70,11 +70,13 @@ class StudyService
           responses.each do |response|
             required_users.push( response.user_id)
           end
-          required_users_list = required_users_list + required_users
+          required_users_list = required_users_list | required_users
         end
         required_audience_list = required_users_list & required_audience_list
       end
     end
+    required_audience_list = required_audience_list | study.whitelist_users
+    required_audience_list = required_audience_list - study.blacklist_users
     return required_audience_list
   end
 
