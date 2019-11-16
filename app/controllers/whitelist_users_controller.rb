@@ -19,7 +19,7 @@ class WhitelistUsersController < ApplicationController
     @research_worker_id = params[:research_worker_id]
     @user = User.find_by(research_worker_id: @research_worker_id )
     
-    if WhitelistUser.where(user_id: @user.id, study_id: params[:study_id]).present?
+    if WhitelistUser.where(user_id: @user.id, study_id: params[:study_id], deleted_at: nil).present?
       @message = "user-already-whitelisted"      
     else
       @whitelist_user.user_id = @user.id
