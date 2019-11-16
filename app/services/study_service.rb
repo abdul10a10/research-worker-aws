@@ -64,6 +64,17 @@ class StudyService
     return study_list
   end
   
+  def self.admin_inactive_study_list
+    studies = Study.where(is_active: "0", is_complete: nil, deleted_at: nil).order(id: :desc)
+    study_list = Array.new
+    studies.each do |study|
+      if study.is_published != "1"
+        study_list.push(study)
+      end
+    end
+    return study_list
+  end
+
   def self.filtered_candidate(study)
     required_audience_list = Array.new
     if study.only_whitelisted == nil

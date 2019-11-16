@@ -246,8 +246,8 @@ class StudiesController < ApplicationController
 
   #  rejected study list
   def admin_inactive_study_list
-    @studies = Study.where(is_active: "0", is_complete: nil,deleted_at: nil).order(id: :desc)
-    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    studies = StudyService.admin_inactive_study_list
+    render json: {Data: { studies: studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
   def admin_active_study_detail
