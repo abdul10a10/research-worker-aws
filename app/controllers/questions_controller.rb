@@ -67,7 +67,7 @@ class QuestionsController < ApplicationController
         @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
         @answers = Array.new
           @response.each do |response|
-            @answer = Answer.find(response.answer_id)
+            @answer = response.answer
             @answers.push(@answer.description)
           end
         @responce.push({

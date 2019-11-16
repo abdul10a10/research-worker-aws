@@ -286,21 +286,19 @@ class StudyService
     studies = Array.new
     eligible_candidates.each do |eligible_candidate|
       eligible_study = eligible_candidate.study
-      if eligible_study.max_participation_date == nil
+      if eligible_study.is_complete == nil && eligible_study.is_active == "1" && eligible_study.deleted_at == nil && eligible_study.max_participation_date == nil
         if eligible_candidate.is_attempted == "1"
           studies.push( eligible_study: eligible_study, is_attempted: "yes" )
         else
           studies.push( eligible_study: eligible_study, is_attempted: "no" )
-        end          
-      else
-        if (eligible_study.max_participation_date + 1.days) >= Time.now.utc
-          if eligible_candidate.is_attempted == "1"
-            studies.push( eligible_study: eligible_study, is_attempted: "yes" )
-          else
-            studies.push( eligible_study: eligible_study, is_attempted: "no" )
-          end          
-        end  
-      end      
+        end    
+      elsif eligible_study.is_complete == nil && eligible_study.is_active == "1" && eligible_study.deleted_at == nil && (eligible_study.max_participation_date + 1.days) >= Time.now.utc 
+        if eligible_candidate.is_attempted == "1"
+          studies.push( eligible_study: eligible_study, is_attempted: "yes" )
+        else
+          studies.push( eligible_study: eligible_study, is_attempted: "no" )
+        end
+      end
     end
     data = { studies: studies.uniq}
     return data
