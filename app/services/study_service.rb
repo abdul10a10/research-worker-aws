@@ -199,45 +199,15 @@ class StudyService
     required_participant = study.submission
     active_candidates = study.eligible_candidates.where(is_attempted: "1", deleted_at: nil)
     active_candidate = active_candidates.count
-    active_candidate_list = Array.new
-    active_candidates.each do |candidate|
-      user = candidate.user
-      active_candidate_list.push(user)
-    end    
     submitted_candidates = study.eligible_candidates.where(is_completed: "1", deleted_at: nil)
-    submitted_candidates_list = Array.new
-    submitted_candidates.each do |candidate|
-      user = candidate.user
-      if (user.user_type == "Participant")
-        submitted_candidates_list.push(user)
-      end
-    end
-    submitted_candidate_count = submitted_candidates_list.count
+    submitted_candidate_count = submitted_candidates.count
     accepted_candidates = study.eligible_candidates.where(is_completed: "1", is_accepted: "1", deleted_at: nil)
     accepted_candidate_count = accepted_candidates.count
-    accepted_candidate_list = Array.new
-    accepted_candidates.each do |candidate|
-      user = candidate.user
-      if (user.user_type == "Participant")
-        accepted_candidate_list.push(user)
-      end
-    end
     rejected_candidates = study.eligible_candidates.where(is_completed: "1", is_accepted: "0", deleted_at: nil)
     rejected_candidate_count = rejected_candidates.count
-    rejected_candidate_list = Array.new
-    rejected_candidates.each do |candidate|
-      user = candidate.user
-      if (user.user_type == "Participant")
-        rejected_candidate_list.push(user)
-      end
-    end
     data = { study: study, 
       required_participant: required_participant, 
       active_candidate: active_candidate, 
-      active_candidate_list: active_candidate_list, 
-      submitted_candidate_list: submitted_candidates_list,
-      accepted_candidate_list: accepted_candidate_list,
-      rejected_candidate_list: rejected_candidate_list,
       rejected_candidate_count: rejected_candidate_count,
       accepted_candidate_count: accepted_candidate_count,
       submitted_candidate_count: submitted_candidate_count
