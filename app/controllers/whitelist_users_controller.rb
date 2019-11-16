@@ -26,14 +26,14 @@ class WhitelistUsersController < ApplicationController
       if @whitelist_user.save
         # delete user from blacklist if he is in blacklist
         if BlacklistUser.where(user_id: @user.id, study_id: params[:study_id], deleted_at: nil).present?
-          @blacklist_user = BlacklistUser.where(user_id: @user.id, study_id: params[:study_id], deleted_at: nil)
+          @blacklist_user = BlacklistUser.where(user_id: @user.id, study_id: params[:study_id], deleted_at: nil).first
           @blacklist_user.deleted_at!
         end
         @message = "user-white-listed"
       else
         @message = "error in whitelisting"
-      end        
-    end
+      end
+    end        
     render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
