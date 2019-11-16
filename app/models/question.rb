@@ -2,6 +2,8 @@ class Question < ApplicationRecord
   belongs_to :question_category
   belongs_to :question_type
   has_many :answers
+  has_many :audiences
+  has_many :responses
 
   def deleted_at!
     self.deleted_at = Time.now.utc
