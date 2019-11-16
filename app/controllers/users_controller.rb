@@ -44,7 +44,7 @@ class UsersController < ApplicationController
       if @user.save
         @user.generate_email_confirmation_token!
         @user.generate_unique_id!
-        MailService.delay.user_welcome_email(@user.id)
+        MailService.user_welcome_email(@user.id)
         @message = "user-registered"
         render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
       else
@@ -116,7 +116,7 @@ class UsersController < ApplicationController
   def deactivateuser
     @reason = params[:reason]
     @message = "user-deactivated"
-    MailService.delay.deactivate_user(@user.id, @reason)
+    MailService.deactivate_user(@user.id, @reason)
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
@@ -147,7 +147,7 @@ class UsersController < ApplicationController
 
   def share_referral_code
     @receiver = params[:email]
-    MailService.delay.share_referral_code(@current_user.id, @receiver)
+    MailService.share_referral_code(@current_user.id, @receiver)
     @message = "Code-shared"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end

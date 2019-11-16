@@ -86,7 +86,7 @@ class EligibleCandidatesController < ApplicationController
     # send mail
     @study = Study.find(params[:study_id])
     @user = User.find(params[:user_id])
-    MailService.delay.study_submission_accept_email(@user.id, @study.id)
+    MailService.study_submission_accept_email(@user.id, @study.id)
     # send notification
     NotificationService.create_notification("Study Submission Accepted", @user.id, 
       "Response of #{@study_name} study has accepted", "/")
@@ -102,7 +102,7 @@ class EligibleCandidatesController < ApplicationController
     @eligible_candidate.save
     @study = Study.find(params[:study_id])
     @user = User.find(params[:user_id])
-    MailService.delay.study_rejection_accept_email(@user.id, @study.id, @eligible_candidate.id)
+    MailService.study_rejection_accept_email(@user.id, @study.id, @eligible_candidate.id)
     NotificationService.create_notification("Study Submission Rejected", @user.id, 
       "Response of #{@study_name} study has Rejected", "/")
     @message = "study-rejected"

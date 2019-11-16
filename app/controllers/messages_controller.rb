@@ -22,7 +22,7 @@ class MessagesController < ApplicationController
     if User.where(research_worker_id: params[:reciever_id] ).present?
       @user = User.where(research_worker_id: params[:reciever_id] ).first
       if @message.save
-        MailService.delay.message_email(@user.id, @message.id)
+        MailService.message_email(@user.id, @message.id)
         render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "message-sent", Token: nil, Success: true}, status: :ok
       else
         render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "message-not-sent", Token: nil, Success: true}, status: :ok
