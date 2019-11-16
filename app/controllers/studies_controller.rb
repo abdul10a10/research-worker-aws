@@ -25,7 +25,7 @@ class StudiesController < ApplicationController
     @message = "study"
     @filtered_candidates = StudyService.filtered_candidate(@study)
     @filtered_candidates_count = @filtered_candidates.count
-    render json: {Data: {study: @study, filtered_candidates:@filtered_candidates, filtered_candidates_count: @filtered_candidates_count}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    render json: {Data: {study: @study, filtered_candidates_count: @filtered_candidates_count}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # POST /studies
