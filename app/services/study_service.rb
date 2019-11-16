@@ -77,12 +77,14 @@ class StudyService
     end
     # blacklist user array
     blacklist_user_list = Array.new
-    study.blacklist_users.each do |blacklist_user|
+    blacklisted_users = study.blacklist_users.where(deleted_at: nil)
+    blacklisted_users.each do |blacklist_user|
       blacklist_user_list.push(blacklist_user.user)
     end
     # whitelist user array
     whitelist_user_list = Array.new
-    study.whitelist_users.each do |whitelist_user|
+    whitelisted_users = study.whitelist_users.where(deleted_at: nil)
+    whitelisted_users.each do |whitelist_user|
       whitelist_user_list.push(whitelist_user.user)
     end
 
