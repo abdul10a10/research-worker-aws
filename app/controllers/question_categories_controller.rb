@@ -22,8 +22,8 @@ class QuestionCategoriesController < ApplicationController
   def create
     @question_category = QuestionCategory.new(question_category_params)
     @name = QuestionCategory.find_by(name: question_category_params[:name], deleted_at: nil)
-    if question_category_params[:image_url] == nil
-      question_category_params[:image_url] = "basics.png"
+    if question_category.image_url == nil
+      question_category.image_url = "basics.png"
     end
     if @name.present?
       @message = "already-exist"
