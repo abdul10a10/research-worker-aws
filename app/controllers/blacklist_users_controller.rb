@@ -66,7 +66,7 @@ class BlacklistUsersController < ApplicationController
   end
 
   def whitelist_blacklisted_user
-    @blacklist_user = BlacklistUser.where(user_id: params[:user_id], study_id: params[:study_id]).first
+    @blacklist_user = BlacklistUser.where(user_id: params[:user_id], study_id: params[:study_id], deleted_at: nil).first
     @blacklist_user.deleted_at!
     @whitelist_user = WhitelistUser.new(user_id: params[:user_id],study_id: params[:study_id])
     @whitelist_user.save
