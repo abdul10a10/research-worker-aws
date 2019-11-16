@@ -24,6 +24,11 @@ class BlacklistUsersController < ApplicationController
     else
       @blacklist_user.user_id = @user.id
       if @blacklist_user.save
+        # delete user from whitelist if he is in whitelist
+        if WhitelistUser.where(user_id: @user.id, study_id: params[:study_id], deleted_at: nil).present?
+          @whitelist_user = WhitelistUser.where(user_id: @user.id, study_id: params[:study_id], deleted_at: nil)
+          @whitelist_user.deleted_at!
+        end
         @message = "user-black-listed"
       else
         @message = "error in black-listing"
