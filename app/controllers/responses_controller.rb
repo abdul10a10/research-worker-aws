@@ -68,7 +68,7 @@ class ResponsesController < ApplicationController
     if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
       @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
       @response.each do |response|
-      response.deleted_at!
+        response.deleted_at!
       end
       # @response.deleted_at!
       @message = "response-deleted"

@@ -220,13 +220,13 @@ class StudiesController < ApplicationController
   end
   
   def admin_new_study_list
-    if Study.where(is_published: "1", is_active: nil, is_complete: nil,deleted_at: nil).present?
-      @studies = Study.where(is_published: "1", is_active: nil, is_complete: nil,deleted_at: nil).order(id: :desc)
+    studies = StudyService.admin_new_study_list
+    if @studies.present?
       @message = "new-studies"
     else
       @message = "no-study-found"
     end
-    render json: {Data: { studies: @studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok      
+    render json: {Data: { studies: studies}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok      
   end
 
   def admin_complete_study_list
@@ -235,7 +235,7 @@ class StudiesController < ApplicationController
   end
 
   def admin_active_study_list
-    if Study.where(is_active: "1", is_complete: nil,deleted_at: nil).present?
+    if Study.where(is_active: "1", is_complete: nil, deleted_at: nil).present?
       @studies = Study.where(is_active: "1", is_complete: nil,deleted_at: nil).order(id: :desc)
       @message = "active-studies"
     else
