@@ -121,52 +121,6 @@ class QuestionsController < ApplicationController
                        })
       end
     end
-
-    # ====================== Audience filter ====================== #
-
-    # @required_audience_list = Array.new
-    # @required_audience = User.where(user_type: "Participant",verification_status: '1', deleted_at: nil)
-    # @required_audience.each do |required_audience|
-    # @required_audience_list.push(required_audience.id)
-    # end
-    # @study = Study.find(@study_id)
-    # if Audience.where(study_id: @study_id, deleted_at: nil).present?
-    #   @study_audience = Audience.select("DISTINCT question_id").where(study_id: @study_id, deleted_at: nil)
-
-    #   @study_audience.each do |study_audience|
-    #     @audience = Audience.where(question_id: study_audience.question_id, study_id: @study_id, deleted_at: nil)
-    #     @required_users_list = Array.new
-
-    #     @audience.each do |audience|
-    #       @required_users = Array.new
-    #       @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
-
-    #       @users.each do |user|
-    #         @required_users.push( user.user_id)
-    #       end
-
-    #       @required_users_list = @required_users_list + @required_users
-    #     end
-
-    #     @required_audience_list = @required_users_list & @required_audience_list
-
-    #   end
-
-    #   # @audience = Audience.where(study_id: @study_id, deleted_at: nil)
-    #   # @audience.each do |audience|
-    #   #   @required_users = Array.new
-    #   #   @users = Response.where(question_id: audience.question_id, answer_id: audience.answer_id, deleted_at: nil)
-    #   #   @users.each do |user|
-    #   #     @required_users.push( user.user_id)
-    #   #   end
-    #   #   @required_audience_list = @required_audience_list & @required_users
-    #   # end
-    # end
-    # # @required_users.uniq.count
-    # # ======================
-
-    # @desired_audience_num = @required_audience_list.count
-
     @study = Study.find(@study_id)
     @required_audience_list = StudyService.filtered_candidate(@study)
     @desired_audience_num = @required_audience_list.count
