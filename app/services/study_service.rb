@@ -309,6 +309,7 @@ class StudyService
   def self.participant_active_study_detail(study, user)
     required_participant = study.submission
     active_candidates = study.eligible_candidates.where(is_attempted: "1", deleted_at: nil)
+    rejected_candidates = study.eligible_candidates.where(is_accepted: "0", deleted_at: nil)
     if study.eligible_candidates.where(user_id: user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).present?
       eligible_candidate = study.eligible_candidates.where(user_id: user.id ,is_attempted: "1", submit_time: nil, deleted_at: nil).first
       estimatetime = study.estimatetime
@@ -323,13 +324,13 @@ class StudyService
     else
       is_attempted = "no"
     end
-    active_candidate = active_candidates.count
-    if active_candidate < required_participant
+    active_candidate_count = active_candidates.count - rejected_candidates.count
+    if active_candidate_count < required_participant
       study_status = "active"
     else
     study_status = "finished"
     end
-    data = { study: study, required_participant: required_participant, active_candidate: active_candidate, 
+    data = { study: study, required_participant: required_participant, active_candidate: active_candidate_count, 
       is_attempted: is_attempted, timer: timer, study_status: study_status}
     return data
   end
