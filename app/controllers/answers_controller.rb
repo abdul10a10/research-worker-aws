@@ -69,7 +69,7 @@ class AnswersController < ApplicationController
     @question_id = params[:id]
     @question = Question.find(params[:id])
     @follow_up_questions = Question.where(question_category_id: @question.question_category_id, deleted_at: nil)
-    @answers = Answer.where(question_id: @question_id, deleted_at: nil)
+    @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
     render json: {Data: {question: @question, answer: @answers, follow_up_questions: @follow_up_questions }, CanEdit: false, CanDelete: false, Status: :ok, message: nil, Token: nil, Success: true}, status: :ok
   end
 
