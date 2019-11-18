@@ -60,30 +60,40 @@ class QuestionsController < ApplicationController
     @user_id = @current_user.id
     @question_category = QuestionCategory.find(params[:question_category_id])
     @questions = @question_category.questions.where(deleted_at: nil).order(id: :asc)
+    @first_question = @question_category.questions.where(deleted_at: nil).first
     @responce = Array.new
+    @follow_up_question = Array.new
+    @follow_up_question.push(@first_question.id)
     @questions.each do |question|
       @question_id = question.id
       if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
         @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
         @answers = Array.new
-          @response.each do |response|
-            @answer = response.answer
-            @answers.push(@answer.description)
-          end
-        @responce.push({
+        @response.each do |response|
+          @answer = response.answer
+          @answers.push(@answer.description)
+          @follow_up_question |= [@answer.follow_up_question]
+        end
+        if @follow_up_question.include? question.id
+          @responce.push({
                            question: question,
                            answer_filled: "Yes",
                            answer: @answers
                        })
+        end
   
       else
         @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
-        @responce.push({
-                           question: question,
-                           answer_filled: "No",
-                           answer: @answers
-                       })
-  
+        @answers.each do |answer|
+          @follow_up_question |= [answer.follow_up_question]
+        end
+        if @follow_up_question.include? question.id
+          @responce.push({
+                            question: question,
+                            answer_filled: "No",
+                            answer: @answers
+                        })
+        end
   
         # @responce = @responce, {question: question, answer: @answers}
       end
