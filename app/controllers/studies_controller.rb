@@ -121,10 +121,11 @@ class StudiesController < ApplicationController
 
   # PUT /pay_for_study/1
   def pay_for_study
+    @razorpay_payment_id = params[:razorpay_payment_id]
     if @study.is_paid == 1
       @message = "payment-already-done"
     else
-      StudyService.pay_for_study(@study)
+      StudyService.pay_for_study(@study, @razorpay_payment_id)
       @message = "payment-done"
     end
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  

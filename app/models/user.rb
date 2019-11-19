@@ -59,6 +59,10 @@ class User < ApplicationRecord
     (self.email != "") && (self.password != "") && (self.user_type != "") && (self.country != "") && (self.first_name != "") && (self.last_name != "")&& (self.job_type != "")&& (self.password != "") && (self.university != "") && (self.department != "")&& (self.department != "") 
   end
   
+  def recieve_participant_reffer_amount!
+    self.wallet = self.wallet + 10
+    save!
+  end
   private
 
   def generate_token

@@ -56,4 +56,12 @@ class EligibleCandidatesService
       "Payment for #{study_name } study of #{study.reward} has been credited in your account", "/")
   end
 
+  def referral_program(user)
+    if User.find_by(user_referral_code: user.referral_code, deleted_at: nil).present?
+      referring_user = User.find_by(user_referral_code: user.referral_code, deleted_at: nil)
+      # send referral money to both account
+      user.recieve_participant_reffer_amount!
+      referring_user.recieve_participant_reffer_amount!
+    end
+  end
 end

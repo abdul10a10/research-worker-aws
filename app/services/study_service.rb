@@ -147,7 +147,7 @@ class StudyService
     end
   end
 
-  def self.pay_for_study(study)
+  def self.pay_for_study(study, razorpay_payment_id)
     # calculation
     amount = study.reward.to_i * study.submission
     tax = amount* 0.20
@@ -163,7 +163,7 @@ class StudyService
     study_name = study.name
     # track transaction for study
     transaction = Transaction.new
-    transaction.transaction_id = SecureRandom.hex(10)
+    transaction.transaction_id = razorpay_payment_id
     transaction.study_id = study.id
     transaction.payment_type = "Study Wallet"
     transaction.sender_id = study.user_id

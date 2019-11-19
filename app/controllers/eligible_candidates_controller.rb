@@ -69,6 +69,10 @@ class EligibleCandidatesController < ApplicationController
         @eligible_candidate.submit_time!
         # auto accept study after 21 days
         EligibleCandidatesService.delay(run_at: 21.days.from_now).auto_accept_study_submission(@study.user.id, @study.id)
+        # check submission number for referral amount
+        if EligibleCandidate.where(user_id: user.id, is_completed: "1").count == 1
+          EligibleCandidatesService.referral_program(@user)      
+        end
         @message = "study-submitted"
       else
         @message = "not-eligible-for-study"
