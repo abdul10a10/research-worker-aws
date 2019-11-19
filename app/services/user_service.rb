@@ -9,7 +9,7 @@ class UserService
 
     # WelcomeUser.perform_async(@user.id)
     # UserMailer.with(user: @user).user_registration_admin_email.deliver_later
-    MailService.delay.user_registration_admin_email(@user.id)
+    MailService.user_registration_admin_email(@user.id)
     @notification = Notification.new
     @notification.notification_type = "Registration"
     @admin = User.where(user_type: "Admin").first

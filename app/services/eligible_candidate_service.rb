@@ -8,7 +8,7 @@ class EligibleCandidatesService
     eligible_candidates = study.eligible_candidates.where(is_attempted: '1', deleted_at: nil)
     attempted_candidate_count = eligible_candidates.count
     if attempted_candidate_count >= study.submission
-      MailService.delay.study_completion_email(study.id)
+      MailService.study_completion_email(study.id)
       NotificationService.create_notification("Study Completion", study.user.id, 
         "Maximum attempt has been done for #{study.name}", "/candidatesubmissionlist/#{study.id}")
     end
@@ -22,7 +22,7 @@ class EligibleCandidatesService
     # send mail
     study = eligible_candidate.study
     user = eligible_candidate.user
-    MailService.delay.study_submission_accept_email(user.id, study.id)
+    MailService.study_submission_accept_email(user.id, study.id)
     # send notification
     NotificationService.create_notification("Study Submission Accepted", user.id, 
       "Response of #{study.name} study has accepted", "/")

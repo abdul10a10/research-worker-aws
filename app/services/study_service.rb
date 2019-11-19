@@ -120,7 +120,7 @@ class StudyService
     required_audience_list = StudyService.filtered_candidate(study)
     required_audience_list.each do |user|
       # send mail
-      MailService.delay.new_study_invitation_email(user.id, study.id)
+      MailService.new_study_invitation_email(user.id, study.id)
       # send notification
       NotificationService.create_notification("Study Invitation", user.id, "Invitation to participate in #{study.name} study", "/participantstudy")
       eligible_candidate = EligibleCandidate.new(user_id: user.id, study_id: study.id)
@@ -136,12 +136,12 @@ class StudyService
       StudyService.find_audience(study)
       # send mail and notification to researcher
       user = study.user
-      MailService.delay.study_published_email(study.id)
+      MailService.study_published_email(study.id)
       NotificationService.create_notification("Study Published", user.id, 
         "Study #{study.name} has been published", "/studyactive")
       # send mail and notification to Admin
       user = User.where(user_type: "Admin").first
-      MailService.delay.study_auto_activate_email(user.id, study.id)
+      MailService.study_auto_activate_email(user.id, study.id)
       NotificationService.create_notification("Study Published", user.id, 
         "Study #{study.name} has been published", "/adminactivestudy")
     end
@@ -153,7 +153,7 @@ class StudyService
     tax = amount* 0.20
     commision = amount* 0.10
     total_amount = amount + tax + commision
-    study_wallet = amount + tax
+    study_wallet = amount
     study.is_paid = 1
     study.study_wallet = study_wallet
     study.save
@@ -189,7 +189,7 @@ class StudyService
     study.save
     # StudyPublish.perform_async(study.id)
     user = User.where(user_type: "Admin").first
-    MailService.delay.new_study_creation_email(user.id, study.id)
+    MailService.new_study_creation_email(user.id, study.id)
     NotificationService.create_notification("Study Created", user.id, 
       "New study #{study.name} created by #{user.first_name}", "/adminnewstudy")
     StudyService.delay(run_at: 1.hours.from_now).auto_activate_study(study)
@@ -222,7 +222,7 @@ class StudyService
     eligible_candidates = study.eligible_candidates.where(is_seen: "1", is_attempted: nil, deleted_at: nil)
     eligible_candidates.each do |eligible_candidate|
       user = eligible_candidate.user
-      MailService.delay.study_reinvitation_email(user.id, study.id)
+      MailService.study_reinvitation_email(user.id, study.id)
       NotificationService.create_notification("Study reactivated", eligible_candidate.user.id, 
         "Study #{study.name} has been published", "/participantstudy")
     end
@@ -371,7 +371,7 @@ class StudyService
     study.save
     # StudyReject.perform_async(study.id)
     user = study.user
-    MailService.delay.study_rejection_email(user.id, study.id)
+    MailService.study_rejection_email(user.id, study.id)
     NotificationService.create_notification("Study Rejected", user.id, "Study #{study.name} has been rejected", "/studypublished/#{study.id}")
   end
 
@@ -381,7 +381,7 @@ class StudyService
     # StudyActivate.perform_async(study.id)
     StudyService.find_audience(study)
     user = study.user
-    MailService.delay.study_published_email(user.id, study.id)
+    MailService.study_published_email(user.id, study.id)
     NotificationService.create_notification("Study Published", user.id, 
       "Study #{study.name.upcase} has been activated", "/studyactive")
   end
