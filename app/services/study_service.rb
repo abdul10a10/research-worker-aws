@@ -152,7 +152,6 @@ class StudyService
     amount = study.reward.to_i * study.submission
     tax = amount* 0.20
     commision = amount* 0.10
-    commision = sprintf('%.2f', commision)
     total_amount = amount + tax + commision
     total_amount = sprintf('%.2f', total_amount)
     study_wallet = sprintf('%.2f', amount)
@@ -174,7 +173,7 @@ class StudyService
     transaction.save
     # track transaction for Admin commision
     transaction = Transaction.new
-    transaction.transaction_id = SecureRandom.hex(10)
+    transaction.transaction_id = "pay_#{SecureRandom.hex(7)}"
     transaction.study_id = study.id
     transaction.payment_type = "Admin commision"
     transaction.sender_id = study.user_id

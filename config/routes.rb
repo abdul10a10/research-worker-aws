@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
   resources :transactions
   get 'researcher_transaction', to: 'transactions#researcher_transaction'
+  get 'participant_transaction', to: 'transactions#participant_transaction'
   resources :terms_of_uses
 
   resources :messages

@@ -54,6 +54,15 @@ class TransactionsController < ApplicationController
     render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-of-researcher", Token: nil, Success: false}, status: :ok
   end
 
+  def participant_transaction
+    eligible_candidates = EligibleCandidate.where(is_paid: "1")
+    transactions = Array.new
+    eligible_candidates.each do |eligible_candidate|
+      transaction = eligible_candidate.study.transactions
+      transactions.push(transaction)
+    end
+    render json: {Data: {transactions: eligible_candidates}, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-of-researcher", Token: nil, Success: false}, status: :ok
+  end
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_transaction

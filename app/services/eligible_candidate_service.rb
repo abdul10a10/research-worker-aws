@@ -43,7 +43,7 @@ class EligibleCandidatesService
     study_name = study.name
     # track transaction
     transaction = Transaction.new
-    transaction.transaction_id = SecureRandom.hex(10)
+    transaction.transaction_id = "pay_#{SecureRandom.hex(7)}"
     transaction.study_id = study.id
     transaction.payment_type = "Participant study reward"
     transaction.sender_id = study.user_id
@@ -56,12 +56,24 @@ class EligibleCandidatesService
       "Payment for #{study_name } study of #{study.reward} has been credited in your account", "/")
   end
 
-  def referral_program(user)
+  def self.referral_program(user)
     if User.find_by(user_referral_code: user.referral_code, deleted_at: nil).present?
       referring_user = User.find_by(user_referral_code: user.referral_code, deleted_at: nil)
-      # send referral money to both account
-      user.recieve_participant_reffer_amount!
-      referring_user.recieve_participant_reffer_amount!
+      # send referral money
+      EligibleCandidatesService.referral_reward(user)
+      EligibleCandidatesService.referral_reward(referring_user)
     end
+  end
+
+  def self.referral_reward(user)
+    user.recieve_participant_reffer_amount!
+    # track transaction
+    transaction = Transaction.new
+    transaction.transaction_id = "pay_#{SecureRandom.hex(7)}"
+    transaction.payment_type = "Referral reward"
+    transaction.receiver_id = user.id
+    transaction.amount = "10"
+    transaction.description = "referral reward"
+    transaction.save
   end
 end
