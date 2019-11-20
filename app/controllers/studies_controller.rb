@@ -25,7 +25,8 @@ class StudiesController < ApplicationController
     @message = "study"
     @filtered_candidates = StudyService.filtered_candidate(@study)
     @filtered_candidates_count = @filtered_candidates.count
-    render json: {Data: {study: @study, filtered_candidates_count: @filtered_candidates_count}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    @transactions = @study.transactions.where(payment_type: "Study Payment")
+    render json: {Data: {study: @study, filtered_candidates_count: @filtered_candidates_count, transactions: @transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # POST /studies
@@ -122,10 +123,11 @@ class StudiesController < ApplicationController
   # PUT /pay_for_study/1
   def pay_for_study
     @razorpay_payment_id = params[:razorpay_payment_id]
+    @razorpay_order_id = params[:razorpay_order_id]
     if @study.is_paid == 1
       @message = "payment-already-done"
     else
-      StudyService.pay_for_study(@study, @razorpay_payment_id)
+      StudyService.pay_for_study(@study, @razorpay_payment_id, @razorpay_order_id)
       @message = "payment-done"
     end
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
