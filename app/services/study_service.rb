@@ -152,8 +152,10 @@ class StudyService
     amount = study.reward.to_i * study.submission
     tax = amount* 0.20
     commision = amount* 0.10
+    commision = sprintf('%.2f', commision)
     total_amount = amount + tax + commision
-    study_wallet = amount
+    total_amount = sprintf('%.2f', total_amount)
+    study_wallet = sprintf('%.2f', amount)
     study.is_paid = 1
     study.study_wallet = study_wallet
     study.save
@@ -165,10 +167,10 @@ class StudyService
     transaction = Transaction.new
     transaction.transaction_id = razorpay_payment_id
     transaction.study_id = study.id
-    transaction.payment_type = "Study Wallet"
+    transaction.payment_type = "Study Payment"
     transaction.sender_id = study.user_id
-    transaction.amount = study_wallet
-    transaction.description = "Amount " + study_wallet.to_s + " has been added to Study wallet"
+    transaction.amount = total_amount
+    transaction.description = "Amount #{total_amount} has been paid for #{study_name} study"
     transaction.save
     # track transaction for Admin commision
     transaction = Transaction.new
@@ -178,10 +180,10 @@ class StudyService
     transaction.sender_id = study.user_id
     transaction.receiver_id = user.id
     transaction.amount = commision
-    transaction.description = "Payment for study " + study_name + " of " + commision.to_s + " has been added to your wallet"
+    transaction.description = "Payment for study #{study_name} of #{commision} has been added to your wallet"
     transaction.save
     NotificationService.create_notification("Study Payment commision", user.id, 
-      "Payment for study #{study.name } of #{ commision} has been added to your wallet", "/")
+      "Payment for study #{study.name } of #{commision} has been added to your wallet", "/")
   end
 
   def self.publish_study(study)

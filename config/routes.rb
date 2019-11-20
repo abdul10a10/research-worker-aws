@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get 'whitelist_blacklisted_user/:user_id/:study_id', to: 'blacklist_users#whitelist_blacklisted_user'
 
   resources :transactions
+  get 'researcher_transaction', to: 'transactions#researcher_transaction'
   resources :terms_of_uses
 
   resources :messages

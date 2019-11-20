@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_14_071035) do
+ActiveRecord::Schema.define(version: 2019_11_20_053533) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -161,7 +161,7 @@ ActiveRecord::Schema.define(version: 2019_11_14_071035) do
     t.datetime "deleted_at"
     t.text "deactivate_reason"
     t.integer "is_paid"
-    t.integer "study_wallet", default: 0
+    t.float "study_wallet", default: 0.0
     t.datetime "max_participation_date"
     t.integer "is_republish"
     t.integer "only_whitelisted"
@@ -190,7 +190,7 @@ ActiveRecord::Schema.define(version: 2019_11_14_071035) do
     t.string "payment_type"
     t.string "sender_id"
     t.string "receiver_id"
-    t.integer "amount"
+    t.float "amount"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -226,7 +226,7 @@ ActiveRecord::Schema.define(version: 2019_11_14_071035) do
     t.string "address"
     t.string "contact_number"
     t.string "nationality"
-    t.integer "wallet", default: 0
+    t.float "wallet", default: 0.0
     t.string "research_worker_id", limit: 30
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true

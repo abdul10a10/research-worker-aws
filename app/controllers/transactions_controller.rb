@@ -1,5 +1,6 @@
 class TransactionsController < ApplicationController
   before_action :set_transaction, only: [:show, :update, :destroy]
+  before_action :authorize_request, except: [:index]
 
   # GET /transactions
   # GET /transactions.json
@@ -41,6 +42,16 @@ class TransactionsController < ApplicationController
   def destroy
     @transaction.destroy
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-deleted", Token: nil, Success: false}, status: :ok
+  end
+
+  def researcher_transaction
+    studies = @current_user.studies.where(is_paid: "1")
+    transactions = Array.new
+    studies.each do |study|
+      transaction = study.transactions
+      transactions.push(transaction)
+    end
+    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-of-researcher", Token: nil, Success: false}, status: :ok
   end
 
   private
