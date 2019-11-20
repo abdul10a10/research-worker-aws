@@ -25,7 +25,7 @@ class StudiesController < ApplicationController
     @message = "study"
     @filtered_candidates = StudyService.filtered_candidate(@study)
     @filtered_candidates_count = @filtered_candidates.count
-    @transactions = @study.transactions.where(payment_type: "Study Payment")
+    @transactions = @study.transactions.where(payment_type: "Study Payment").first
     render json: {Data: {study: @study, filtered_candidates_count: @filtered_candidates_count, transactions: @transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
