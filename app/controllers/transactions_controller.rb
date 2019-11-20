@@ -54,7 +54,7 @@ class TransactionsController < ApplicationController
         transactions.push(study: study,transaction: transaction)
       end
     end
-    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-of-researcher", Token: nil, Success: false}, status: :ok
+    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "researcher-transactions", Token: nil, Success: false}, status: :ok
   end
 
   def study_transaction
@@ -66,17 +66,18 @@ class TransactionsController < ApplicationController
         transactions.push(study: study,transaction: transaction, user: study.user)
       end
     end
-    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-of-researcher", Token: nil, Success: false}, status: :ok
+    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "all-study-transactions", Token: nil, Success: false}, status: :ok
   end
 
   def participant_transaction
-    eligible_candidates = EligibleCandidate.where(is_paid: "1")
+    eligible_candidates = @current_user.eligible_candidates.where(is_paid: "1")
     transactions = Array.new
     eligible_candidates.each do |eligible_candidate|
-      transaction = eligible_candidate.study.transactions
-      transactions.push(transaction)
+      study = eligible_candidate.study
+      transaction = eligible_candidate.study.where(payment_type: "Participant study reward", receiver_id: @current_user.id).first
+      transactions.push(study: study,transaction: transaction)
     end
-    render json: {Data: {transactions: eligible_candidates}, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-of-researcher", Token: nil, Success: false}, status: :ok
+    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "participant-transactions", Token: nil, Success: false}, status: :ok
   end
   private
     # Use callbacks to share common setup or constraints between actions.
