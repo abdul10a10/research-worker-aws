@@ -48,7 +48,7 @@ class TransactionsController < ApplicationController
     studies = @current_user.studies.where(is_paid: "1")
     transactions = Array.new
     studies.each do |study|
-      transaction = study.transactions.where(payment_type: "Study Payment")
+      transaction = study.transactions.where(payment_type: "Study Payment").first
       if transaction.present?        
         transactions.push(study: study,transaction: transaction)
       end
