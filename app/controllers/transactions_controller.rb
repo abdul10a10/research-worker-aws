@@ -50,7 +50,7 @@ class TransactionsController < ApplicationController
     studies.each do |study|
       transaction = study.transactions.where(payment_type: "Study Payment")
       if transaction.present?        
-        transactions.push(transaction)
+        transactions.push(study: study,transaction: transaction)
       end
     end
     render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-of-researcher", Token: nil, Success: false}, status: :ok
