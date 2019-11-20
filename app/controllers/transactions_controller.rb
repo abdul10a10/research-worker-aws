@@ -1,6 +1,7 @@
 class TransactionsController < ApplicationController
   before_action :set_transaction, only: [:show, :update, :destroy]
   before_action :authorize_request, except: [:index]
+  before_action :is_admin, only: [:study_transaction]
 
   # GET /transactions
   # GET /transactions.json
@@ -51,6 +52,18 @@ class TransactionsController < ApplicationController
       transaction = study.transactions.where(payment_type: "Study Payment").first
       if transaction.present?        
         transactions.push(study: study,transaction: transaction)
+      end
+    end
+    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-of-researcher", Token: nil, Success: false}, status: :ok
+  end
+
+  def study_transaction
+    studies = Study.where(is_paid: "1").order(id: :desc)
+    transactions = Array.new
+    studies.each do |study|
+      transaction = study.transactions.where(payment_type: "Study Payment").first
+      if transaction.present?        
+        transactions.push(study: study,transaction: transaction, user: study.user)
       end
     end
     render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "transaction-of-researcher", Token: nil, Success: false}, status: :ok
