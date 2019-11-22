@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivateuser, :activate, 
     :researcheroverview, :participantoverview, :reports]
   # before_action :is_participant, only: [:share_referral_code]
-  before_action :set_user, only: [:show, :update, :destroy, :activate, :deactivateuser, :participant_overview, :researcher_overview, :participant_info]
+  before_action :set_user, only: [:show,:update_image, :update, :destroy, :activate, :deactivateuser, :participant_overview, :researcher_overview, :participant_info]
 
   #GET /users
   def index
@@ -102,6 +102,15 @@ class UsersController < ApplicationController
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @user.errors, Token: nil, Success: false}, status: :ok
+    end
+  end
+
+  def update_image
+    if @user.update_attributes(user_params)
+      @message = "user-profile-updated"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    else
+      render json: @transaction.errors, status: :unprocessable_entity
     end
   end
 
