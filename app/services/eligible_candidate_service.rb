@@ -1,4 +1,4 @@
-class EligibleCandidatesService
+class EligibleCandidateService
 
   def self.attempt_study(user_id, study_id)
     @eligible_candidate = EligibleCandidate.where(user_id: user_id, study_id: study_id).first
@@ -27,7 +27,7 @@ class EligibleCandidatesService
     NotificationService.create_notification("Study Submission Accepted", user.id, 
       "Response of #{study.name} study has accepted", "/")
     # send reward after 4 days
-    EligibleCandidatesService.delay(run_at: 4.days.from_now).send_accept_study_reward(user.id, study.id)
+    EligibleCandidateService.delay(run_at: 4.days.from_now).send_accept_study_reward(user.id, study.id)
   end
 
   # method to send money for accepted studies
@@ -60,8 +60,8 @@ class EligibleCandidatesService
     if User.find_by(user_referral_code: user.referral_code, deleted_at: nil).present?
       referring_user = User.find_by(user_referral_code: user.referral_code, deleted_at: nil)
       # send referral money
-      EligibleCandidatesService.referral_reward(user)
-      EligibleCandidatesService.referral_reward(referring_user)
+      EligibleCandidateService.referral_reward(user)
+      EligibleCandidateService.referral_reward(referring_user)
     end
   end
 

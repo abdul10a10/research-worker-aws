@@ -41,7 +41,7 @@ class EligibleCandidatesController < ApplicationController
 
   def attempt_study
     if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).present?
-      EligibleCandidatesService.attempt_study(@current_user.id, params[:study_id])
+      EligibleCandidateService.attempt_study(@current_user.id, params[:study_id])
       @message = "study-attempted"
     else
       @message = "not-eligible-for-study"
@@ -65,15 +65,19 @@ class EligibleCandidatesController < ApplicationController
       @study = Study.find_by(completioncode: params[:completioncode], completionurl: params[:completionurl])
       @study_id = @study.id
       if EligibleCandidate.where(user_id: @user.id, study_id: @study_id, deleted_at: nil).present?
-        @eligible_candidate = EligibleCandidate.where(user_id: @user.id, study_id: @study_id).first
-        @eligible_candidate.submit_time!
-        # auto accept study after 21 days
-        EligibleCandidatesService.delay(run_at: 21.days.from_now).auto_accept_study_submission(@study.user.id, @study.id)
-        # check submission number for referral amount
-        if EligibleCandidate.where(user_id: user.id, is_completed: "1").count == 1
-          EligibleCandidatesService.referral_program(@user)      
+        if EligibleCandidate.where(user_id: @user.id, study_id: @study_id, deleted_at: nil, is_completed: "1").present?
+          @message = "study-already-submitted"
+        else
+          @eligible_candidate = EligibleCandidate.where(user_id: @user.id, study_id: @study_id).first
+          @eligible_candidate.submit_time!
+          # auto accept study after 21 days
+          EligibleCandidateService.delay(run_at: 21.days.from_now).auto_accept_study_submission(@study.user.id, @study.id)
+          # check submission number for referral amount
+          if EligibleCandidate.where(user_id: @user.id, is_completed: "1").count == 1
+            EligibleCandidateService.referral_program(@user)      
+          end
+          @message = "study-submitted"
         end
-        @message = "study-submitted"
       else
         @message = "not-eligible-for-study"
       end  
@@ -95,7 +99,7 @@ class EligibleCandidatesController < ApplicationController
     NotificationService.create_notification("Study Submission Accepted", @user.id, 
       "Response of #{@study_name} study has accepted", "/")
     # send reward after 25 days
-    EligibleCandidatesService.delay(run_at: 25.days.from_now).send_accept_study_reward(@user.id, @study.id)
+    EligibleCandidateService.delay(run_at: 25.days.from_now).send_accept_study_reward(@user.id, @study.id)
     render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
