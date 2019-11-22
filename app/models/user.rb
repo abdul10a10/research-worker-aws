@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :whitelist_users
   has_many :blacklist_users
   
+  has_one_attached :image
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
   

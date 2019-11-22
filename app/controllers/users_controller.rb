@@ -76,7 +76,9 @@ class UsersController < ApplicationController
     if @user.research_worker_id === nil
       @user.generate_unique_id!
     end
-    
+    if @user.image.attached?
+      @image_url = url_for(@user.try(:image))
+    end
     @message = "user-info"
     @notification = @user.notifications.where(deleted_at: nil).order(id: :desc)
     @notification.each do |notification|
@@ -85,7 +87,7 @@ class UsersController < ApplicationController
         break
       end
     end
-    render json: {Data: {user: @user,notification: @notification, unread_notification: @unread_notification }, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+    render json: {Data: {user: @user,notification: @notification, unread_notification: @unread_notification, image_url: @image_url }, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
 
@@ -106,7 +108,9 @@ class UsersController < ApplicationController
   end
 
   def update_image
-    if @user.update_attributes(user_params)
+    if params[:file].present?
+      @user.image = params[:file]
+      @user.save
       @message = "user-profile-updated"
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
