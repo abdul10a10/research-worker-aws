@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_20_084150) do
+ActiveRecord::Schema.define(version: 2019_11_22_060542) do
 
   create_table "answers", force: :cascade do |t|
     t.integer "question_id"
@@ -229,6 +229,7 @@ ActiveRecord::Schema.define(version: 2019_11_20_084150) do
     t.string "nationality"
     t.float "wallet", default: 0.0
     t.string "research_worker_id", limit: 30
+    t.string "image_url"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["research_worker_id"], name: "index_users_on_research_worker_id", unique: true
