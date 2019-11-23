@@ -93,10 +93,13 @@ class QuestionCategoriesController < ApplicationController
           @response = @response+1
         end
       end
+      if category.image.attached?
+        image_url = url_for(category.try(:image))
+      end
       @demographic_category.push({
         id: category.id,
         name: category.name,
-        image_url: category.image_url,
+        image_url:image_url,
         question_count: @question_count,
         response: @response
       })
