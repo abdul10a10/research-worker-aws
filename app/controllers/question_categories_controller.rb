@@ -2,13 +2,20 @@ class QuestionCategoriesController < ApplicationController
   # before_action :authorize_request, except: :create
   before_action :authorize_request, only: [:about_you, :index]
   before_action :is_admin_or_researcher, only: [:index]
-  before_action :set_question_category, only: [:show, :update, :destroy]
+  before_action :set_question_category, only: [:show, :update, :destroy, :update_category_image]
 
   # GET /question_categories
   # GET /question_categories.json
   def index
     @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
-    render json: {Data: {question_categories: @question_categories}, CanEdit: false, CanDelete: false, Status: :ok, message: "question-categories", Token: nil, Success: true}, status: :ok
+    @question_category_list = Array.new
+    @question_categories.each do |question_category|
+      if question_category.image.attached?
+        image_url = url_for(question_category.try(:image))
+      end
+      @question_category_list.push(question_category: question_category, image_url: image_url)
+    end
+    render json: {Data: {question_categories: @question_category_list}, CanEdit: false, CanDelete: false, Status: :ok, message: "question-categories", Token: nil, Success: true}, status: :ok
   end
 
   # GET /question_categories/1
@@ -97,6 +104,17 @@ class QuestionCategoriesController < ApplicationController
     end
     # render json: @demographic_category, status: :ok
     render json: {Data: {demographic_category: @demographic_category, total_question: @total_question, total_response: @total_response}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
+  def update_category_image
+    if params[:file].present?
+      @question_category.image = params[:file]
+      @question_category.save
+      @message = "question-category-image-updated"
+      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    else
+      render json: @question_category.errors, status: :unprocessable_entity
+    end
   end
 
 
