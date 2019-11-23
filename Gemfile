@@ -34,6 +34,7 @@ gem 'delayed_job_active_record', '~> 4.1', '>= 4.1.4'
 gem 'recommendable'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
+gem 'aws-sdk', '~> 3'
 
 gem 'devise'
 gem 'simple_token_authentication', '~> 1.0' # see semver.org

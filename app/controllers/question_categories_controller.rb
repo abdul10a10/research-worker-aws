@@ -29,9 +29,6 @@ class QuestionCategoriesController < ApplicationController
   def create
     @question_category = QuestionCategory.new(question_category_params)
     @name = QuestionCategory.find_by(name: question_category_params[:name], deleted_at: nil)
-    if @question_category.image_url == nil
-      @question_category.image_url = "basics.png"
-    end
     if @name.present?
       @message = "already-exist"
       render json: { message: @message}, status: :ok
@@ -99,7 +96,7 @@ class QuestionCategoriesController < ApplicationController
       @demographic_category.push({
         id: category.id,
         name: category.name,
-        image_url:image_url,
+        image_url: image_url,
         question_count: @question_count,
         response: @response
       })

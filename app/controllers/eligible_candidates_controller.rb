@@ -100,6 +100,7 @@ class EligibleCandidatesController < ApplicationController
       "Response of #{@study_name} study has accepted", "/")
     # send reward after 25 days
     EligibleCandidateService.delay(run_at: 25.days.from_now).send_accept_study_reward(@user.id, @study.id)
+    @message = "study-accepted"
     render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
