@@ -351,6 +351,7 @@ class StudyService
         completion_time = Time.at(time_difference.to_i.abs).utc.strftime("%H:%M:%S")
         estimate_min_time = candidate.start_time + study.allowedtime.to_i.minutes
         estimate_max_time = candidate.start_time + study.estimatetime.to_i.minutes
+
         if candidate.submit_time < estimate_min_time
           submission_status = "before-time"
         elsif candidate.submit_time > estimate_min_time && candidate.submit_time < estimate_max_time
@@ -358,8 +359,15 @@ class StudyService
         else
           submission_status = "after-time"
         end
+
+        if candidate.is_accepted = "0"
+          status = "rejected"
+        elsif candidate.is_accepted = "1"
+          status = "accepted"
+        end
         submission = candidate.is_completed
-        submitted_candidate_list.push(user: user, completion_time: completion_time, start_time: candidate.start_time, submission: submission, submission_status: submission_status)
+        submitted_candidate_list.push(user: user, completion_time: completion_time, start_time: candidate.start_time,
+          submission: submission, submission_status: submission_status, status: status)
       end
     end
     data = { submitted_candidate_list: submitted_candidate_list}
