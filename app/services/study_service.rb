@@ -360,9 +360,9 @@ class StudyService
           submission_status = "after-time"
         end
 
-        if candidate.is_accepted = "0"
+        if candidate.is_accepted == "0"
           status = "rejected"
-        elsif candidate.is_accepted = "1"
+        elsif candidate.is_accepted == "1"
           status = "accepted"
         end
         submission = candidate.is_completed
