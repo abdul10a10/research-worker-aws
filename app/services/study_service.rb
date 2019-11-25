@@ -39,6 +39,8 @@ class StudyService
       end
     end
 
+    paid_candidates = study.eligible_candidates.where(is_paid: "1", deleted_at: nil)
+    paid_candidate_count = paid_candidates.count
     admin_active_study_detail = { study: study, 
       required_participant: required_participant, 
       active_candidate: active_candidate, 
@@ -48,7 +50,8 @@ class StudyService
       rejected_candidate_list: rejected_candidate_list,
       rejected_candidate_count: rejected_candidate_count,
       accepted_candidate_count: accepted_candidate_count,
-      submitted_candidate_count: submitted_candidate_count
+      submitted_candidate_count: submitted_candidate_count,
+      paid_candidate_count: paid_candidate_count
     }
     return admin_active_study_detail
   end
