@@ -1,6 +1,6 @@
 class UsersController < ApplicationController 
   # before_action :authorize_request, only: [:dashboard, :reports, :participantoverview]
-  before_action :authorize_request, except: [:create, :destroy, :show, :welcome]
+  before_action :authorize_request, except: [:create, :destroy, :welcome]
   before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivateuser, :activate, 
     :researcheroverview, :participantoverview, :reports]
   # before_action :is_participant, only: [:share_referral_code]

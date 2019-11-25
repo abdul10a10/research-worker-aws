@@ -46,7 +46,7 @@ class TransactionsController < ApplicationController
   end
 
   def researcher_transaction
-    studies = @current_user.studies.where(is_paid: "1")
+    studies = @current_user.studies.where(is_paid: "1").order(id: :desc)
     transactions = Array.new
     studies.each do |study|
       transaction = study.transactions.where(payment_type: "Study Payment").first
