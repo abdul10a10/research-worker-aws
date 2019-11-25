@@ -2,20 +2,17 @@ class MessagesController < ApplicationController
   before_action :set_message, only: [:show, :update, :destroy, :archive_message, :delete_message]
 
   # GET /messages
-  # GET /messages.json
   def index
     @messages = Message.all
     render json: {Data: {messages: @messages}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok    
   end
 
   # GET /messages/1
-  # GET /messages/1.json
   def show
     render json: {Data: {message: @message}, CanEdit: false, CanDelete: true, Status: :ok, message: nil, Token: nil, Success: true}, status: :ok    
   end
 
   # POST /messages
-  # POST /messages.json
   def create
     @message = Message.new(message_params)
 
@@ -34,7 +31,6 @@ class MessagesController < ApplicationController
   end
 
   # PATCH/PUT /messages/1
-  # PATCH/PUT /messages/1.json
   def update
     if @message.update(message_params)
       render :show, status: :ok, location: @message
@@ -44,7 +40,6 @@ class MessagesController < ApplicationController
   end
 
   # DELETE /messages/1
-  # DELETE /messages/1.json
   def destroy
     @message.destroy
     render json: {Data: nil, CanEdit: false, CanDelete: true, Status: :ok, message: "message-deleted", Token: nil, Success: true}, status: :ok
@@ -100,14 +95,11 @@ class MessagesController < ApplicationController
 
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_message
       @message = Message.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def message_params
-      # debugger
       params.fetch(:message, {}).permit(:reciever_id,:research_worker_id,:sender_id,:subject, :description)
     end
 end

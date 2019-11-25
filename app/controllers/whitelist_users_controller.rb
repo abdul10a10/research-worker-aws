@@ -2,18 +2,15 @@ class WhitelistUsersController < ApplicationController
   before_action :set_whitelist_user, only: [:show, :update, :destroy]
 
   # GET /whitelist_users
-  # GET /whitelist_users.json
   def index
     @whitelist_users = WhitelistUser.all
   end
 
   # GET /whitelist_users/1
-  # GET /whitelist_users/1.json
   def show
   end
 
   # POST /whitelist_users
-  # POST /whitelist_users.json
   def create
     @whitelist_user = WhitelistUser.new(whitelist_user_params)
     @research_worker_id = params[:research_worker_id]
@@ -38,7 +35,6 @@ class WhitelistUsersController < ApplicationController
   end
 
   # PATCH/PUT /whitelist_users/1
-  # PATCH/PUT /whitelist_users/1.json
   def update
     if @whitelist_user.update(whitelist_user_params)
       render :show, status: :ok, location: @whitelist_user
@@ -48,7 +44,6 @@ class WhitelistUsersController < ApplicationController
   end
 
   # DELETE /whitelist_users/1
-  # DELETE /whitelist_users/1.json
   def destroy
     @whitelist_user.destroy
   end
@@ -80,12 +75,10 @@ class WhitelistUsersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_whitelist_user
       @whitelist_user = WhitelistUser.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def whitelist_user_params
       params.fetch(:whitelist_user, {}).permit(:study_id, :user_id)
     end

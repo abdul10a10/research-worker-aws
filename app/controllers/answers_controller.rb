@@ -5,7 +5,6 @@ class AnswersController < ApplicationController
   before_action :set_answer, only: [:show, :update, :destroy]
 
   # GET /answers
-  # GET /answers.json
   def index
     # @answers = Answer.group(:question_id)
     @answers = Answer.where(deleted_at: nil)
@@ -13,12 +12,10 @@ class AnswersController < ApplicationController
   end
 
   # GET /answers/1
-  # GET /answers/1.json
   def show
   end
 
   # POST /answers
-  # POST /answers.json
   def create
     @answer = Answer.new(answer_params)
     @question_id = @answer.question_id
@@ -39,7 +36,6 @@ class AnswersController < ApplicationController
   end
 
   # PATCH/PUT /answers/1
-  # PATCH/PUT /answers/1.json
   def update
     if @answer.update(answer_params)
       @message = "answer-updated"
@@ -51,7 +47,6 @@ class AnswersController < ApplicationController
   end
 
   # DELETE /answers/1
-  # DELETE /answers/1.json
   def destroy
     @answer.deleted_at!
     @message = "answer-deleted"
@@ -74,12 +69,10 @@ class AnswersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_answer
       @answer = Answer.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def answer_params
       params.fetch(:answer, {}).permit(:question_id, :description, :follow_up_question)
     end

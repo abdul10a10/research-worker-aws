@@ -5,7 +5,6 @@ class QuestionCategoriesController < ApplicationController
   before_action :set_question_category, only: [:show, :update, :destroy, :update_category_image]
 
   # GET /question_categories
-  # GET /question_categories.json
   def index
     @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
     @question_category_list = Array.new
@@ -19,13 +18,11 @@ class QuestionCategoriesController < ApplicationController
   end
 
   # GET /question_categories/1
-  # GET /question_categories/1.json
   def show
   end
 
 
   # POST /question_categories
-  # POST /question_categories.json
   def create
     @question_category = QuestionCategory.new(question_category_params)
     @name = QuestionCategory.find_by(name: question_category_params[:name], deleted_at: nil)
@@ -64,7 +61,6 @@ class QuestionCategoriesController < ApplicationController
   end
 
   # DELETE /question_categories/1
-  # DELETE /question_categories/1.json
   def destroy
     @question_category.destroy
   end
@@ -80,7 +76,6 @@ class QuestionCategoriesController < ApplicationController
     @question_categories.each do |category|
       @question_category = category.id
       @question = category.questions.where(deleted_at: nil)
-      # @question = Question.where(question_category: @question_category, deleted_at: nil)
       @question_count = @question.count
       @total_question = @total_question + @question_count
       @response=0
@@ -102,7 +97,6 @@ class QuestionCategoriesController < ApplicationController
       })
       @total_response = @total_response + @response
     end
-    # render json: @demographic_category, status: :ok
     render json: {Data: {demographic_category: @demographic_category, total_question: @total_question, total_response: @total_response}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
@@ -119,12 +113,10 @@ class QuestionCategoriesController < ApplicationController
 
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_question_category
       @question_category = QuestionCategory.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def question_category_params
       params.fetch(:question_category, {}).permit(:name, :image_url)
     end

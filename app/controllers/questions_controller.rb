@@ -5,7 +5,6 @@ class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :update, :destroy]
 
   # GET /questions
-  # GET /questions.json
   def index
     @questions = Question.where(deleted_at: nil).order(id: :asc)
     @message = "questions"
@@ -13,14 +12,12 @@ class QuestionsController < ApplicationController
   end
 
   # GET /questions/1
-  # GET /questions/1.json
   def show
     @message = "question"
     render json: {Data: @question, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # POST /questions
-  # POST /questions.json
   def create
     @question = Question.new(question_params)
     # @temp1 = question_params[:question_category]
@@ -37,7 +34,6 @@ class QuestionsController < ApplicationController
   end
 
   # PATCH/PUT /questions/1
-  # PATCH/PUT /questions/1.json
   def update
     if @question.update(question_params)
       @message = "question-updated"
@@ -49,7 +45,6 @@ class QuestionsController < ApplicationController
   end
 
   # DELETE /questions/1
-  # DELETE /questions/1.json
   def destroy
     @question.destroy
     @message = "question-deleted"
@@ -159,12 +154,10 @@ class QuestionsController < ApplicationController
 
   end
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_question
       @question = Question.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def question_params
       params.fetch(:question, {}).permit(:question_category_id, :question_type_id, :title, :description, :description2)
     end

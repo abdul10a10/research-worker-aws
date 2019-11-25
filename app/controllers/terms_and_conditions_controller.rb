@@ -3,20 +3,17 @@ class TermsAndConditionsController < ApplicationController
   before_action :set_terms_and_condition, only: [:show, :update, :destroy]
 
   # GET /terms_and_conditions
-  # GET /terms_and_conditions.json
   def index
     @terms_and_conditions = TermsAndCondition.where(deleted_at: nil).order(id: :asc)
     render json: @terms_and_conditions, status: :ok
   end
 
   # GET /terms_and_conditions/1
-  # GET /terms_and_conditions/1.json
   def show
     render json: {Data: @terms_and_condition, CanEdit: true, CanDelete: false, Status: :ok, message: 'terms and conditions', Token: nil, Success: false}, status: :ok
   end
 
   # POST /terms_and_conditions
-  # POST /terms_and_conditions.json
   def create
     @terms_and_condition = TermsAndCondition.new(terms_and_condition_params)
 
@@ -28,7 +25,6 @@ class TermsAndConditionsController < ApplicationController
   end
 
   # PATCH/PUT /terms_and_conditions/1
-  # PATCH/PUT /terms_and_conditions/1.json
   def update
     if @terms_and_condition.update(terms_and_condition_params)
       render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: 'terms-updated', Token: nil, Success: false}, status: :ok
@@ -39,7 +35,6 @@ class TermsAndConditionsController < ApplicationController
   end
 
   # DELETE /terms_and_conditions/1
-  # DELETE /terms_and_conditions/1.json
   def destroy
     @terms_and_condition.destroy
     render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: 'terms-deleted', Token: nil, Success: false}, status: :ok

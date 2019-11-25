@@ -2,7 +2,6 @@ class AudiencesController < ApplicationController
   before_action :set_audience, only: [:show, :update, :destroy]
 
   # GET /audiences
-  # GET /audiences.json
   def index
     @audiences = Audience.where(deleted_at: nil)
     @message = "All-audience-response"
@@ -10,14 +9,12 @@ class AudiencesController < ApplicationController
   end
 
   # GET /audiences/1
-  # GET /audiences/1.json
   def show
     @message = "audience-response"
     render json: {Data: @audience, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # POST /audiences
-  # POST /audiences.json
   def create
     @audience = Audience.new(audience_params)
     answer_ids = audience_params[:answer_id]
@@ -31,7 +28,6 @@ class AudiencesController < ApplicationController
   end
 
   # PATCH/PUT /audiences/1
-  # PATCH/PUT /audiences/1.json
   def update
     if @audience.update(audience_params)
       @message = "audience-updated"
@@ -42,7 +38,6 @@ class AudiencesController < ApplicationController
   end
 
   # DELETE /audiences/1
-  # DELETE /audiences/1.json
   def destroy
     @audience.destroy
     @message = "audience-deleted"
@@ -70,7 +65,6 @@ class AudiencesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_audience
       if Audience.exists?(params[:id])
         @audience = Audience.find(params[:id])
@@ -80,7 +74,6 @@ class AudiencesController < ApplicationController
       end
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def audience_params
       params.fetch(:audience, {}).permit(:study_id, :question_id, :answer_id, :deleted_at, answer_id:[])
     end

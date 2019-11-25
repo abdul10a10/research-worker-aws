@@ -314,7 +314,6 @@ class StudiesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_study
       if Study.exists?(params[:id])
         @study = Study.find(params[:id])
@@ -324,7 +323,6 @@ class StudiesController < ApplicationController
       end  
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def study_params
       params.fetch(:study, {}).permit(:user_id, :name, :completionurl, :completioncode, :studyurl, :allowedtime, :estimatetime,
         :submission, :description, :reward, :deactivate_reason, :max_participation_date)

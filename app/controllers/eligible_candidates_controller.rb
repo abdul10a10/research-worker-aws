@@ -178,12 +178,10 @@ class EligibleCandidatesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_eligible_candidate
       @eligible_candidate = EligibleCandidate.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def eligible_candidate_params
       params.fetch(:eligible_candidate, {}).permit(:reject_reason)
     end

@@ -75,12 +75,10 @@ class TransactionsController < ApplicationController
     render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "participant-transactions", Token: nil, Success: false}, status: :ok
   end
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_transaction
       @transaction = Transaction.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def transaction_params
       params.fetch(:transaction, {})
     end
