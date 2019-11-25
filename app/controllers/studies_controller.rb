@@ -224,7 +224,7 @@ class StudiesController < ApplicationController
   
   def admin_new_study_list
     studies = StudyService.admin_new_study_list
-    if @studies.present?
+    if studies.present?
       @message = "new-studies"
     else
       @message = "no-study-found"
