@@ -80,7 +80,7 @@ class UsersController < ApplicationController
       @image_url = url_for(@user.try(:image))
     end
     @message = "user-info"
-    @notification = @user.notifications.where(deleted_at: nil).order(id: :desc)
+    @notification = @user.notifications.where(deleted_at: nil).order(id: :desc).limit(30)
     @notification.each do |notification|
       if (notification.status == nil)
         @unread_notification = "yes"
