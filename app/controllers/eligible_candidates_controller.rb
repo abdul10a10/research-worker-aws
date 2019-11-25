@@ -4,7 +4,7 @@ class EligibleCandidatesController < ApplicationController
 
   # GET /eligible_candidates
   def index
-    @eligible_candidates = EligibleCandidate.where(deleted_at: nil)
+    @eligible_candidates = EligibleCandidate.where(deleted_at: nil).order(id: :desc)
     @message = "Eligible-candidates"
     render json: {Data: @eligible_candidates, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
