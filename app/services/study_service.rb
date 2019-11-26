@@ -9,7 +9,7 @@ class StudyService
       user = candidate.user
       active_candidate_list.push(user)
     end
-    submitted_candidates = study.eligible_candidates.where(is_completed: "1", deleted_at: nil)
+    submitted_candidates = study.eligible_candidates.where(is_attempted: "1", is_completed: "1", deleted_at: nil)
     submitted_candidate_count = submitted_candidates.count
     submitted_candidates_list = Array.new
     submitted_candidates.each do |candidate|
@@ -343,13 +343,12 @@ class StudyService
   end
 
   def self.submitted_candidate_list(study)
-    submitted_candidates = study.eligible_candidates.where(is_completed: "1", deleted_at: nil)
+    submitted_candidates = study.eligible_candidates.where(is_attempted: "1", is_completed: "1", deleted_at: nil)
     submitted_candidate_count = submitted_candidates.count
     submitted_candidate_list = Array.new
     submitted_candidates.each do |candidate|
       user = candidate.user
       if (user.user_type == "Participant")
-        # completion_time = helpers.distance_of_time_in_words(candidate.submit_time , candidate.start_time)
         time_difference = candidate.submit_time - candidate.start_time
         completion_time = Time.at(time_difference.to_i.abs).utc.strftime("%H:%M:%S")
         estimate_min_time = candidate.start_time + study.allowedtime.to_i.minutes

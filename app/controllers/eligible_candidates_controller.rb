@@ -64,7 +64,7 @@ class EligibleCandidatesController < ApplicationController
       @user = User.find_by(email: params[:email])
       @study = Study.find_by(completioncode: params[:completioncode], completionurl: params[:completionurl])
       @study_id = @study.id
-      if EligibleCandidate.where(user_id: @user.id, study_id: @study_id, deleted_at: nil).present?
+      if EligibleCandidate.where(user_id: @user.id, study_id: @study_id, is_attempted: "1", deleted_at: nil).present?
         if EligibleCandidate.where(user_id: @user.id, study_id: @study_id, deleted_at: nil, is_completed: "1").present?
           @message = "study-already-submitted"
         else
@@ -79,7 +79,7 @@ class EligibleCandidatesController < ApplicationController
           @message = "study-submitted"
         end
       else
-        @message = "not-eligible-for-study"
+        @message = "study-not-started-yet"
       end  
     else
       @message = "not-eligible-for-study"
