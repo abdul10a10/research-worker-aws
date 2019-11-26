@@ -204,7 +204,7 @@ class StudyService
     required_participant = study.submission
     active_candidates = study.eligible_candidates.where(is_attempted: "1", deleted_at: nil)
     active_candidate = active_candidates.count
-    submitted_candidates = study.eligible_candidates.where(is_completed: "1", deleted_at: nil)
+    submitted_candidates = study.eligible_candidates.where(is_attempted: "1", is_completed: "1", deleted_at: nil)
     submitted_candidate_count = submitted_candidates.count
     accepted_candidates = study.eligible_candidates.where(is_completed: "1", is_accepted: "1", deleted_at: nil)
     accepted_candidate_count = accepted_candidates.count
