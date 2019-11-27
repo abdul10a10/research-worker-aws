@@ -130,7 +130,7 @@ class UserService
 
       monthly_study.push(studies.count)
       monthly_paid_study.push(paid_studies.count)
-      monthly_payment.push(paid_amount.round(3))
+      monthly_payment.push(sprintf('%.2f', paid_amount))
       month.push(start_time.strftime("%B"))
       end_time = start_time
       start_time = start_time-1.month
@@ -142,7 +142,7 @@ class UserService
       end
     end
 
-    data = {user: user,total_paid_amount: total_paid_amount.round(3), month: month, monthly_study: monthly_study, 
+    data = {user: user,total_paid_amount: sprintf('%.2f', total_paid_amount), month: month, monthly_study: monthly_study, 
       monthly_paid_study: monthly_paid_study, monthly_payment: monthly_payment, transactions: transactions,
       studies: user.studies.where(is_published: "1", deleted_at: nil).order(id: :desc)
       }
