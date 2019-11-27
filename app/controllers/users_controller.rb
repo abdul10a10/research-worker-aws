@@ -163,7 +163,15 @@ class UsersController < ApplicationController
 
   #GET /researcheroverview/:id
   def researcher_overview
-    render json: {Data: {user: @user, studies: @user.studies.where(is_published: nil, deleted_at: nil)}, 
+    studies = @user.studies.where(is_paid: "1").order(id: :desc)
+    transactions = Array.new
+    studies.each do |study|
+      transaction = study.transactions.where(payment_type: "Study Payment").first
+      if transaction.present?        
+        transactions.push(study: study,transaction: transaction)
+      end
+    end
+    render json: {Data: {user: @user, studies: @user.studies.where(deleted_at: nil).order(id: :desc), transactions: transactions}, 
       CanEdit: false, CanDelete: false, Status: :ok, message: "user-info", Token: nil, Success: false}, status: :ok
   end
 
