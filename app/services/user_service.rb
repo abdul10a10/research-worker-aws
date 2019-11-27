@@ -107,7 +107,8 @@ class UserService
       end
     end
 
-    # report of
+    # report of researcher
+    total_paid_amount = 0
     end_time = Time.now.utc
     start_time = Time.now.beginning_of_month
     month = Array.new
@@ -125,6 +126,7 @@ class UserService
           paid_amount = paid_amount + transaction.try(:amount)
         end
       end
+      total_paid_amount += paid_amount
 
       monthly_study.push(studies.count)
       monthly_paid_study.push(paid_studies.count)
@@ -140,9 +142,10 @@ class UserService
       end
     end
 
-    data = {user: user,month: month, monthly_study: monthly_study, monthly_paid_study: monthly_paid_study, 
-      monthly_payment: monthly_payment,studies: user.studies.where(is_published: "1", deleted_at: nil).order(id: :desc),
-      transactions: transactions}
+    data = {user: user,total_paid_amount: total_paid_amount, month: month, monthly_study: monthly_study, 
+      monthly_paid_study: monthly_paid_study, monthly_payment: monthly_payment, transactions: transactions,
+      studies: user.studies.where(is_published: "1", deleted_at: nil).order(id: :desc)
+      }
     return data
   end
 
