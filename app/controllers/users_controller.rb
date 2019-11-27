@@ -1,9 +1,7 @@
 class UsersController < ApplicationController 
-  # before_action :authorize_request, only: [:dashboard, :reports, :participantoverview]
   before_action :authorize_request, except: [:create, :destroy, :welcome]
   before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivateuser, :activate, 
     :researcheroverview, :participantoverview, :reports]
-  # before_action :is_participant, only: [:share_referral_code]
   before_action :set_user, only: [:show,:update_image, :update, :destroy, :activate, :deactivateuser, :participant_overview, :researcher_overview, :participant_info]
 
   #GET /users
@@ -59,12 +57,10 @@ class UsersController < ApplicationController
 
 
   def destroy
-    
     Notification.where(user_id: @user.id).delete_all
     EligibleCandidate.where(user_id: @user.id).delete_all
     Response.where(user_id: @user.id).delete_all
     Study.where(user_id: @user.id).delete_all
-
     @user.destroy
     @message = "user-deleted"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok

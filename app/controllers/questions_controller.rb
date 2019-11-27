@@ -58,7 +58,7 @@ class QuestionsController < ApplicationController
     @first_question = @question_category.questions.where(deleted_at: nil).first
     @responce = Array.new
     @follow_up_question = Array.new
-    @follow_up_question.push(@first_question.id)
+    @follow_up_question.push(@first_question.try(:id))
     @questions.each do |question|
       @question_id = question.id
       if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
@@ -76,7 +76,6 @@ class QuestionsController < ApplicationController
                            answer: @answers
                        })
         end
-  
       else
         @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
         @answers.each do |answer|
@@ -89,10 +88,7 @@ class QuestionsController < ApplicationController
                             answer: @answers
                         })
         end
-  
-        # @responce = @responce, {question: question, answer: @answers}
       end
-
     end
     render json: @responce, status: :ok
   end
