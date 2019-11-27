@@ -118,7 +118,7 @@ class UserService
     loop do
       studies = user.studies.where(created_at: start_time..end_time, deleted_at: nil)
       paid_studies = user.studies.where(created_at: start_time..end_time, is_paid: "1").order(id: :desc)
-      paid_amount = 0.0
+      paid_amount = 0
       paid_studies.each do |study|
         transaction = study.transactions.where(payment_type: "Study Payment").first
         if transaction.present?
@@ -128,7 +128,7 @@ class UserService
 
       monthly_study.push(studies.count)
       monthly_paid_study.push(paid_studies.count)
-      monthly_payment.push(paid_amount)
+      monthly_payment.push(paid_amount.round(2))
       month.push(start_time.strftime("%B"))
       end_time = start_time
       start_time = start_time-1.month
