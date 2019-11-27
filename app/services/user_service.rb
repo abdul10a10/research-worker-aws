@@ -39,8 +39,10 @@ class UserService
     i = 0
 
     loop do
-      @participant_user = User.where(created_at: @start_time..@end_time, user_type: "Participant",verification_status: '1', deleted_at: nil)
-      @researcher_user = User.where(created_at: @start_time..@end_time, user_type: "Researcher", verification_status: '1', deleted_at: nil)
+      @participant_user = User.where(created_at: @start_time..@end_time, user_type: "Participant",
+        verification_status: '1', deleted_at: nil)
+      @researcher_user = User.where(created_at: @start_time..@end_time, user_type: "Researcher", 
+        verification_status: '1', deleted_at: nil)
       @studies = Study.where(created_at: @start_time..@end_time, deleted_at: nil)
       @indian_study = 0
       @uae_study = 0
@@ -51,16 +53,10 @@ class UserService
           @uae_study = @uae_study + 1
         end
       end
-      # @indian_studies = @studies.user.where(country: "India", deleted_at: nil)
-      # @studies = Study.where(created_at: @start_time..@end_time, deleted_at: nil)
-      @participant_count = @participant_user.count
-      @researcher_count = @researcher_user.count
-      @study_count = @studies.count
-      @month_name = @start_time.strftime("%B")
-      @participant.push(@participant_count)
-      @researcher.push(@researcher_count)
-      @study.push(@study_count)
-      @month.push(@month_name)
+      @participant.push(@participant_user.count)
+      @researcher.push(@researcher_user.count)
+      @study.push(@studies.count)
+      @month.push(@start_time.strftime("%B"))
       @indian_studies.push(@indian_study)
       @uae_studies.push(@uae_study) 
       @end_time = @start_time
@@ -100,4 +96,54 @@ class UserService
     end
     @result = {user: @user, demographics: @demographics}
   end
+
+  def self.researcher_overview(user)
+    studies = user.studies.where(is_paid: "1").order(id: :desc)
+    transactions = Array.new
+    studies.each do |study|
+      transaction = study.transactions.where(payment_type: "Study Payment").first
+      if transaction.present?        
+        transactions.push(study: study,transaction: transaction)
+      end
+    end
+
+    # report of
+    end_time = Time.now.utc
+    start_time = Time.now.beginning_of_month
+    month = Array.new
+    monthly_study = Array.new
+    monthly_payment = Array.new
+    monthly_paid_study = Array.new
+    i = 0
+    loop do
+      studies = user.studies.where(created_at: start_time..end_time, deleted_at: nil)
+      paid_studies = user.studies.where(created_at: start_time..end_time, is_paid: "1").order(id: :desc)
+      paid_amount = 0.0
+      paid_studies.each do |study|
+        transaction = study.transactions.where(payment_type: "Study Payment").first
+        if transaction.present?
+          paid_amount = paid_amount + transaction.try(:amount)
+        end
+      end
+
+      monthly_study.push(studies.count)
+      monthly_paid_study.push(paid_studies.count)
+      monthly_payment.push(paid_amount)
+      month.push(start_time.strftime("%B"))
+      end_time = start_time
+      start_time = start_time-1.month
+
+      # increment month
+      i += 1
+      if i == 12
+        break       
+      end
+    end
+
+    data = {user: user,month: month, monthly_study: monthly_study, monthly_paid_study: monthly_paid_study, 
+      monthly_payment: monthly_payment,studies: user.studies.where(is_published: "1", deleted_at: nil).order(id: :desc),
+      transactions: transactions}
+    return data
+  end
+
 end
