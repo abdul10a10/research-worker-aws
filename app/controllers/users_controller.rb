@@ -171,7 +171,7 @@ class UsersController < ApplicationController
         transactions.push(study: study,transaction: transaction)
       end
     end
-    render json: {Data: {user: @user, studies: @user.studies.where(deleted_at: nil).order(id: :desc), transactions: transactions}, 
+    render json: {Data: {user: @user, studies: @user.studies.where(is_published: "1", deleted_at: nil).order(id: :desc), transactions: transactions}, 
       CanEdit: false, CanDelete: false, Status: :ok, message: "user-info", Token: nil, Success: false}, status: :ok
   end
 
