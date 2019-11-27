@@ -94,7 +94,16 @@ class UserService
         })
       end
     end
-    @result = {user: @user, demographics: @demographics}
+    seen_studies = @user.eligible_candidates.where(is_seen: "1", deleted_at: nil)
+    attempted_studies = @user.eligible_candidates.where(is_attempted: "1", deleted_at: nil)
+    accepted_studies = @user.eligible_candidates.where(is_accepted: "1", deleted_at: nil)
+    rejected_studies = @user.eligible_candidates.where(is_accepted: "0", deleted_at: nil)
+    submitted_studies = @user.eligible_candidates.where(is_completed: "1", deleted_at: nil)
+    result = {user: @user, demographics: @demographics, seen_studies: seen_studies.count, 
+      attempted_studies: attempted_studies.count, accepted_studies: accepted_studies.count,
+      rejected_studies: rejected_studies.count, submitted_studies: submitted_studies.count
+    }
+    return result
   end
 
   def self.researcher_overview(user)
