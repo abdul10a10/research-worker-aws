@@ -161,8 +161,8 @@ class UserService
       end
     end
 
-    data = {user: user,total_paid_amount: sprintf('%.2f', total_paid_amount), month: month, monthly_study: monthly_study, 
-      monthly_paid_study: monthly_paid_study, monthly_payment: monthly_payment, transactions: transactions,
+    data = {user: user,total_paid_amount: sprintf('%.2f', total_paid_amount), month: month.reverse, monthly_study: monthly_study.reverse, 
+      monthly_paid_study: monthly_paid_study.reverse, monthly_payment: monthly_payment.reverse, transactions: transactions,
       studies: user.studies.where(is_published: "1", deleted_at: nil).order(id: :desc)
     }
     return data
