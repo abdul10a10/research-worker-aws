@@ -3,6 +3,9 @@ class TransactionService
   def self.total_monthly_transaction
     total_transaction = 0
     total_payment = 0
+    total_indian_payment = 0
+    total_uae_payment = 0
+    total_other_country_payment = 0
     end_time = Time.now.utc
     start_time = Time.now.beginning_of_month
     monthly_transaction = Array.new
@@ -31,12 +34,14 @@ class TransactionService
           if study.user.country == "India"
             indian_transactions += 1
             indian_payment += transaction.try(:amount)
+            total_indian_payment += transaction.try(:amount)
           elsif study.user.country == "United Arab Emirates" || study.user.country == "UAE"
             uae_transactions += 1
             uae_payment += transaction.try(:amount)
+            total_uae_payment += transaction.try(:amount)
           else
             other_country_transactions += 1
-            other_country_payment += transaction.try(:amount)
+            total_other_country_payment += transaction.try(:amount)
           end
 
         end
@@ -62,7 +67,9 @@ class TransactionService
       monthly_uae_payment: monthly_uae_payment.reverse,
       monthly_other_country_payment: monthly_other_country_payment.reverse,
       monthly_indian_payment: monthly_indian_payment.reverse,
-
+      total_indian_payment: sprintf('%.2f',total_indian_payment),
+      total_uae_payment: sprintf('%.2f',total_uae_payment),
+      total_other_country_payment: sprintf('%.2f',total_other_country_payment),
       total_payment: sprintf('%.2f', total_payment)
     }
   end
