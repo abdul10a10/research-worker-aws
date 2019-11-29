@@ -61,7 +61,15 @@ class TransactionsController < ApplicationController
         transactions.push(study: study,transaction: transaction, user: study.user)
       end
     end
-    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "all-study-transactions", Token: nil, Success: false}, status: :ok
+    month = FunctionService.month_array
+    transactions_data = TransactionService.total_monthly_transaction
+    render json: {Data: {transactions: transactions, 
+      total_transaction: transactions_data[:total_transaction],
+      total_payment: transactions_data[:total_payment],
+      month: month, 
+      monthly_transaction: transactions_data[:monthly_transaction],
+      monthly_payment: transactions_data[:monthly_payment]
+      }, CanEdit: false, CanDelete: false, Status: :ok, message: "all-study-transactions", Token: nil, Success: false}, status: :ok
   end
 
   def participant_transaction

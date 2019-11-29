@@ -32,6 +32,7 @@ class UserService
     study = Array.new
     indian_studies = Array.new
     uae_studies = Array.new
+    other_country_studies = Array.new
     monthly_payment = Array.new
     i = 0
 
@@ -53,11 +54,14 @@ class UserService
 
       indian_study = 0
       uae_study = 0
+      other_country_study = 0
       studies.each do |study|
         if study.user.country == "India"
-          indian_study = indian_study + 1
+          indian_study += 1
         elsif study.user.country == "United Arab Emirates" || study.user.country == "UAE"
-          uae_study = uae_study + 1
+          uae_study += 1
+        else
+          other_country_study += 1
         end
       end
       participant.push(participant_user.count)
@@ -66,6 +70,7 @@ class UserService
       month.push(start_time.strftime("%B"))
       indian_studies.push(indian_study)
       uae_studies.push(uae_study)
+      other_country_studies.push(other_country_study)
       monthly_payment.push(sprintf('%.2f', paid_amount))
 
       end_time = start_time
@@ -117,6 +122,8 @@ class UserService
   end
 
   def self.researcher_overview(user)
+    total_studies = user.studies.where(deleted_at: nil)
+    active_studies = user.studies.where(is_active: "1", deleted_at: nil)
     studies = user.studies.where(is_paid: "1").order(id: :desc)
     transactions = Array.new
     studies.each do |study|
