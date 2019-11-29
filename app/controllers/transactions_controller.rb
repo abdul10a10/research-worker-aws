@@ -65,6 +65,9 @@ class TransactionsController < ApplicationController
     transactions_data = TransactionService.total_monthly_transaction
     render json: {Data: {transactions: transactions, 
       total_transaction: transactions_data[:total_transaction],
+      indian_transactions: transactions_data[:indian_transactions],
+      uae_transactions: transactions_data[:uae_transactions],
+      other_country_transactions: transactions_data[:other_country_transactions],
       total_payment: transactions_data[:total_payment],
       total_indian_payment: transactions_data[:total_indian_payment],
       total_uae_payment: transactions_data[:total_uae_payment],

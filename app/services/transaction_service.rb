@@ -2,6 +2,9 @@ class TransactionService
 
   def self.total_monthly_transaction
     total_transaction = 0
+    indian_transactions = 0
+    uae_transactions = 0
+    other_country_transactions = 0
     total_payment = 0
     total_indian_payment = 0
     total_uae_payment = 0
@@ -20,11 +23,11 @@ class TransactionService
       paid_studies = Study.where(created_at: start_time..end_time, is_paid: "1").order(id: :desc)
       paid_amount = 0
       transaction_count = 0
-      indian_transactions = 0
+      
       indian_payment = 0
-      uae_transactions = 0
+      
       uae_payment = 0
-      other_country_transactions = 0
+      
       other_country_payment = 0
       paid_studies.each do |study|
         transaction = study.transactions.where(payment_type: "Study Payment").first
@@ -64,6 +67,9 @@ class TransactionService
     end
     data = { total_transaction: total_transaction,
       monthly_transaction: monthly_transaction.reverse,
+      indian_transactions: indian_transactions,
+      uae_transactions: uae_transactions,
+      other_country_transactions: other_country_transactions,
       monthly_payment: monthly_payment.reverse,
       monthly_uae_payment: monthly_uae_payment.reverse,
       monthly_other_country_payment: monthly_other_country_payment.reverse,
