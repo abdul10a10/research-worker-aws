@@ -72,6 +72,7 @@ class TransactionsController < ApplicationController
       monthly_uae_payment: transactions_data[:monthly_uae_payment],
       monthly_other_country_payment: transactions_data[:monthly_other_country_payment],
       monthly_indian_payment: transactions_data[:monthly_indian_payment],
+      payment_array: transactions_data[:payment_array],
       month: month, 
       monthly_transaction: transactions_data[:monthly_transaction],
       monthly_payment: transactions_data[:monthly_payment]

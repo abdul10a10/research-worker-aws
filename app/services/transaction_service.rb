@@ -13,6 +13,7 @@ class TransactionService
     monthly_indian_payment = Array.new
     monthly_uae_payment = Array.new
     monthly_other_country_payment = Array.new
+    payment_array = Array.new
     i=0
 
     loop do
@@ -70,7 +71,8 @@ class TransactionService
       total_indian_payment: sprintf('%.2f',total_indian_payment),
       total_uae_payment: sprintf('%.2f',total_uae_payment),
       total_other_country_payment: sprintf('%.2f',total_other_country_payment),
-      total_payment: sprintf('%.2f', total_payment)
+      total_payment: sprintf('%.2f', total_payment),
+      payment_array: payment_array.push(sprintf('%.2f',total_indian_payment),sprintf('%.2f',total_uae_payment),sprintf('%.2f',total_other_country_payment))
     }
   end
   
