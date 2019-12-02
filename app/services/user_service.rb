@@ -92,6 +92,9 @@ class UserService
 
   def self.participant_overview(user)
     user = user
+    if user.image.attached?
+      image_url = url_for(@user.try(:image))
+    end
     if Response.where(user_id: user.id, deleted_at: nil).present?
       demographics = Array.new
       question_ids = user.responses.select("DISTINCT question_id").where(deleted_at: nil).map(&:question_id)
@@ -114,7 +117,7 @@ class UserService
     accepted_studies = user.eligible_candidates.where(is_accepted: "1", deleted_at: nil)
     rejected_studies = user.eligible_candidates.where(is_accepted: "0", deleted_at: nil)
     submitted_studies = user.eligible_candidates.where(is_completed: "1", deleted_at: nil)
-    result = {user: user, demographics: demographics, seen_studies: seen_studies.count, 
+    result = {user: user,image_url: image_url, demographics: demographics, seen_studies: seen_studies.count, 
       attempted_studies: attempted_studies.count, accepted_studies: accepted_studies.count,
       rejected_studies: rejected_studies.count, submitted_studies: submitted_studies.count
     }
@@ -122,6 +125,9 @@ class UserService
   end
 
   def self.researcher_overview(user)
+    if user.image.attached?
+      image_url = url_for(@user.try(:image))
+    end
     total_studies = user.studies.where(deleted_at: nil)
     active_studies = user.studies.where(is_active: "1", deleted_at: nil)
     studies = user.studies.where(is_paid: "1").order(id: :desc)
@@ -168,7 +174,7 @@ class UserService
       end
     end
 
-    data = {user: user,total_paid_amount: sprintf('%.2f', total_paid_amount), month: month.reverse, monthly_study: monthly_study.reverse, 
+    data = {user: user,image_url: image_url, total_paid_amount: sprintf('%.2f', total_paid_amount), month: month.reverse, monthly_study: monthly_study.reverse, 
       monthly_paid_study: monthly_paid_study.reverse, monthly_payment: monthly_payment.reverse, transactions: transactions,
       studies: user.studies.where(is_published: "1", deleted_at: nil).order(id: :desc)
     }
