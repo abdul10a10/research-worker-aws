@@ -118,12 +118,51 @@ class TransactionsController < ApplicationController
   def participant_transaction
     eligible_candidates = @current_user.eligible_candidates.where(is_paid: "1")
     transactions = Array.new
+
+
+    total_transaction = 0
+    total_payment = 0
+    transactions = Array.new
+    monthly_transaction = Array.new
+    monthly_payment = Array.new
+    end_time = Time.now.utc
+    start_time = Time.now.beginning_of_month
+    i = 0
+    loop do
+      eligible_candidates = @current_user.eligible_candidates.where(created_at: start_time..end_time, is_paid: "1")
+      paid_amount = 0
+      transaction_count = 0
+      eligible_candidates.each do |eligible_candidate|
+        study = eligible_candidate.study
+        transaction = study.transactions.where(payment_type: "Participant study reward", receiver_id: @current_user.id).first
+        if transaction.present?
+          paid_amount +=  transaction.try(:amount)
+          transaction_count +=1
+        end
+      end
+      monthly_payment.push(sprintf('%.2f', paid_amount))
+      monthly_transaction.push(transaction_count)
+      total_transaction += transaction_count
+      
+      end_time = start_time
+      start_time = start_time-1.month
+
+      i += 1
+      if i == 12
+        break       
+      end
+    end
+    month = FunctionService.month_array
+
+
+
     eligible_candidates.each do |eligible_candidate|
       study = eligible_candidate.study
-      transaction = eligible_candidate.study.where(payment_type: "Participant study reward", receiver_id: @current_user.id).first
+      transaction = study.transactions.where(payment_type: "Participant study reward", receiver_id: @current_user.id).first
       transactions.push(study: study,transaction: transaction)
     end
-    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "participant-transactions", Token: nil, Success: false}, status: :ok
+    render json: {Data: {transactions: transactions, total_payment: sprintf('%.2f', total_payment), total_transaction: total_transaction, monthly_payment: monthly_payment.reverse,
+      monthly_transaction: monthly_transaction.reverse, month: month}, CanEdit: false, CanDelete: false, Status: :ok, message: "participant-transactions", Token: nil, Success: false}, status: :ok
   end
   private
     def set_transaction
