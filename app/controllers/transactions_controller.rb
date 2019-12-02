@@ -42,14 +42,47 @@ class TransactionsController < ApplicationController
 
   def researcher_transaction
     studies = @current_user.studies.where(is_paid: "1").order(id: :desc)
+    total_transaction = 0
+    total_payment = 0
     transactions = Array.new
+    monthly_transaction = Array.new
+    monthly_payment = Array.new
+    end_time = Time.now.utc
+    start_time = Time.now.beginning_of_month
     studies.each do |study|
       transaction = study.transactions.where(payment_type: "Study Payment").first
       if transaction.present?        
         transactions.push(study: study,transaction: transaction)
+        total_payment += transaction.amount
       end
     end
-    render json: {Data: {transactions: transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: "researcher-transactions", Token: nil, Success: false}, status: :ok
+    i = 0
+    loop do
+      paid_studies = @current_user.studies.where(created_at: start_time..end_time, is_paid: "1")
+      paid_amount = 0
+      transaction_count = 0
+      paid_studies.each do |study|
+        transaction = study.transactions.where(payment_type: "Study Payment").first
+        if transaction.present?
+          paid_amount +=  transaction.try(:amount)
+          transaction_count +=1
+        end
+      end
+      monthly_payment.push(sprintf('%.2f', paid_amount))
+      monthly_transaction.push(transaction_count)
+      total_transaction += transaction_count
+      
+      end_time = start_time
+      start_time = start_time-1.month
+
+      i += 1
+      if i == 12
+        break       
+      end
+    end
+    month = FunctionService.month_array
+    render json: {Data: {transactions: transactions, total_payment: sprintf('%.2f', total_payment), total_transaction: total_transaction, monthly_payment: monthly_payment.reverse,
+      monthly_transaction: monthly_transaction.reverse, month: month}, CanEdit: false, CanDelete: false, Status: :ok, message: "researcher-transactions", Token: nil, Success: false}, status: :ok
   end
 
   def study_transaction
