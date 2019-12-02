@@ -163,15 +163,23 @@ class UsersController < ApplicationController
 
   #GET /researcheroverview/:id
   def researcher_overview
+    if @user.image.attached?
+      @image_url = url_for(@user.try(:image))
+    end
     data = UserService.researcher_overview(@user)
+    data[:image_url] = @image_url
     render json: {Data: data, CanEdit: false, CanDelete: false, Status: :ok, message: "user-info", Token: nil, Success: false}, status: :ok
   end
 
   #GET /participantoverview/:id
   def participant_overview
+    if @user.image.attached?
+      @image_url = url_for(@user.try(:image))
+    end
     @message = "user-info"
-    @participant_overview = UserService.participant_overview(@user)
-    render json: {Data: @participant_overview, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    @data = UserService.participant_overview(@user)
+    @data[:image_url] = @image_url
+    render json: {Data: @data, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def reports
