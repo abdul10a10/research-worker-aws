@@ -1,5 +1,4 @@
 class UserService
-
   def self.verify_user(user)
     user = user
     user.status = "active"
@@ -91,9 +90,8 @@ class UserService
   end
 
   def self.participant_overview(user)
-    user = user
     if user.image.attached?
-      image_url = url_for(@user.try(:image))
+      image_url = Rails.application.routes.url_helpers.url_for(user.try(:image))
     end
     if Response.where(user_id: user.id, deleted_at: nil).present?
       demographics = Array.new
@@ -126,7 +124,7 @@ class UserService
 
   def self.researcher_overview(user)
     if user.image.attached?
-      image_url = url_for(@user.try(:image))
+      image_url = Rails.application.routes.url_helpers.url_for(user.try(:image))
     end
     total_studies = user.studies.where(deleted_at: nil)
     active_studies = user.studies.where(is_active: "1", deleted_at: nil)
