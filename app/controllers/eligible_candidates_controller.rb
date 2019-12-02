@@ -40,11 +40,19 @@ class EligibleCandidatesController < ApplicationController
   end
 
   def attempt_study
-    if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).present?
-      EligibleCandidateService.attempt_study(@current_user.id, params[:study_id])
-      @message = "study-attempted"
+    study = Study.find(params[:study_id])
+    attempted_candidates = study.eligible_candidates.where(is_attempted: "1",deleted_at: nil).count
+    rejected_candidates = study.eligible_candidates.where(is_accepted: "0",deleted_at: nil).count
+    attempts = attempted_candidates - rejected_candidates
+    if attempts < study.submission
+      if EligibleCandidate.where(user_id: @current_user.id, study_id: params[:study_id]).present?
+        EligibleCandidateService.attempt_study(@current_user.id, params[:study_id])
+        @message = "study-attempted"
+      else
+        @message = "not-eligible-for-study"
+      end
     else
-      @message = "not-eligible-for-study"
+      @message = "maximum-attempt-completed"
     end
     render json: {Data: nil, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
