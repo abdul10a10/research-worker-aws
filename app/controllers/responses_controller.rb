@@ -21,22 +21,27 @@ class ResponsesController < ApplicationController
     if @question.question_type_id == 2
       answer_ids = response_params[:answer_id]
       for answer_id in answer_ids do
-        @responsetemp = Response.new(response_params)
-        @responsetemp.answer_id = answer_id
-        @responsetemp.save
+        if Answer.where(id: answer_id,question_id: response_params[:question_id], deleted_at: nil).present?
+          @responsetemp = Response.new(response_params)
+          @responsetemp.answer_id = answer_id
+          @responsetemp.save          
+          @message = "response-saved"
+        else
+          @message = "please-select-valid-answer"          
+        end
       end
-        @message = "response-saved"
-        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      if @response.save
-        @message = "response-saved"
-        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+      if Answer.where(id: response_params[:answer_id],question_id: response_params[:question_id], deleted_at: nil).present?
+        if @response.save
+          @message = "response-saved"
+        else
+          @message = "response-not-saved"
+        end
       else
-        @message = "response-not-saved"
-        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+        @message = "please-select-valid-answer"
       end
     end
-    
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # PATCH/PUT /responses/1

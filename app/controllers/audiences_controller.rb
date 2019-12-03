@@ -19,11 +19,15 @@ class AudiencesController < ApplicationController
     @audience = Audience.new(audience_params)
     answer_ids = audience_params[:answer_id]
     for answer_id in answer_ids do
-      @audiencetemp = Audience.new(audience_params)
-      @audiencetemp.answer_id = answer_id
-      @audiencetemp.save
+      if Answer.where(id: answer_id,question_id: audience_params[:question_id], deleted_at: nil).present?
+        @audiencetemp = Audience.new(audience_params)
+        @audiencetemp.answer_id = answer_id
+        @audiencetemp.save
+        @message = "audience-response-saved"
+      else
+        @message = "please-select-valid-answer"
+      end
     end
-    @message = "audience-response-saved"
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
