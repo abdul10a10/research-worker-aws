@@ -149,7 +149,7 @@ class UsersController < ApplicationController
       end      
     else
       @message = "Not-a-valid-token"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :not_found
+      render json: {Data: nil, CanEdit: false, CanDelete: false, message: @message, Token: nil, Success: false}, status: :ok
     end
   end
 
