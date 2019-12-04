@@ -191,7 +191,11 @@ class UsersController < ApplicationController
     if User.find_by(email: params[:email]).present?
       message = "email-already-exist"
     else
-      message = "valid-email"
+      if params[:email].match?('[a-z0-9]+[_a-z0-9\.-]*[a-z0-9]+@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})')
+        message = "valid-email"
+      else
+        message = "invalid-email"
+      end
     end
     render json: {Data: @reports, CanEdit: false, CanDelete: false, Status: :ok, message: message, Token: nil, Success: true}, status: :ok 
   end
