@@ -1,5 +1,5 @@
 class UsersController < ApplicationController 
-  before_action :authorize_request, except: [:create, :destroy, :welcome]
+  before_action :authorize_request, except: [:create, :destroy, :welcome, :check_email]
   before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivateuser, :activate, 
     :researcheroverview, :participantoverview, :reports]
   before_action :set_user, only: [:show,:update_image, :update, :destroy, :activate, :deactivateuser, :participant_overview, :researcher_overview, :participant_info]
@@ -185,6 +185,15 @@ class UsersController < ApplicationController
   def reports
     @reports = UserService.report
     render json: {Data: @reports, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+  end
+
+  def check_email
+    if User.find_by(email: params[:email]).present?
+      message = "email-already-exist"
+    else
+      message = "valid-email"
+    end
+    render json: {Data: @reports, CanEdit: false, CanDelete: false, Status: :ok, message: message, Token: nil, Success: true}, status: :ok 
   end
 
   private

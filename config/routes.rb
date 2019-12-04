@@ -115,6 +115,7 @@ Rails.application.routes.draw do
   get 'welcome/:confirmation_token', to: 'users#welcome'
   post 'users', to: 'users#create'
   post 'share_referral_code', to: 'users#share_referral_code'
+  post 'check_email', to: 'users#check_email'
   put 'updateuserinfo/:id', to: 'users#update'
   put 'update_image/:id', to: 'users#update_image'
   put 'activateuser/:id', to: 'users#activate'
