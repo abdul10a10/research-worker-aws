@@ -22,11 +22,13 @@ class StudiesController < ApplicationController
   # ==================================================== Researcher ==========================================================
   # GET /studies/1
   def show
+    line = @study.description
+    description_size = line.split(/[^-a-zA-Z]/).size
     @message = "study"
     @filtered_candidates = StudyService.filtered_candidate(@study)
     @filtered_candidates_count = @filtered_candidates.count
     @transactions = @study.transactions.where(payment_type: "Study Payment").first
-    render json: {Data: {study: @study, filtered_candidates_count: @filtered_candidates_count, transactions: @transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    render json: {Data: {study: @study, description_size: description_size, filtered_candidates_count: @filtered_candidates_count, transactions: @transactions}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # POST /studies
