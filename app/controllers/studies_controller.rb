@@ -67,7 +67,7 @@ class StudiesController < ApplicationController
     else
       @message = "insufficient-length"
     end
-    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+    render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def count_description_words
