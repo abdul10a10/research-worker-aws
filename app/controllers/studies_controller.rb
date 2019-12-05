@@ -56,12 +56,18 @@ class StudiesController < ApplicationController
 
   # POST /add_description
   def add_description
-    if @study.update(study_params)
-      @message = "description-added"
-      render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
+    line = study_params[:description]
+    size = line.split(/[^-a-zA-Z]/).size
+    if size > 100
+      if @study.update(study_params)
+        @message = "description-added"
+      else
+        @message = "error-in-adding-description"
+      end
     else
-      render json: @study.errors, status: :unprocessable_entity
+      @message = "insufficient-length"
     end
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def count_description_words
