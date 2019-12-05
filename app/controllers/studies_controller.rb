@@ -23,7 +23,7 @@ class StudiesController < ApplicationController
   # GET /studies/1
   def show
     line = @study.description
-    description_size = line.split(/[^-a-zA-Z]/).size
+    description_size = WordsCounted.count(line)
     @message = "study"
     @filtered_candidates = StudyService.filtered_candidate(@study)
     @filtered_candidates_count = @filtered_candidates.count
