@@ -23,7 +23,8 @@ class StudiesController < ApplicationController
   # GET /studies/1
   def show
     line = @study.description
-    description_size = WordsCounted.count(line)
+    counter = WordsCounted.count(line)
+    description_size = counter.word_count
     @message = "study"
     @filtered_candidates = StudyService.filtered_candidate(@study)
     @filtered_candidates_count = @filtered_candidates.count
