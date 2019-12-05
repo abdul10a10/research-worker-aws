@@ -1,6 +1,6 @@
 class QuestionCategoriesController < ApplicationController
-  # before_action :authorize_request, except: :create
-  before_action :authorize_request, only: [:about_you, :index]
+  before_action :authorize_request, except: :create
+  # before_action :authorize_request, only: [:about_you, :index]
   before_action :is_admin_or_researcher, only: [:index]
   before_action :set_question_category, only: [:show, :update, :destroy, :update_category_image]
 
@@ -41,7 +41,6 @@ class QuestionCategoriesController < ApplicationController
 
 
   # PATCH/PUT /question_categories/1
-  # PATCH/PUT /question_categories/1.json
   def update
     if @question_category.update(question_category_params)
       @message = "Question-category-updated"
@@ -111,6 +110,7 @@ class QuestionCategoriesController < ApplicationController
     end
   end
 
+  # GET /about_you/:study_id
   def audience_question_category
     @study = Study.find(params[:id])
     @filtered_candidates = StudyService.filtered_candidate(@study)
