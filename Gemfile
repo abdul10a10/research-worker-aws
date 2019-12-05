@@ -21,6 +21,7 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'sidekiq', '~> 5.2', '>= 5.2.7'
 gem 'sinatra', github: 'sinatra/sinatra'
+gem 'words_counted'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

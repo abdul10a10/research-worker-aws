@@ -1002,6 +1002,7 @@ GEM
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
+    words_counted (1.0.2)
 
 PLATFORMS
   ruby
@@ -1027,6 +1028,7 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   sqlite3
   tzinfo-data
+  words_counted
 
 RUBY VERSION
    ruby 2.4.2p198
