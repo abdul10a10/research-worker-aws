@@ -10,7 +10,7 @@ class StudiesController < ApplicationController
     :paid_candidate_list]
   before_action :set_study, except: [:index, :create, :unpublished_studies, :active_studies, :completed_studies, 
     :rejected_studies, :track_active_study_list, :new_study, :admin_new_study_list, :admin_complete_study_list, 
-    :admin_active_study_list, :admin_inactive_study_list, :participant_active_study_list]
+    :admin_active_study_list, :admin_inactive_study_list, :participant_active_study_list, :count_description_words]
 
   # GET /studies
   def index
@@ -64,6 +64,12 @@ class StudiesController < ApplicationController
     end
   end
 
+  def count_description_words
+    line = study_params[:description]
+    size = line.split(/[^-a-zA-Z]/).size
+    render json: {Data: {word_count: size}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+  end
+  
   # GET 'unpublished_studies/:user_id'
   def unpublished_studies
     if Study.where(user_id: params[:user_id], is_active: nil, deleted_at: nil).present?

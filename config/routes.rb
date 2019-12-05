@@ -47,6 +47,7 @@ Rails.application.routes.draw do
 
   resources :studies
   post 'add_description', to: 'studies#add_description'
+  post 'count_description_words', to: 'studies#count_description_words'
   
   get 'unpublished_studies/:user_id', to: 'studies#unpublished_studies'
   get 'active_studies/:user_id', to: 'studies#active_studies'
