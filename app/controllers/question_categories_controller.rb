@@ -111,6 +111,21 @@ class QuestionCategoriesController < ApplicationController
     end
   end
 
+  def audience_question_category
+    @study = Study.find(params[:id])
+    @filtered_candidates = StudyService.filtered_candidate(@study)
+    filtered_candidates_count = @filtered_candidates.count
+    @question_categories = QuestionCategory.where(deleted_at: nil).order(id: :asc)
+    @question_category_list = Array.new
+    @question_categories.each do |question_category|
+      if question_category.image.attached?
+        image_url = url_for(question_category.try(:image))
+      end
+      @question_category_list.push(question_category: question_category, image_url: image_url)
+    end
+    render json: {Data: {question_categories: @question_category_list, filtered_candidates_count: filtered_candidates_count}, CanEdit: false, CanDelete: false, Status: :ok, message: "question-categories", Token: nil, Success: true}, status: :ok
+
+  end
 
   private
     def set_question_category

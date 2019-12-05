@@ -176,9 +176,9 @@ class StudiesController < ApplicationController
   end
 
   def new_study
-    @completioncode = SecureRandom.hex(5)
-    @completionurl = "http://winpowerllc.karyonsolutions.com/#/studysubmission/#{SecureRandom.hex(5)}"
-    render json: {Data: {completioncode: @completioncode, completionurl: @completionurl}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
+    completioncode = SecureRandom.hex(3)
+    completionurl = "http://winpowerllc.karyonsolutions.com/#/studysubmission/#{completioncode}"
+    render json: {Data: {completioncode: completioncode, completionurl: completionurl}, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false},
     status: :ok
   end
 

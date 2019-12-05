@@ -96,6 +96,7 @@ Rails.application.routes.draw do
 
   resources :question_categories
   get 'about_you', to: 'question_categories#about_you'
+  get 'audience_question_category/:id', to: 'question_categories#audience_question_category'
   put 'update_category_image/:id', to: 'question_categories#update_category_image'
   delete 'delete_question_category/:id', to: 'question_categories#delete_question_category'
 
