@@ -186,10 +186,10 @@ class EligibleCandidatesController < ApplicationController
   end
 
   def participant_ratings
-    participants = EligibleCandidate.group(:id, :user_id).where(is_completed: "1",deleted_at: nil)
+    # participants = EligibleCandidate.group(:user_id).where(is_completed: "1",deleted_at: nil) 
+    participants = User.includes(:eligible_candidates).where(eligible_candidates: {is_completed: "1",deleted_at: nil})
     result = Array.new
-    participants.each do |participant|
-      user = participant.user
+    participants.each do |user|
       completed_studies = user.eligible_candidates.where(is_completed: "1",deleted_at: nil).count
       accepted_studies = user.eligible_candidates.where(is_accepted: "1",deleted_at: nil).count
       rejected_studies = user.eligible_candidates.where(is_accepted: "0",deleted_at: nil).count
