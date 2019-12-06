@@ -190,12 +190,13 @@ class EligibleCandidatesController < ApplicationController
     participants = User.includes(:eligible_candidates).order(:id)
     result = Array.new
     participants.each do |user|
-      if user.eligible_candidates.where(is_completed: "1",deleted_at: nil).present?
+      if user.eligible_candidates.where(is_attempted: "1",deleted_at: nil).present?
+        participated_studies = user.eligible_candidates.where(is_attempted: "1",deleted_at: nil).count
         completed_studies = user.eligible_candidates.where(is_completed: "1",deleted_at: nil).count
         accepted_studies = user.eligible_candidates.where(is_accepted: "1",deleted_at: nil).count
         rejected_studies = user.eligible_candidates.where(is_accepted: "0",deleted_at: nil).count
         result.push(user: user, completed_studies: completed_studies, accepted_studies: accepted_studies,
-          rejected_studies: rejected_studies)          
+          rejected_studies: rejected_studies, participated_studies: participated_studies)          
       end
     end
     render json: {Data: { participants: result}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
