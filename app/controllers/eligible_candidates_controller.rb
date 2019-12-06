@@ -187,7 +187,7 @@ class EligibleCandidatesController < ApplicationController
 
   def participant_ratings
     # participants = EligibleCandidate.group(:user_id).where(is_completed: "1",deleted_at: nil) Person.includes(:notes).where("notes.important", true)
-    participants = User.includes(:eligible_candidates).order(:id)
+    participants = User.includes(:eligible_candidates)
     result = Array.new
     participants.each do |user|
       if user.eligible_candidates.where(is_attempted: "1",deleted_at: nil).present?
@@ -199,7 +199,7 @@ class EligibleCandidatesController < ApplicationController
           rejected_studies: rejected_studies, participated_studies: participated_studies)          
       end
     end
-    result.sort_by { |m| m[:participated_studies] }
+    result = result.sort_by { |m| m[:participated_studies] }
     render json: {Data: { participants: result}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
 
   end
