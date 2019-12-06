@@ -187,7 +187,7 @@ class EligibleCandidatesController < ApplicationController
 
   def participant_ratings
     # participants = EligibleCandidate.group(:user_id).where(is_completed: "1",deleted_at: nil) Person.includes(:notes).where("notes.important", true)
-    participants = User.includes(:eligible_candidates)
+    participants = User.includes(:eligible_candidates).order(:id)
     result = Array.new
     participants.each do |user|
       if user.eligible_candidates.where(is_completed: "1",deleted_at: nil).present?
