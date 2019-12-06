@@ -23,8 +23,11 @@ class StudiesController < ApplicationController
   # GET /studies/1
   def show
     line = @study.description
-    counter = WordsCounted.count(line)
-    description_size = counter.word_count
+    description_size = 0
+    if line.present?
+      counter = WordsCounted.count(line)
+      description_size = counter.word_count
+    end
     @message = "study"
     @filtered_candidates = StudyService.filtered_candidate(@study)
     @filtered_candidates_count = @filtered_candidates.count
@@ -62,7 +65,6 @@ class StudiesController < ApplicationController
     line = study_params[:description]
     counter = WordsCounted.count(line)
     size = counter.word_count
-    # size = line.split(/[^-a-zA-Z]/).size
     if size > 100
       if @study.update(study_params)
         @message = "description-added"
@@ -130,7 +132,6 @@ class StudiesController < ApplicationController
   end
 
   # DELETE /studies/1
-  # DELETE /studies/1.json
   def destroy
     @study.deleted_at!
     @message = "study-deleted"
