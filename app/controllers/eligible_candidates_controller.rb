@@ -186,15 +186,17 @@ class EligibleCandidatesController < ApplicationController
   end
 
   def participant_ratings
-    # participants = EligibleCandidate.group(:user_id).where(is_completed: "1",deleted_at: nil) 
-    participants = User.includes(:eligible_candidates).where(eligible_candidates: {is_completed: "1",deleted_at: nil})
+    # participants = EligibleCandidate.group(:user_id).where(is_completed: "1",deleted_at: nil) Person.includes(:notes).where("notes.important", true)
+    participants = User.includes(:eligible_candidates)
     result = Array.new
     participants.each do |user|
-      completed_studies = user.eligible_candidates.where(is_completed: "1",deleted_at: nil).count
-      accepted_studies = user.eligible_candidates.where(is_accepted: "1",deleted_at: nil).count
-      rejected_studies = user.eligible_candidates.where(is_accepted: "0",deleted_at: nil).count
-      result.push(user: user, completed_studies: completed_studies, accepted_studies: accepted_studies,
-        rejected_studies: rejected_studies)
+      if user.eligible_candidates.where(is_completed: "1",deleted_at: nil).present?
+        completed_studies = user.eligible_candidates.where(is_completed: "1",deleted_at: nil).count
+        accepted_studies = user.eligible_candidates.where(is_accepted: "1",deleted_at: nil).count
+        rejected_studies = user.eligible_candidates.where(is_accepted: "0",deleted_at: nil).count
+        result.push(user: user, completed_studies: completed_studies, accepted_studies: accepted_studies,
+          rejected_studies: rejected_studies)          
+      end
     end
     render json: {Data: { participants: result}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
 
