@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   get 'total_attempt_list/:user_id', to: 'eligible_candidates#total_attempt_list'
   get 'accepted_study_list/:user_id', to: 'eligible_candidates#accepted_study_list'
   get 'rejected_study_list/:user_id', to: 'eligible_candidates#rejected_study_list'
+  get 'participant_ratings', to: 'eligible_candidates#participant_ratings'
 
   resources :privacy_policies
   get 'user_policies', to: 'privacy_policies#user_policies'

@@ -185,6 +185,21 @@ class EligibleCandidatesController < ApplicationController
     render json: {Data: { rejected_study_list: @rejected_study_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
   end
 
+  def participant_ratings
+    participants = EligibleCandidate.group(:user_id).where(is_completed: "1",deleted_at: nil)
+    result = Array.new
+    participants.each do |participant|
+      user = participant.user
+      completed_studies = user.eligible_candidates.where(is_completed: "1",deleted_at: nil).count
+      accepted_studies = user.eligible_candidates.where(is_accepted: "1",deleted_at: nil).count
+      rejected_studies = user.eligible_candidates.where(is_accepted: "0",deleted_at: nil).count
+      result.push(user: user, completed_studies: completed_studies, accepted_studies: accepted_studies,
+        rejected_studies: rejected_studies)
+    end
+    render json: {Data: { participants: result}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
+
+  end
+
   private
     def set_eligible_candidate
       @eligible_candidate = EligibleCandidate.find(params[:id])

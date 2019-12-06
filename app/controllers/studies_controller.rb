@@ -10,7 +10,7 @@ class StudiesController < ApplicationController
     :paid_candidate_list]
   before_action :set_study, except: [:index, :create, :unpublished_studies, :active_studies, :completed_studies, 
     :rejected_studies, :track_active_study_list, :new_study, :admin_new_study_list, :admin_complete_study_list, 
-    :admin_active_study_list, :admin_inactive_study_list, :participant_active_study_list, :count_description_words, :evai_method]
+    :admin_active_study_list, :admin_inactive_study_list, :participant_active_study_list, :count_description_words]
 
   # GET /studies
   def index
