@@ -199,6 +199,7 @@ class EligibleCandidatesController < ApplicationController
           rejected_studies: rejected_studies, participated_studies: participated_studies)          
       end
     end
+    result.sort_by { |m| m[:participated_studies] }
     render json: {Data: { participants: result}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok
 
   end
