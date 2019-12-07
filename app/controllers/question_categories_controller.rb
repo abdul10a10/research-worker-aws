@@ -28,15 +28,14 @@ class QuestionCategoriesController < ApplicationController
     @name = QuestionCategory.find_by(name: question_category_params[:name], deleted_at: nil)
     if @name.present?
       @message = "already-exist"
-      render json: { message: @message}, status: :ok
     else
       if @question_category.save
         @message = "category-saved"
-        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
       else
-        render json: @question_category.errors, status: :ok
+        @message = "category-not-saved"
       end
     end
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
 

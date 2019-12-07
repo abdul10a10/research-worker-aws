@@ -20,32 +20,49 @@ class AnswersController < ApplicationController
     @answer = Answer.new(answer_params)
     @question_id = @answer.question_id
     @description = @answer.description
-
-    if Answer.where(question_id: @question_id, description: @description, deleted_at: nil).present?
-      @message = "answer-already-exist"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
-    else
-      if @answer.save
-        @message = "answer-saved"
-        render json: {answer: @answer, message: @message}, status: :created
+    @question = Question.find(@question_id)
+    if @question.question_type_id == 4
+      if @question.range_answer.present?
+        range_answer = @question.range_answer
       else
-        render json: @answer.errors, status: :ok
+        range_answer = RangeAnswer.new
+        range_answer.question_id = params[:question_id]
       end
+      range_answer.min_limit = params[:min_limit]
+      range_answer.max_limit = params[:max_limit]
+      range_answer.save
+      @message = "answer-saved"
+    else
+      if Answer.where(question_id: @question_id, description: @description, deleted_at: nil).present?
+        @message = "answer-already-exist"
+      else
+        if @answer.save
+          @message = "answer-saved"
+        else
+          @message = "answer-not-saved"
+        end
+      end        
     end
-    
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # PATCH/PUT /answers/1
   def update
     if @answer.update(answer_params)
       @message = "answer-updated"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @message = "answer-not-update"
       render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
   end
 
+  def range_answer_delete
+    @range_answer = RangeAnswer.find(params[:id])
+    @range_answer.deleted_at!
+    @message = "answer-deleted"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+  
   # DELETE /answers/1
   def destroy
     @answer.deleted_at!

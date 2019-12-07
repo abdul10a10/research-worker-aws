@@ -20,17 +20,12 @@ class QuestionsController < ApplicationController
   # POST /questions
   def create
     @question = Question.new(question_params)
-    # @temp1 = question_params[:question_category]
-    # @category = QuestionCategory.where(name: @temp1, deleted_at: nil).first
-    # @question_category = @category.id
-    # @question.question_category = @question_category
     if @question.save
       @message = "question-saved"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @message = "question-not-saved"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-     end
+    end
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   # PATCH/PUT /questions/1

@@ -89,6 +89,7 @@ Rails.application.routes.draw do
  
   resources :answers
   get 'question_answer/:id', to: 'answers#question_answer'
+  delete 'range_answer_delete/:id', to: 'answers#range_answer_delete'
 
   resources :questions
   get 'category_question/:question_category_id', to: 'questions#category_question'
