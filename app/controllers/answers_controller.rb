@@ -30,6 +30,7 @@ class AnswersController < ApplicationController
       end
       range_answer.min_limit = params[:min_limit]
       range_answer.max_limit = params[:max_limit]
+      range_answer.follow_up_question = params[:follow_up_question]
       range_answer.save
       @message = "answer-saved"
     else
