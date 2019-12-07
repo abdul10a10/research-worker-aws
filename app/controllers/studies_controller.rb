@@ -189,7 +189,11 @@ class StudiesController < ApplicationController
 
   def track_active_study_list
     @data = StudyService.track_active_study_list(@current_user)
-    @message = "active-studies"
+    if @data.present?
+      @message = "active-studies"
+    else
+      @message = "no-study-found"
+    end
     render json: {Data: @data, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
