@@ -34,13 +34,18 @@ class ResponsesController < ApplicationController
       if params[:description] == nil
         @message = "please-select-valid-answer"
       else
-        @range_response = RangeResponse.new()
-        @range_response.user_id = response_params[:user_id]
-        @range_response.question_id = response_params[:question_id]
-        @range_response.description = params[:description]
-        @range_response.save
-        @message = "response-saved"
-  
+        min_limit = @question.range_answer.min_limit
+        max_limit = @question.range_answer.max_limit
+        if min_limit.to_f < params[:description].to_f &&  params[:description].to_f < max_limit.to_f
+          @range_response = RangeResponse.new()
+          @range_response.user_id = response_params[:user_id]
+          @range_response.question_id = response_params[:question_id]
+          @range_response.description = params[:description]
+          @range_response.save
+          @message = "response-saved"
+        else
+          @message = "response-is-not-in-range"
+        end
       end
     else
       if Answer.where(id: response_params[:answer_id],question_id: response_params[:question_id], deleted_at: nil).present?
