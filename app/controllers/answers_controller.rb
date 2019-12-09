@@ -53,8 +53,8 @@ class AnswersController < ApplicationController
       @message = "answer-updated"
     else
       @message = "answer-not-update"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def update_range_answer

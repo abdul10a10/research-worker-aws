@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   
-  has_many :responses 
+  has_many :responses
+  has_many :range_responses
   has_many :notifications
   has_many :studies
   has_many :eligible_candidates
