@@ -31,13 +31,17 @@ class ResponsesController < ApplicationController
         end
       end
     elsif @question.question_type_id == 4
-      @range_response = RangeResponse.new()
-      @range_response.user_id = response_params[:user_id]
-      @range_response.question_id = response_params[:question_id]
-      @range_response.description = response_params[:answer_id]
-      @range_response.save
-      @message = @range_response.errors
-
+      if params[:description] == nil
+        @message = "please-select-valid-answer"
+      else
+        @range_response = RangeResponse.new()
+        @range_response.user_id = response_params[:user_id]
+        @range_response.question_id = response_params[:question_id]
+        @range_response.description = params[:description]
+        @range_response.save
+        @message = "response-saved"
+  
+      end
     else
       if Answer.where(id: response_params[:answer_id],question_id: response_params[:question_id], deleted_at: nil).present?
         if @response.save
