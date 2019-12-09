@@ -76,20 +76,36 @@ class ResponsesController < ApplicationController
   def delete_response
     @user_id = @current_user.id
     @question_id = params[:question_id]
-    
-    if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
-      @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
-      @response.each do |response|
-        response.deleted_at!
+    @question = Question.find(params[:question_id])
+    if @question.question_type_id == 4
+      if RangeResponse.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
+        @response = RangeResponse.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
+        @response.each do |response|
+          response.deleted_at!
+        end
+        # @response.deleted_at!
+        @message = "response-deleted"
+        render json: {message: @message}
+      else
+        @message = "response-not-exist"
+        render json: {message: @message}, status: :ok
       end
-      # @response.deleted_at!
-      @message = "response-deleted"
-      render json: {message: @message}
-    else
-      @message = "response-not-exist"
-      render json: {message: @message}, status: :ok
     end
-    
+      
+    else
+      if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
+        @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
+        @response.each do |response|
+          response.deleted_at!
+        end
+        # @response.deleted_at!
+        @message = "response-deleted"
+        render json: {message: @message}
+      else
+        @message = "response-not-exist"
+        render json: {message: @message}, status: :ok
+      end
+    end
   end
 
   def user_response
