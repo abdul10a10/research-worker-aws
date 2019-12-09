@@ -39,15 +39,35 @@ class UsersController < ApplicationController
       @validation = @user.validateparamsresearcher!
     end
     if @validation
-      if @user.save
-        @user.generate_email_confirmation_token!
-        @user.generate_unique_id!
-        MailService.user_welcome_email(@user.id)
-        @message = "user-registered"
-        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
+      if @user.country == "UAE" || @user.country == "United Arab Emirates"
+        city = user_params[:city].split.map(&:capitalize).join(' ')
+        pincode = user_params[:pincode].split.map(&:capitalize).join(' ')
+        if UaePost.where(city: city, po_box_number: pincode).present?
+          if @user.save
+            @user.generate_email_confirmation_token!
+            @user.generate_unique_id!
+            MailService.user_welcome_email(@user.id)
+            @message = "user-registered"
+            render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
+          else
+            @message = "already-exists"
+            render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+          end
+        else
+          @message = "pincode-miss-match"
+          render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+        end    
       else
-        @message = "already-exists"
-        render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+        if @user.save
+          @user.generate_email_confirmation_token!
+          @user.generate_unique_id!
+          MailService.user_welcome_email(@user.id)
+          @message = "user-registered"
+          render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
+        else
+          @message = "already-exists"
+          render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+        end
       end
     else
       @message = "fields-not-filled"
@@ -203,7 +223,6 @@ class UsersController < ApplicationController
   def check_city_pincode
     city = user_params[:city].split.map(&:capitalize).join(' ')
     pincode = user_params[:pincode].split.map(&:capitalize).join(' ')
-    puts(pincode)
     if UaePost.where(city: city, po_box_number: pincode).present?
       message = "pincode-matched"
     else
