@@ -41,7 +41,7 @@ class UsersController < ApplicationController
     if @validation
       if @user.country == "UAE" || @user.country == "United Arab Emirates"
         city = user_params[:city].split.map(&:capitalize).join(' ')
-        pincode = user_params[:pincode].split.map(&:capitalize).join(' ')
+        pincode = user_params[:pincode]
         if UaePost.where(city: city, po_box_number: pincode).present?
           if @user.save
             @user.generate_email_confirmation_token!
