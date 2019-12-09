@@ -127,6 +127,7 @@ Rails.application.routes.draw do
   put 'deactivateuser/:id', to: 'users#deactivateuser'
   delete 'deleteuser/:id', to: 'users#destroy'
   get 'reports', to: 'users#reports'
+  post 'check_city_pincode', to: 'users#check_city_pincode'
 
 
   devise_for :users, controllers: {

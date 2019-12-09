@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_09_093952) do
+ActiveRecord::Schema.define(version: 2019_12_09_125057) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -287,6 +287,8 @@ ActiveRecord::Schema.define(version: 2019_12_09_093952) do
     t.float "wallet", default: 0.0
     t.string "research_worker_id", limit: 30
     t.string "image_url"
+    t.string "city"
+    t.string "pincode"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["research_worker_id"], name: "index_users_on_research_worker_id", unique: true

@@ -1,5 +1,5 @@
 class UsersController < ApplicationController 
-  before_action :authorize_request, except: [:create, :destroy, :welcome, :check_email]
+  before_action :authorize_request, except: [:create, :destroy, :welcome, :check_email, :check_city_pincode]
   before_action :is_admin, only: [:index, :dashboard, :participant_list, :researcher_list, :deactivateuser, :activate, 
     :researcheroverview, :participantoverview, :reports]
   before_action :set_user, only: [:show,:update_image, :update, :destroy, :activate, :deactivateuser, :participant_overview, :researcher_overview, :participant_info]
@@ -200,11 +200,23 @@ class UsersController < ApplicationController
     render json: {Data: @reports, CanEdit: false, CanDelete: false, Status: :ok, message: message, Token: nil, Success: true}, status: :ok 
   end
 
+  def check_city_pincode
+    city = user_params[:city].split.map(&:capitalize).join(' ')
+    pincode = user_params[:pincode].split.map(&:capitalize).join(' ')
+    puts(pincode)
+    if UaePost.where(city: city, po_box_number: pincode).present?
+      message = "pincode-matched"
+    else
+      message = "pincode-miss-matched"
+    end
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: message, Token: nil, Success: true}, status: :ok 
+  end
+
   private
 
   def user_params
     params.permit(:email, :password, :first_name, :last_name, :country, :user_type, :university, :university_email, :department,
-      :specialisation, :job_type, :referral_code, :address, :contact_number, :nationality, :image_url)
+      :specialisation, :job_type, :referral_code, :address, :contact_number, :nationality, :image_url, :city, :pincode)
   end
 
   
