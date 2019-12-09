@@ -90,8 +90,6 @@ class ResponsesController < ApplicationController
         @message = "response-not-exist"
         render json: {message: @message}, status: :ok
       end
-    end
-      
     else
       if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
         @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
