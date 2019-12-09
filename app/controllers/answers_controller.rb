@@ -57,6 +57,15 @@ class AnswersController < ApplicationController
     end
   end
 
+  def update_range_answer
+    @range_answer = RangeAnswer.find(params[:id])
+    @range_answer.min_limit = params[:min_limit]
+    @range_answer.max_limit = params[:max_limit]
+    @range_answer.save
+    @message = "answer-updated"
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
+  end
+
   def range_answer_delete
     @range_answer = RangeAnswer.find(params[:id])
     @range_answer.deleted_at!
@@ -82,7 +91,11 @@ class AnswersController < ApplicationController
     @question_id = params[:id]
     @question = Question.find(params[:id])
     @follow_up_questions = Question.where(question_category_id: @question.question_category_id, deleted_at: nil)
-    @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
+    if @question.question_type_id == 4
+      @answers = @question.range_answer
+    else
+      @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
+    end
     render json: {Data: {question: @question, answer: @answers, follow_up_questions: @follow_up_questions }, CanEdit: false, CanDelete: false, Status: :ok, message: nil, Token: nil, Success: true}, status: :ok
   end
 
