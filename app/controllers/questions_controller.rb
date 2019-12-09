@@ -56,33 +56,63 @@ class QuestionsController < ApplicationController
     @follow_up_question.push(@first_question.try(:id))
     @questions.each do |question|
       @question_id = question.id
-      if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
-        @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
-        @answers = Array.new
-        @response.each do |response|
-          @answer = response.answer
-          @answers.push(@answer.description)
-          @follow_up_question |= [@answer.follow_up_question]
+      if question.question_type_id == 4
+        if RangeResponse.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
+          @response = RangeResponse.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
+          @answers = Array.new
+          @response.each do |response|
+            @answer = response
+            @answers.push(@answer.description)
+            @follow_up_question |= [question.range_answer.follow_up_question]
+          end
+          if @follow_up_question.include? question.id
+            @responce.push({
+                             question: question,
+                             answer_filled: "Yes",
+                             answer: @answers
+                         })
+          end
+        else
+          @follow_up_question |= [question.range_answer.follow_up_question]
+          if @follow_up_question.include? question.id
+            @responce.push({
+                              question: question,
+                              answer_filled: "No",
+                              answer: nil
+                          })
+          end
         end
-        if @follow_up_question.include? question.id
-          @responce.push({
-                           question: question,
-                           answer_filled: "Yes",
-                           answer: @answers
-                       })
-        end
+  
       else
-        @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
-        @answers.each do |answer|
-          @follow_up_question |= [answer.follow_up_question]
+        if Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil).present?
+          @response = Response.where(question_id: @question_id, user_id: @user_id, deleted_at: nil)
+          @answers = Array.new
+          @response.each do |response|
+            @answer = response.answer
+            @answers.push(@answer.description)
+            @follow_up_question |= [@answer.follow_up_question]
+          end
+          if @follow_up_question.include? question.id
+            @responce.push({
+                             question: question,
+                             answer_filled: "Yes",
+                             answer: @answers
+                         })
+          end
+        else
+          @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
+          @answers.each do |answer|
+            @follow_up_question |= [answer.follow_up_question]
+          end
+          if @follow_up_question.include? question.id
+            @responce.push({
+                              question: question,
+                              answer_filled: "No",
+                              answer: @answers
+                          })
+          end
         end
-        if @follow_up_question.include? question.id
-          @responce.push({
-                            question: question,
-                            answer_filled: "No",
-                            answer: @answers
-                        })
-        end
+  
       end
     end
     render json: @responce, status: :ok
