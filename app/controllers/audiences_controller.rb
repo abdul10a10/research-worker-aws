@@ -73,20 +73,32 @@ class AudiencesController < ApplicationController
   def delete_audience
     @study_id = params[:study_id]
     @question_id = params[:question_id]
-    
-    if Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil).present?
-      @audience = Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil)
+    question = Question.find(@question_id)
 
-      @audience.each do |audience|
-        audience.deleted_at!
+    if question.question_type_id == 4
+      if RangeAudience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil).present?
+        @audience = RangeAudience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil)
+        @audience.each do |audience|
+          audience.deleted_at!
+        end
+        @message = "audience-deleted"
+      else
+        @message = "audience-not-exist"
       end
-      
-      @message = "audience-deleted"
-      render json: {message: @message}
     else
-      @message = "audience-not-exist"
-      render json: {message: @message}, status: :ok
+      if Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil).present?
+        @audience = Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil)
+  
+        @audience.each do |audience|
+          audience.deleted_at!
+        end
+        
+        @message = "audience-deleted"
+      else
+        @message = "audience-not-exist"
+      end
     end
+    render json: {message: @message}, status: :ok
   end
 
   private
