@@ -127,25 +127,47 @@ class QuestionsController < ApplicationController
     @audience_question = Array.new
     @questions.each do |question|
       @question_id = question.id
-      if Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil).present?
-        @existing_audience = Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil)
-        @answers = Array.new
-          @existing_audience.each do |existing_audience|
-            @answer = Answer.find(existing_audience.answer_id)
-            @answers.push(@answer.description)
+      if question.question_type_id == 4
+        if RangeAudience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil).present?
+          @response = RangeAudience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil)
+          @answers = Array.new
+          @response.each do |response|
+            @answers.push(response)
           end
-        @audience_question.push({
-                           question: question,
-                           answer_filled: "Yes",
-                           answer: @answers
-                       })  
+          @audience_question.push({
+                            question: question,
+                            answer_filled: "Yes",
+                            answer: @answers
+                        })
+        else
+          answer = question.range_answer
+          @audience_question.push({
+                            question: question,
+                            answer_filled: "No",
+                            answer: answer
+                        })
+        end
       else
-        @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
-        @audience_question.push({
-                           question: question,
-                           answer_filled: "No",
-                           answer: @answers
-                       })
+        if Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil).present?
+          @existing_audience = Audience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil)
+          @answers = Array.new
+            @existing_audience.each do |existing_audience|
+              @answer = Answer.find(existing_audience.answer_id)
+              @answers.push(@answer.description)
+            end
+          @audience_question.push({
+                             question: question,
+                             answer_filled: "Yes",
+                             answer: @answers
+                         })  
+        else
+          @answers = Answer.where(question_id: @question_id, deleted_at: nil).order(id: :asc)
+          @audience_question.push({
+                             question: question,
+                             answer_filled: "No",
+                             answer: @answers
+                         })
+        end          
       end
     end
     @study = Study.find(@study_id)

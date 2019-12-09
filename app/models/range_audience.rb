@@ -1,0 +1,2 @@
+class RangeAudience < ApplicationRecord
+end

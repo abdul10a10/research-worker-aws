@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_09_045439) do
+ActiveRecord::Schema.define(version: 2019_12_09_072702) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -158,6 +158,16 @@ ActiveRecord::Schema.define(version: 2019_12_09_045439) do
     t.string "min_limit"
     t.string "max_limit"
     t.integer "follow_up_question"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "range_audiences", force: :cascade do |t|
+    t.string "study_id"
+    t.string "question_id"
+    t.float "min_limit"
+    t.float "max_limit"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

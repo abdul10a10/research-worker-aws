@@ -16,16 +16,31 @@ class AudiencesController < ApplicationController
 
   # POST /audiences
   def create
-    @audience = Audience.new(audience_params)
-    answer_ids = audience_params[:answer_id]
-    for answer_id in answer_ids do
-      if Answer.where(id: answer_id,question_id: audience_params[:question_id], deleted_at: nil).present?
-        @audiencetemp = Audience.new(audience_params)
-        @audiencetemp.answer_id = answer_id
-        @audiencetemp.save
-        @message = "audience-response-saved"
-      else
+    question = Question.find(audience_params[:question_id])
+    if question.question_type_id == 4
+      if params[:min_limit] == nil || params[:min_limit] == nil
         @message = "please-select-valid-answer"
+      else
+        @range_audience = RangeAudience.new
+        @range_audience.study_id = params[:study_id]
+        @range_audience.question_id = params[:question_id]
+        @range_audience.min_limit = params[:min_limit]
+        @range_audience.max_limit = params[:max_limit]
+        @range_audience.save
+        @message = "audience-response-saved"
+      end
+    else
+      @audience = Audience.new(audience_params)
+      answer_ids = audience_params[:answer_id]
+      for answer_id in answer_ids do
+        if Answer.where(id: answer_id,question_id: audience_params[:question_id], deleted_at: nil).present?
+          @audiencetemp = Audience.new(audience_params)
+          @audiencetemp.answer_id = answer_id
+          @audiencetemp.save
+          @message = "audience-response-saved"
+        else
+          @message = "please-select-valid-answer"
+        end
       end
     end
     render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
