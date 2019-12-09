@@ -73,12 +73,13 @@ class QuestionsController < ApplicationController
                          })
           end
         else
+          answer = question.range_answer
           @follow_up_question |= [question.range_answer.follow_up_question]
           if @follow_up_question.include? question.id
             @responce.push({
                               question: question,
                               answer_filled: "No",
-                              answer: nil
+                              answer: answer
                           })
           end
         end
