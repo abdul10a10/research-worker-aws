@@ -1,0 +1,2 @@
+class UaePost < ApplicationRecord
+end

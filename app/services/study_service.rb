@@ -101,6 +101,22 @@ class StudyService
           required_audience_list = required_users_list & required_audience_list
         end
       end
+      if study.range_audiences.where(deleted_at: nil).present?
+        study_audiences = study.range_audiences.select("DISTINCT question_id").where(deleted_at: nil)
+        study_audiences.each do |study_audience|
+          audiences = study.range_audiences.where(question_id: study_audience.question_id, deleted_at: nil)
+          required_users_list = Array.new
+          audiences.each do |audience|
+            required_users = Array.new
+            responses = RangeResponse.where(question_id: audience.question_id, description: audience.min_limit..audience.max_limit, deleted_at: nil)
+            responses.each do |response|
+              required_users.push( response.user)
+            end
+            required_users_list = required_users_list | required_users
+          end
+          required_audience_list = required_users_list & required_audience_list
+        end
+      end
     end
     # blacklist user array
     blacklisted_user_list = Array.new

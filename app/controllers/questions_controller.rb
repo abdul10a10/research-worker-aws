@@ -132,7 +132,7 @@ class QuestionsController < ApplicationController
           @response = RangeAudience.where(question_id: @question_id, study_id: @study_id, deleted_at: nil)
           @answers = Array.new
           @response.each do |response|
-            @answers.push(response)
+            @answers.push(min_limit: response.min_limit , max_limit: response.max_limit)
           end
           @audience_question.push({
                             question: question,

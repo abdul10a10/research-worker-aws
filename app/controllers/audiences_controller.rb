@@ -21,13 +21,19 @@ class AudiencesController < ApplicationController
       if params[:min_limit] == nil || params[:min_limit] == nil
         @message = "please-select-valid-answer"
       else
-        @range_audience = RangeAudience.new
-        @range_audience.study_id = params[:study_id]
-        @range_audience.question_id = params[:question_id]
-        @range_audience.min_limit = params[:min_limit]
-        @range_audience.max_limit = params[:max_limit]
-        @range_audience.save
-        @message = "audience-response-saved"
+        min_limit = question.range_answer.min_limit
+        max_limit = question.range_answer.max_limit
+        if min_limit.to_f <= params[:min_limit].to_f &&  params[:max_limit].to_f <= max_limit.to_f
+          @range_audience = RangeAudience.new
+          @range_audience.study_id = params[:study_id]
+          @range_audience.question_id = params[:question_id]
+          @range_audience.min_limit = params[:min_limit]
+          @range_audience.max_limit = params[:max_limit]
+          @range_audience.save
+          @message = "audience-response-saved"
+        else
+          @message = "please-select-valid-answer"
+        end
       end
     else
       @audience = Audience.new(audience_params)
