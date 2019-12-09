@@ -23,7 +23,7 @@ class AudiencesController < ApplicationController
       else
         min_limit = question.range_answer.min_limit
         max_limit = question.range_answer.max_limit
-        if min_limit.to_f <= params[:min_limit].to_f &&  params[:max_limit].to_f <= max_limit.to_f
+        if min_limit.to_f <= params[:min_limit].to_f &&  params[:max_limit].to_f <= max_limit.to_f && params[:min_limit].to_f <= params[:max_limit].to_f
           @range_audience = RangeAudience.new
           @range_audience.study_id = params[:study_id]
           @range_audience.question_id = params[:question_id]
