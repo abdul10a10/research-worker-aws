@@ -19,13 +19,13 @@ class UsersController < ApplicationController
 
   #GET /participantlist
   def participant_list
-    @user = User.where(user_type: 'Participant', verification_status: '1').order(id: :desc)
+    @user = User.verified_participant.order(id: :desc)
     render json: {Data: @user, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   #GET /researcherlist
   def researcher_list
-    @user = User.where(user_type: 'Researcher', verification_status: '1').order(id: :desc)
+    @user = User.verified_researcher.order(id: :desc)
     @message = "user-list"
     render json: {Data: @user, CanEdit: true, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok   
   end
@@ -33,9 +33,9 @@ class UsersController < ApplicationController
   #Post /users
   def create
     @user = User.new(user_params)
-    if @user.user_type == 'Participant'
+    if @user.participant?
       @validation = @user.validateparamsparticipant!
-    else
+    elsif @user.researcher?
       @validation = @user.validateparamsresearcher!
     end
     if @validation
@@ -48,14 +48,11 @@ class UsersController < ApplicationController
             @user.generate_unique_id!
             MailService.user_welcome_email(@user.id)
             @message = "user-registered"
-            render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
           else
             @message = "already-exists"
-            render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
           end
         else
           @message = "pincode-miss-match"
-          render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
         end    
       else
         if @user.save
@@ -63,16 +60,14 @@ class UsersController < ApplicationController
           @user.generate_unique_id!
           MailService.user_welcome_email(@user.id)
           @message = "user-registered"
-          render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :created
         else
           @message = "already-exists"
-          render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
         end
       end
     else
       @message = "fields-not-filled"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
 
@@ -117,10 +112,10 @@ class UsersController < ApplicationController
   def update
     if @user.update_attributes(user_params)
       @message = "user-profile-updated"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @user.errors, Token: nil, Success: false}, status: :ok
+      @message = @user.errors
     end
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def update_image
@@ -128,10 +123,10 @@ class UsersController < ApplicationController
       @user.image = params[:file]
       @user.save
       @message = "user-profile-updated"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
-      render json: @transaction.errors, status: :unprocessable_entity
+      @message = "user-profile-not-updated"
     end
+    render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   def activate
@@ -157,20 +152,17 @@ class UsersController < ApplicationController
       if @user.present? && @user.email_confirmation_valid?
         if @user.verification_status == "1"
           @message = "already-activated-account"
-          render json: {message: @message}, status: :ok
         else
           UserService.verify_user(@user)
           @message = "user-activated"
-          render json: {message: @message}, status: :ok
         end
       else
         @message = "Link-expired"
-        render json: {message: @message}, status: :ok
       end      
     else
       @message = "Not-a-valid-token"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, message: @message, Token: nil, Success: false}, status: :ok
     end
+    render json: {Data: nil, CanEdit: false, CanDelete: false, message: @message, Token: nil, Success: false}, status: :ok
   end
 
 
@@ -222,7 +214,7 @@ class UsersController < ApplicationController
 
   def check_city_pincode
     city = user_params[:city].split.map(&:capitalize).join(' ')
-    pincode = user_params[:pincode].split.map(&:capitalize).join(' ')
+    pincode = user_params[:pincode]
     if UaePost.where(city: city, po_box_number: pincode).present?
       message = "pincode-matched"
     else

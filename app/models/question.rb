@@ -4,6 +4,7 @@ class Question < ApplicationRecord
   has_many :answers
   has_one :range_answer
   has_many :audiences
+  has_many :range_audiences
   has_many :responses
   has_many :range_responses
 

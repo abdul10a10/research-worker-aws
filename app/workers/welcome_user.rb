@@ -11,9 +11,9 @@ class WelcomeUser
     @user_type = @user.user_type
     @notification.message = "New " + @user_type +" has registered"
 
-    if @user.user_type == "Participant"
+    if @user.participant?
       @notification.redirect_url = "/dashboards/overviewuser/#{@user.id}"
-    elsif @user.user_type == "Researcher"
+    elsif @user.researcher?
       @notification.redirect_url = "/dashboards/overviewresearcheruser/#{@user.id}"
     end
     @notification.save

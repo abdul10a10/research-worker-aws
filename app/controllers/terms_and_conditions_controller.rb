@@ -50,6 +50,9 @@ class TermsAndConditionsController < ApplicationController
   # get /user_terms
   def user_terms
     @terms_and_condition = TermsAndCondition.where(user_type: @current_user.user_type, country: @current_user.country, deleted_at: nil)
+    if @terms_and_condition.empty?
+      @terms_and_condition = TermsAndCondition.where(deleted_at: nil)
+    end
     render json: {Data: @terms_and_condition, CanEdit: false, CanDelete: false, Status: :ok, message: 'terms-and-conditions', Token: nil, Success: false}, status: :ok
   end
 

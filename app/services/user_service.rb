@@ -9,14 +9,13 @@ class UserService
     MailService.user_registration_admin_email(user.id)
     notification = Notification.new
     notification.notification_type = "Registration"
-    admin = User.where(user_type: "Admin").first
+    admin = User.admin.first
     notification.user_id = admin.id
-    user_type = user.user_type
-    notification.message = "New " + user_type +" has registered"
+    notification.message = "New #{user.user_type} has registered"
 
-    if user.user_type == "Participant"
+    if user.participant?
       notification.redirect_url = "/dashboards/overviewuser/#{user.id}"
-    elsif user.user_type == "Researcher"
+    elsif user.researcher?
       notification.redirect_url = "/dashboards/overviewresearcheruser/#{user.id}"
     end
     notification.save

@@ -48,6 +48,9 @@ class PrivacyPoliciesController < ApplicationController
   # get /user_terms
   def user_policies
     @privacy_policy = PrivacyPolicy.where(user_type: @current_user.user_type, country: @current_user.country, deleted_at: nil)
+    if @privacy_policy.empty?
+      @privacy_policy = PrivacyPolicy.where(deleted_at: nil)
+    end
     render json: {Data: @privacy_policy, CanEdit: true, CanDelete: false, Status: :ok, message: 'privacy policy', Token: nil, Success: false}, status: :ok
   end
 

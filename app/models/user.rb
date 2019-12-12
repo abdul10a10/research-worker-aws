@@ -10,9 +10,23 @@ class User < ApplicationRecord
   
   has_one_attached :image
 
+  scope :participant, -> { where(user_type: 'Participant', deleted_at: nil) }
+  scope :admin, -> { where(user_type: 'Admin', deleted_at: nil) }
+  scope :researcher, -> { where(user_type: 'Researcher', deleted_at: nil) }
+  scope :verified_participant, -> { where(user_type: "Participant", verification_status: '1', deleted_at: nil) }
+  scope :verified_researcher, -> { where(user_type: "Researcher", verification_status: '1', deleted_at: nil) }
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
   
+  def participant?
+    self.user_type == "Participant"
+  end
+  
+  def researcher?
+    self.user_type == "Researcher"
+  end
+
   def generate_unique_id!
     self.research_worker_id = generate_token
     save!

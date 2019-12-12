@@ -39,25 +39,25 @@ class StudiesController < ApplicationController
   def create
     @study = Study.new(study_params)
     if Study.find_by(completioncode: @study.completioncode).present?
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: "completion-code-already-exist", Token: nil, Success: false}, status: :ok
+      @message = "completion-code-already-exist"
     else
       if @study.save
         @message = "study-saved"
-        render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
       else
-        render json: @study.errors, status: :unprocessable_entity
+        @message = @study.errors
       end
     end
+    render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
   # PATCH/PUT /studies/1
   def update
     if @study.update(study_params)
       @message = "study-updated"
-      render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
     else
-      render json: @study.errors, status: :unprocessable_entity
+      @message = @study.errors
     end
+    render json: {Data: @study, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
   # POST /add_description
@@ -88,11 +88,10 @@ class StudiesController < ApplicationController
     if Study.where(user_id: params[:user_id], is_active: nil, deleted_at: nil).present?
       @studies = Study.where(user_id: params[:user_id], is_active: nil, deleted_at: nil).order(id: :desc)
       @message = "user-studies"
-      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok 
     else
       @message = "studies-not-found"
-      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     end   
+    render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok 
   end
 
   #GET 'active_studies/:user_id'
@@ -100,11 +99,10 @@ class StudiesController < ApplicationController
     if Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil, deleted_at: nil).present?
       @studies = Study.where(user_id: params[:user_id], is_active: "1", is_complete: nil, deleted_at: nil).order(id: :desc)
       @message = "user-studies"
-      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
     else
       @message = "studies-not-found"
-      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
-    end    
+    end
+    render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok
   end
 
   #GET 'completed_studies/:user_id'
@@ -112,11 +110,10 @@ class StudiesController < ApplicationController
     if Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil).present?
       @studies = Study.where(user_id: params[:user_id], is_complete: "1", deleted_at: nil).order(id: :desc)
       @message = "completed-studies"
-      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
     else
       @message = "studies-not-found"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok    
     end  
+    render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
   #GET 'rejected_studies/:user_id'
@@ -124,11 +121,10 @@ class StudiesController < ApplicationController
     if Study.where(user_id: params[:user_id], is_active: "0", deleted_at: nil).present?
       @studies = Study.where(user_id: params[:user_id], is_active: "0", deleted_at: nil).order(id: :desc)
       @message = "rejected-studies"
-      render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
     else
       @message = "studies-not-found"
-      render json: {Data: nil, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok    
     end
+    render json: {Data: @studies, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: false}, status: :ok  
   end
 
   # DELETE /studies/1
@@ -327,7 +323,7 @@ class StudiesController < ApplicationController
     @paid_candidate_list = Array.new
     @paid_candidates.each do |candidate|
       @user = User.find(candidate.user_id)
-      if (@user.user_type == "Participant")
+      if @user.participant?
         @paid_candidate_list_list.push(@user)
       end
     end
@@ -335,6 +331,13 @@ class StudiesController < ApplicationController
     render json: {Data: { paid_candidate_list: @paid_candidate_list}, CanEdit: false, CanDelete: true, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok  
   end
 
+  def evai_method
+    @user = User.admin.first
+    if @user.researcher?
+      @message = "yuhu i am researcher"
+    end
+    render json: {Data: @user, CanEdit: false, CanDelete: false, Status: :ok, message: @message, Token: nil, Success: true}, status: :ok 
+  end
   private
     def set_study
       if Study.exists?(params[:id])

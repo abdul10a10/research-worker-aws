@@ -14,7 +14,7 @@ class StudyService
     submitted_candidates_list = Array.new
     submitted_candidates.each do |candidate|
       user = candidate.user
-      if (user.user_type == "Participant")
+      if user.participant?
         submitted_candidates_list.push(user)
       end
     end
@@ -24,7 +24,7 @@ class StudyService
     accepted_candidate_list = Array.new
     accepted_candidates.each do |candidate|
       user = candidate.user
-      if (user.user_type == "Participant")
+      if user.participant?
         accepted_candidate_list.push(user)
       end
     end
@@ -34,7 +34,7 @@ class StudyService
     rejected_candidate_list = Array.new
     rejected_candidates.each do |candidate|
       user = candidate.user
-      if (user.user_type == "Participant")
+      if user.participant?
         rejected_candidate_list.push(user)
       end
     end
@@ -81,7 +81,7 @@ class StudyService
   def self.filtered_candidate(study)
     required_audience_list = Array.new
     if study.only_whitelisted == nil
-      required_audience = User.where(user_type: "Participant", verification_status: '1', deleted_at: nil)
+      required_audience = User.verified_participant
       required_audience.each do |required_audience|
         required_audience_list.push(required_audience)
       end
@@ -159,7 +159,7 @@ class StudyService
       NotificationService.create_notification("Study Published", user.id, 
         "Study #{study.name} has been published", "/studyactive")
       # send mail and notification to Admin
-      user = User.where(user_type: "Admin").first
+      user = User.admin.first
       MailService.study_auto_activate_email(user.id, study.id)
       NotificationService.create_notification("Study Published", user.id, 
         "Study #{study.name} has been published", "/adminactivestudy")
@@ -177,7 +177,7 @@ class StudyService
     study.is_paid = 1
     study.study_wallet = study_wallet
     study.save
-    user = User.where(user_type: "Admin").first
+    user = User.admin.first
     user.wallet = user.wallet + commision
     user.save
     study_name = study.name
@@ -209,7 +209,7 @@ class StudyService
     study.is_published = 1
     study.save
     # StudyPublish.perform_async(study.id)
-    user = User.where(user_type: "Admin").first
+    user = User.admin.first
     MailService.new_study_creation_email(user.id, study.id)
     NotificationService.create_notification("Study Created", user.id, 
       "New study #{study.name} created by #{user.first_name}", "/adminnewstudy")
@@ -255,7 +255,7 @@ class StudyService
     accepted_candidate_list = Array.new
     accepted_candidates.each do |candidate|
       user = candidate.user
-      if (user.user_type == "Participant")
+      if user.participant?
         accepted_candidate_list.push(user)
       end
     end
@@ -264,7 +264,7 @@ class StudyService
     rejected_candidate_list = Array.new
     rejected_candidates.each do |candidate|
       user = candidate.user
-      if (user.user_type == "Participant")
+      if user.participant?
         rejected_candidate_list.push(user)
       end
     end
@@ -364,7 +364,7 @@ class StudyService
     submitted_candidate_list = Array.new
     submitted_candidates.each do |candidate|
       user = candidate.user
-      if (user.user_type == "Participant")
+      if user.participant?
         time_difference = candidate.submit_time - candidate.start_time
         completion_time = Time.at(time_difference.to_i.abs).utc.strftime("%H:%M:%S")
         estimate_min_time = candidate.start_time + study.allowedtime.to_i.minutes
