@@ -32,6 +32,8 @@ module ResearchWorkerApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    config.secret_key_base = 'f58f05a0c46252c8ebb3615694402f39fe0c445ef67f30819bcd5206ce892d1392dd302e5bbbd39c8f023fe38ad0a26c780e20596ca0d124ef228b32b12442c7'
+
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
