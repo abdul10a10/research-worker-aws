@@ -23,6 +23,7 @@ gem 'sidekiq', '~> 5.2', '>= 5.2.7'
 gem 'sinatra', github: 'sinatra/sinatra'
 gem 'words_counted'
 
+gem 'unicorn'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
