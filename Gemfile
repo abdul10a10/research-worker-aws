@@ -20,7 +20,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'mini_magick', '~> 4.8'
 
 gem 'sidekiq', '~> 5.2', '>= 5.2.7'
-gem 'sinatra', github: 'sinatra/sinatra'
+gem 'sinatra'
 gem 'words_counted'
 
 gem 'unicorn'
@@ -38,8 +38,8 @@ gem 'recommendable'
 gem 'rack-cors'
 gem 'aws-sdk', '~> 3'
 
-gem 'devise'
 gem 'simple_token_authentication', '~> 1.0' # see semver.org
+gem 'devise'
 gem 'jwt'
 group :development, :test do
   # gem 'sqlite3'
