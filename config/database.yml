@@ -12,6 +12,7 @@ default: &default
 
 development:
   <<: *default
+  host: localhost
   database: winpowerllc
   username: winpowerllc
   password: winpowerllc123
