@@ -26,4 +26,4 @@ production:
   host: localhost
   database: winpowerllc
   username: winpowerllc
-  password: winpowerllc123
+  password: winpowerllc
