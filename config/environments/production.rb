@@ -74,24 +74,14 @@ Rails.application.configure do
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
   config.action_mailer.default_url_options = { :host => 'https://research-worker-backend.herokuapp.com' }
-  # config.action_mailer.delivery_method = :smtp
-  # # SMTP settings for gmail
-  # config.action_mailer.smtp_settings = {
-  #     :address              => "smtp.gmail.com",
-  #     :port                 => 587,
-  #     :user_name            => "10a10khan@gmail.com",
-  #     :password             => "arman1010#",
-  #     :authentication       => "plain",
-  #     :enable_starttls_auto => true
-  # }
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
       address:              'smtp.gmail.com',
       port:                 587,
-      user_name:            '10a10khan@gmail.com',
-      password:             'arman1010#',
+      user_name:            ENV['DEFAULT_EMAIL'],
+      password:             ENV['DEFAULT_EMAIL_PASSWORD'],
       authentication:       'plain',
       enable_starttls_auto: true  }
   # Rails.application.routes.default_url_options[:host] = 'https://winpowerllc-back-end.herokuapp.com'

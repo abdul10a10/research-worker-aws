@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'abdulrahman.khan@codoxysolutions.com'
+  default from: ENV['DEFAULT_EMAIL']
   layout 'mailer'
 end

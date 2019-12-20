@@ -1,2 +1,2 @@
-gmail_username: '10a10khan@gmail.com'
-gmail_password: 'arman1010#'
+gmail_username: <%= ENV['DEFAULT_EMAIL'] %>
+gmail_password: <%= ENV['DEFAULT_EMAIL_PASSWORD'] %>

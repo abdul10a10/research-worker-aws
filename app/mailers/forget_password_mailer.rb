@@ -1,6 +1,4 @@
 class ForgetPasswordMailer < ApplicationMailer
-  default from: "10a10khan@gmail.com"
-
   def forget_password_email
     @user = params[:user]
     @link = "http://winpowerllc.karyonsolutions.com/#/pages/updatepassword/#{@user.reset_password_token}"
